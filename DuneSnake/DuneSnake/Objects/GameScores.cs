@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Linq;
 
-//
 // Added to support serialization
 using System.IO;
 using System.IO.IsolatedStorage;

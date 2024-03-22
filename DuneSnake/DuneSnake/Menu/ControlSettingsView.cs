@@ -81,9 +81,9 @@ namespace CS5410.Menu
             Drawing.DrawBlurredRectangle(m_spriteBatch, new Vector2(halfWidth - headerStringSize.X, halfHeight - headerStringSize.Y-50), new Vector2(maxKeyStringSize.X + 75, headerStringSize.Y*5), 5);
 
             Drawing.DrawShadedString(m_font, MESSAGE, new Vector2(halfWidth, halfHeight - headerStringSize.Y), Colors.displayColor, m_spriteBatch);
-            Drawing.DrawShadedString(m_font, "Left Rotate:  " + keyboardInput.Left.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 50), getStringColor(ControlStateEnum.RotateLeft), m_spriteBatch);
-            Drawing.DrawShadedString(m_font, "Right Rotate:  " + keyboardInput.Right.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 100), getStringColor(ControlStateEnum.RotateRight), m_spriteBatch);
-            Drawing.DrawShadedString(m_font, "Thrust:  " + keyboardInput.Thrust.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 150), getStringColor(ControlStateEnum.ThrustUp), m_spriteBatch);
+            Drawing.DrawShadedString(m_font, "Move Left  " + keyboardInput.Left.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 50), getStringColor(ControlStateEnum.RotateLeft), m_spriteBatch);
+            Drawing.DrawShadedString(m_font, "Move Right  " + keyboardInput.Right.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 100), getStringColor(ControlStateEnum.RotateRight), m_spriteBatch);
+            Drawing.DrawShadedString(m_font, "Move Up  " + keyboardInput.Thrust.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 150), getStringColor(ControlStateEnum.ThrustUp), m_spriteBatch);
             m_spriteBatch.End();
         }
 

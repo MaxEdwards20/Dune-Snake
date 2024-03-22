@@ -9,7 +9,7 @@ namespace CS5410.Menu
     public class HelpView : GameStateView
     {
         private SpriteFont m_font;
-        private const string MESSAGE = "Win by landing on the platform.\nUse the arrow keys (unless otherwise configured) to move.\nThe less fuel you use, the higher your score.\nGood luck!";
+        private const string MESSAGE = "Win by eating all of the food and the other Sandworms.\nUse the arrow keys or mouse to move.\nThe more you eat, the higher your score.\nGood luck!";
         private bool isKeyboardRegistered = false;
         private MenuStateEnum newState = MenuStateEnum.Help;
 
