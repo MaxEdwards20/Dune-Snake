@@ -9,7 +9,7 @@ namespace CS5410.Menu
     public class AboutView : GameStateView
     {
         private SpriteFont m_font;
-        private const string MESSAGE = "Created by Max Edwards in 2024. Enjoy!";
+        private const string MESSAGE = "Created by Caden, Satchel, and Max in 2024. Enjoy!";
         private bool isKeyboardRegistered = false;
         private MenuStateEnum newState = MenuStateEnum.Credits;
         public override void loadContent(ContentManager contentManager)

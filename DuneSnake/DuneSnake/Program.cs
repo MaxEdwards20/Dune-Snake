@@ -7,7 +7,7 @@ namespace CS5410
         [STAThread]
         static void Main()
         {
-            using (var game = new LunarLanderGame())
+            using (var game = new SnakeGame())
                 game.Run();
         }
     }

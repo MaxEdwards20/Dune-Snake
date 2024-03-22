@@ -8,7 +8,7 @@ using CS5410.Menu;
 
 namespace CS5410
 {
-    public class LunarLanderGame : Game
+    public class DuneSnake : Game
     {
         private GraphicsDeviceManager m_graphics;
         private IGameState m_currentState;
@@ -19,7 +19,7 @@ namespace CS5410
         private Texture2D m_background;
         private SpriteBatch m_spriteBatch;
 
-        public LunarLanderGame()
+        public DuneSnake()
         {
             m_graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
@@ -33,12 +33,6 @@ namespace CS5410
             // For Graders: You can change the resolution here
             m_graphics.PreferredBackBufferWidth = 1920;
             m_graphics.PreferredBackBufferHeight = 1080;
-
-            // Another option
-            // m_graphics.PreferredBackBufferWidth = 1280;
-            // m_graphics.PreferredBackBufferHeight = 720;
-
-
             m_graphics.ApplyChanges();
 
             // Create all the game states here
@@ -68,10 +62,10 @@ namespace CS5410
         {
             m_spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // Load background music
-            var backgroundMusic = Content.Load<Song>("Audio/backgroundMusic");
-            MediaPlayer.Play(backgroundMusic);
-            MediaPlayer.IsRepeating = true;
+            // Load background music TODO: Pick a background song
+            // var backgroundMusic = Content.Load<Song>("Audio/backgroundMusic");
+            // MediaPlayer.Play(backgroundMusic);
+            // MediaPlayer.IsRepeating = true;
 
             // Load select sound
             selectSound = Content.Load<SoundEffect>("Audio/menuSelect");
@@ -115,6 +109,7 @@ namespace CS5410
             {
                 selectSound.Play();
             }
+            // Draw the menu background
             m_spriteBatch.Begin();
             m_spriteBatch.Draw(m_background, new Rectangle(0, 0, m_graphics.PreferredBackBufferWidth, m_graphics.PreferredBackBufferHeight), Color.White);
             m_spriteBatch.End();
