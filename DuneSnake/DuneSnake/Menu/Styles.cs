@@ -4,8 +4,8 @@ using Microsoft.Xna.Framework.Graphics;
 namespace CS5410.Menu { 
 
     public class Colors { 
-        public static Color selectedColor = Color.Purple;
-        public static Color displayColor = Color.Plum;
+        public static Color selectedColor = Color.Goldenrod;
+        public static Color displayColor = Color.PaleGoldenrod;
     }
 
     public class Drawing { 
