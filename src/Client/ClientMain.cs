@@ -66,9 +66,9 @@ namespace Client
             m_spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // Load background music TODO: Pick a background song
-            // var backgroundMusic = Content.Load<Song>("Audio/backgroundMusic");
-            // MediaPlayer.Play(backgroundMusic);
-            // MediaPlayer.IsRepeating = true;
+            var backgroundMusic = Content.Load<Song>("Audio/backgroundMusic");
+            MediaPlayer.Play(backgroundMusic);
+            MediaPlayer.IsRepeating = true;
 
             // Load select sound
             selectSound = Content.Load<SoundEffect>("Audio/menuSelect");
