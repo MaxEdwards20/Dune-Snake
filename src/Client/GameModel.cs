@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using Shared.Entities;
 using System;
 using System.Collections.Generic;
+using Client.Menu;
 
 namespace Client
 {
@@ -39,32 +40,17 @@ namespace Client
         public bool initialize(ContentManager contentManager)
         {
             m_contentManager = contentManager;
-
             m_systemNetwork.registerNewEntityHandler(handleNewEntity);
             m_systemNetwork.registerRemoveEntityHandler(handleRemoveEntity);
 
             m_systemKeyboardInput = new Systems.KeyboardInput(new List<Tuple<Shared.Components.Input.Type, Keys>>
             {
-                Tuple.Create(Shared.Components.Input.Type.Thrust, Keys.W),
+                Tuple.Create(Shared.Components.Input.Type.SnakeUp, Keys.W),
                 Tuple.Create(Shared.Components.Input.Type.RotateLeft, Keys.A),
                 Tuple.Create(Shared.Components.Input.Type.RotateRight, Keys.D)
             });
 
             return true;
-        }
-        public void shutdown()
-        {
-
-        }
-
-        public void signalKeyPressed(Keys key)
-        {
-            m_systemKeyboardInput.keyPressed(key);
-        }
-
-        public void signalKeyReleased(Keys key)
-        {
-            m_systemKeyboardInput.keyReleased(key);
         }
 
         /// <summary>

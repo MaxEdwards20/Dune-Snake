@@ -93,7 +93,7 @@ namespace Client.Systems
                         {
                             switch (input)
                             {
-                                case Shared.Components.Input.Type.Thrust:
+                                case Shared.Components.Input.Type.SnakeUp:
                                     Shared.Entities.Utility.thrust(entity, message.elapsedTime);
                                     break;
                                 case Shared.Components.Input.Type.RotateLeft:

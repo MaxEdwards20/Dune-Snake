@@ -42,7 +42,7 @@ namespace Client.Systems
                         // Client-side prediction of the input
                         switch (type)
                         {
-                            case Shared.Components.Input.Type.Thrust:
+                            case Shared.Components.Input.Type.SnakeUp:
                                 Shared.Entities.Utility.thrust(item.Value, elapsedTime);
                                 break;
                             case Shared.Components.Input.Type.RotateLeft:
@@ -50,6 +50,12 @@ namespace Client.Systems
                                 break;
                             case Shared.Components.Input.Type.RotateRight:
                                 Shared.Entities.Utility.rotateRight(item.Value, elapsedTime);
+                                break;
+                            case Shared.Components.Input.Type.SnakeDown:
+                                Shared.Entities.Utility.thrust(item.Value, -elapsedTime);
+                                break;
+                            case Shared.Components.Input.Type.Boost:
+                                Shared.Entities.Utility.boost(item.Value, elapsedTime);
                                 break;
                         }
                     }

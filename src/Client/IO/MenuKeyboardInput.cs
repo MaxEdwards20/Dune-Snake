@@ -37,9 +37,9 @@ namespace Client.IO
         public Control SnakeLeft = new Control(Keys.Left);
         [DataMember(Name = "SnakeRight")]
         public Control SnakeRight = new Control(Keys.Right);
-
         [DataMember(Name = "SnakeDown")]
         public Control SnakeDown = new Control(Keys.Down);
+        
         public Control Up = new Control(Keys.Up);
         public Control Down = new Control(Keys.Down);
         public Control Enter = new Control(Keys.Enter);
@@ -119,10 +119,12 @@ namespace Client.IO
                 if (entry.keyPressOnly && keyPressed(entry.key))
                 {
                     entry.callback(gameTime, 1.0f);
+                    // TODO: Add the system keyboard input callback here
                 }
                 else if (!entry.keyPressOnly && state.IsKeyDown(entry.key))
                 {
                     entry.callback(gameTime, 1.0f);
+                    // TODO : Add the system keyboard input callback here
                 }
             }
             //
@@ -158,8 +160,7 @@ namespace Client.IO
             }
             SaveControls();
         }
-    
-    
+        
         private async Task finalizeSaveAsync(KeyboardInput keyboard)
         {
             await Task.Run(() =>
@@ -187,7 +188,7 @@ namespace Client.IO
             });
         }
 
-    private async Task finalizeLoadAsync()
+        private async Task finalizeLoadAsync()
     {
         await Task.Run(() =>
         {
