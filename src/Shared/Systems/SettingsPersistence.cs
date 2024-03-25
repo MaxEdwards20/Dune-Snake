@@ -28,23 +28,29 @@ public class SettingsPersistence: System
         return;
     }
 
-    public void SaveControls() { 
+    public void SaveControls(Controls controls)
+    {
         if (!saving) {
             saving = true;
-            finalizeSaveAsync(this);
+            finalizeSaveAsync(controls);
         }
     }
 
-    public void LoadControls() { 
+    public void LoadControls(Controls controls) { 
         if (!loading) {
             loading = true;
             var res = finalizeLoadAsync();
             res.Wait(); // we want to load the controls before letting the user start playing
+            if (controls != null) {
+                controls.SnakeUp = m_loadedState.SnakeUp;
+                controls.SnakeLeft = m_loadedState.SnakeLeft;
+                controls.SnakeRight = m_loadedState.SnakeRight;
+                controls.SnakeDown = m_loadedState.SnakeDown;
+                controls.SnakeBoost = m_loadedState.SnakeBoost;
+            }
         }
     }
-    
-            // TODO: Add persistence code here
-        private async Task finalizeSaveAsync(Controls controls)
+    private async Task finalizeSaveAsync(Controls controls)
         {
             await Task.Run(() =>
             {
@@ -57,9 +63,8 @@ public class SettingsPersistence: System
                         {
                             if (fs != null)
                             {
-                                DataContractJsonSerializer mySerializer = new DataContractJsonSerializer(typeof(KeyboardInput));
+                                DataContractJsonSerializer mySerializer = new DataContractJsonSerializer(typeof(Controls));
                                 mySerializer.WriteObject(fs, controls);
-                                
                             }
                         }
                     }
@@ -86,7 +91,6 @@ public class SettingsPersistence: System
                             {
                                 DataContractJsonSerializer mySerializer = new DataContractJsonSerializer(typeof(Controls));
                                 m_loadedState = (Controls)mySerializer.ReadObject(fs);
-                                
                             }
                         }
                     }

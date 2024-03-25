@@ -26,7 +26,6 @@ namespace Client.Systems
 
         public KeyboardInput(List<Tuple<Shared.Components.Input.Type, Keys>> mapping) : base(typeof(Shared.Components.Input))
         {
-            LoadControls();
         }
 
         public override void update(TimeSpan elapsedTime)
@@ -89,7 +88,6 @@ namespace Client.Systems
         public void updateControlKey(Control v, Keys key)
         {
             v.switchKey(key);
-            SaveControls();
         }
 
         public override bool add(Entity entity)

@@ -1,12 +1,17 @@
 ﻿using Microsoft.Xna.Framework;
 using Shared.Components;
+using Shared.Systems;
 
 namespace Shared.Entities
 {
     public class Snake
     {
-        public static Entity create(string texture, Vector2 position, float size, float moveRate, float rotateRate)
+        public static Entity create(string texture, Vector2 position, float size, float moveRate, float rotateRate, Controls controls = null)
         {
+            if (controls == null)
+            {
+                controls = new Controls();
+            }
             Entity entity = new Entity();
 
             entity.add(new Appearance(texture));
@@ -14,8 +19,7 @@ namespace Shared.Entities
             entity.add(new Position(position));
             entity.add(new Size(new Vector2(size, size)));
             entity.add(new Movement(moveRate, rotateRate));
-            entity.add(new Controls());
-
+            entity.add(controls);
             List<Input.Type> inputs = new List<Input.Type>();
             inputs.Add(Input.Type.SnakeUp);
             inputs.Add(Input.Type.RotateLeft);

@@ -21,7 +21,7 @@ namespace Client.Menu
         private bool m_isLoadedScores = false;
         private int m_playerScore = 0;
         private GameModel m_gameModel;
-
+        
         public override void initializeSession()
         {
             m_gameModel = new GameModel();

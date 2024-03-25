@@ -44,11 +44,7 @@ namespace Client
             m_systemNetwork.registerRemoveEntityHandler(handleRemoveEntity);
 
             m_systemKeyboardInput = new Systems.KeyboardInput(new List<Tuple<Shared.Components.Input.Type, Keys>>
-            {
-                Tuple.Create(Shared.Components.Input.Type.SnakeUp, Keys.W),
-                Tuple.Create(Shared.Components.Input.Type.RotateLeft, Keys.A),
-                Tuple.Create(Shared.Components.Input.Type.RotateRight, Keys.D)
-            });
+            { });
 
             return true;
         }

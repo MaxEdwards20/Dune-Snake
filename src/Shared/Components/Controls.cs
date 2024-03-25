@@ -39,4 +39,7 @@ namespace Shared.Components
             this.key = key;
         }
     }
+    
 }
+
+

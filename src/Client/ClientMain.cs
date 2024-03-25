@@ -9,6 +9,8 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
 using System.Collections.Generic;
+using Shared.Components;
+using Shared.Systems;
 
 namespace Client
 {
@@ -22,6 +24,9 @@ namespace Client
         private bool newState = false;
         private SoundEffect selectSound;
         private Texture2D m_background;
+        private GameModel m_gameModel;
+        private Controls m_controls;
+        private SettingsPersistence m_settingsPersistence = new SettingsPersistence();
 
         public ClientMain()
         {
@@ -29,6 +34,8 @@ namespace Client
             Content.RootDirectory = "Content";
             m_menuKeyboardInput = new MenuKeyboardInput();
             IsMouseVisible = true;
+            m_gameModel = new GameModel();
+            m_controls = new Controls();
         }
 
         protected override void Initialize()
@@ -37,6 +44,9 @@ namespace Client
             m_graphics.PreferredBackBufferWidth = 1920;
             m_graphics.PreferredBackBufferHeight = 1080;
             m_graphics.ApplyChanges();
+            
+            // Load the controls
+            m_settingsPersistence.LoadControls(m_controls);
 
             // Create all the game states here
             m_states = new Dictionary<MenuStateEnum, IGameState>
@@ -44,7 +54,7 @@ namespace Client
                 { MenuStateEnum.MainMenu, new MainMenuView() },
                 { MenuStateEnum.GamePlay, new GamePlayView() }, 
                 { MenuStateEnum.HighScores, new HighScoresView() },
-                { MenuStateEnum.Controls, new ControlSettingsView() },
+                { MenuStateEnum.Controls, new ControlSettingsView(m_controls) },
                 { MenuStateEnum.Help, new HelpView() },
                 { MenuStateEnum.Credits, new AboutView() }
             };
