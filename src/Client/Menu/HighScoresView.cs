@@ -33,11 +33,11 @@ namespace Client.Menu
             {
                 RegisterCommands();
             }
-            keyboardInput.Update(gameTime);
+            MenuKeyboardInput.Update(gameTime);
 
             if (newState != MenuStateEnum.HighScores)
             {
-                keyboardInput.ClearAllCommands();
+                MenuKeyboardInput.ClearAllCommands();
                 isKeyboardRegistered = false;
                 isLoadedScores = false;
                 var transState = newState;
@@ -66,7 +66,7 @@ namespace Client.Menu
 
         public override void RegisterCommands()
         {
-            keyboardInput.registerCommand(keyboardInput.Escape, true, new IInputDevice.CommandDelegate(Escape));
+            MenuKeyboardInput.registerCommand(MenuKeyboardInput.Escape, true, new IInputDevice.CommandDelegate(Escape));
             isKeyboardRegistered = true;
         }
 

@@ -14,6 +14,7 @@ namespace Shared.Entities
             entity.add(new Position(position));
             entity.add(new Size(new Vector2(size, size)));
             entity.add(new Movement(moveRate, rotateRate));
+            entity.add(new Controls());
 
             List<Input.Type> inputs = new List<Input.Type>();
             inputs.Add(Input.Type.SnakeUp);

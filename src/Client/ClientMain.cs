@@ -18,7 +18,7 @@ namespace Client
         private SpriteBatch m_spriteBatch;
         private IGameState m_currentState;
         private Dictionary<MenuStateEnum, IGameState> m_states;
-        private KeyboardInput m_keyboardInput;
+        private MenuKeyboardInput m_menuKeyboardInput;
         private bool newState = false;
         private SoundEffect selectSound;
         private Texture2D m_background;
@@ -27,7 +27,7 @@ namespace Client
         {
             m_graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            m_keyboardInput = new KeyboardInput();
+            m_menuKeyboardInput = new MenuKeyboardInput();
             IsMouseVisible = true;
         }
 
@@ -52,7 +52,7 @@ namespace Client
             // Give all game states a chance to initialize, other than constructor
             foreach (var item in m_states)
             {
-                item.Value.initialize(this.GraphicsDevice, m_graphics, m_keyboardInput);
+                item.Value.initialize(this.GraphicsDevice, m_graphics, m_menuKeyboardInput);
             }
             
             // We are starting with the main menu

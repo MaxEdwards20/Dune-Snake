@@ -10,12 +10,12 @@ namespace Client.Menu
     {
         protected GraphicsDeviceManager m_graphics;
         protected SpriteBatch m_spriteBatch;
-        protected KeyboardInput keyboardInput;
-        public void initialize(GraphicsDevice graphicsDevice, GraphicsDeviceManager graphics, KeyboardInput keyboardInput)
+        protected MenuKeyboardInput MenuKeyboardInput;
+        public void initialize(GraphicsDevice graphicsDevice, GraphicsDeviceManager graphics, MenuKeyboardInput menuKeyboardInput)
         {
             m_graphics = graphics;
             m_spriteBatch = new SpriteBatch(graphicsDevice);
-            this.keyboardInput = keyboardInput;
+            this.MenuKeyboardInput = menuKeyboardInput;
         }
 
         // Taken from the ECS SnakeGame Demo Code

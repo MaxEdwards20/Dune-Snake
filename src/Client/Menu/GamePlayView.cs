@@ -13,13 +13,13 @@ namespace Client.Menu
         private ContentManager m_contentManager;
         private Texture2D m_background;
         private SpriteFont m_font;
-        private bool isKeyboardRegistered = false;
-        private MenuStateEnum newState = MenuStateEnum.GamePlay;
-        private GameScores highScores = new GameScores();
-        private int countdown = 3;
-        private TimeSpan countdownTime = TimeSpan.FromSeconds(1);
-        private bool isLoadedScores = false;
-        private int playerScore = 0;
+        private bool m_isKeyboardRegistered = false;
+        private MenuStateEnum m_newState = MenuStateEnum.GamePlay;
+        private GameScores m_highScores = new GameScores();
+        private int m_countdown = 3;
+        private TimeSpan m_countdownTime = TimeSpan.FromSeconds(1);
+        private bool m_isLoadedScores = false;
+        private int m_playerScore = 0;
         private GameModel m_gameModel;
 
         public override void initializeSession()
@@ -37,14 +37,14 @@ namespace Client.Menu
 
         public override MenuStateEnum processInput(GameTime gameTime)
         {
-            if (!isKeyboardRegistered){RegisterCommands();}
-            if (!isLoadedScores)
+            if (!m_isKeyboardRegistered){RegisterCommands();}
+            if (!m_isLoadedScores)
             {
-                highScores.LoadScores();
-                isLoadedScores = true;
+                m_highScores.LoadScores();
+                m_isLoadedScores = true;
             }
-            keyboardInput.Update(gameTime);
-            if (newState != MenuStateEnum.GamePlay){return handleSwitchToMainMenu();}
+            MenuKeyboardInput.Update(gameTime);
+            if (m_newState != MenuStateEnum.GamePlay){return handleSwitchToMainMenu();}
             return MenuStateEnum.GamePlay;
         }
 
@@ -56,63 +56,43 @@ namespace Client.Menu
         {
             m_spriteBatch.Begin();
             renderBackground(m_spriteBatch);
-            m_spriteBatch.DrawString(m_font, "Score: " + playerScore, new Vector2(10, 10), Color.White);
+            m_spriteBatch.DrawString(m_font, "Score: " + m_playerScore, new Vector2(10, 10), Color.White);
             m_spriteBatch.End();
             m_gameModel.render(gameTime.ElapsedGameTime, m_spriteBatch);
 
         }
 
-        private void renderBackground(SpriteBatch m_spriteBatch) {
-            m_spriteBatch.Draw(m_background, new Rectangle(0, 0, m_graphics.PreferredBackBufferWidth, m_graphics.PreferredBackBufferHeight), Color.White);
+        private void renderBackground(SpriteBatch spriteBatch) {
+            spriteBatch.Draw(m_background, new Rectangle(0, 0, m_graphics.PreferredBackBufferWidth, m_graphics.PreferredBackBufferHeight), Color.White);
         }
 
         private void resetGame() {
-            countdown = 3;
-            countdownTime = TimeSpan.FromSeconds(1);
+            m_countdown = 3;
+            m_countdownTime = TimeSpan.FromSeconds(1);
         }
 
         public override void RegisterCommands()
         {
-            keyboardInput.registerCommand(keyboardInput.Escape, true, Escape);
-            keyboardInput.registerCommand(keyboardInput.SnakeDown, false, MoveDown);
-            keyboardInput.registerCommand(keyboardInput.SnakeUp, false, MoveUp);
-            keyboardInput.registerCommand(keyboardInput.SnakeLeft, false, MoveLeft);
-            keyboardInput.registerCommand(keyboardInput.SnakeRight, false, MoveRight);
-            isKeyboardRegistered = true;
+            MenuKeyboardInput.registerCommand(MenuKeyboardInput.Escape, true, escape);
+            m_isKeyboardRegistered = true;
         }
 
-        public void MoveUp(GameTime gameTime, float scale)
+        public void escape(GameTime gameTime, float scale)
         {
-        }
-        
-        public void MoveDown(GameTime gameTime, float scale)
-        {
-        }
-
-        public void MoveLeft(GameTime gameTime, float scale)
-        {
-        }
-
-        public void MoveRight(GameTime gameTime, float scale)
-        {
-        }
-        
-        public void Escape(GameTime gameTime, float scale)
-        {
-            newState = MenuStateEnum.MainMenu;
+            m_newState = MenuStateEnum.MainMenu;
         }
 
 
         private MenuStateEnum handleSwitchToMainMenu()
         {
-            keyboardInput.ClearAllCommands();
-            isKeyboardRegistered = false;
-            highScores.addScore(playerScore); // this adds the score and saves to the hardrive asyncronously
-            playerScore = 0; // Reset the score
-            isLoadedScores = false;
+            MenuKeyboardInput.ClearAllCommands();
+            m_isKeyboardRegistered = false;
+            m_highScores.addScore(m_playerScore); // this adds the score and saves to the hardrive asyncronously
+            m_playerScore = 0; // Reset the score
+            m_isLoadedScores = false;
             resetGame();
-            var temp = newState;
-            newState = MenuStateEnum.GamePlay;
+            var temp = m_newState;
+            m_newState = MenuStateEnum.GamePlay;
             return temp;
         }
 

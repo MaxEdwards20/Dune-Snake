@@ -41,10 +41,10 @@ namespace Client.Menu
             {
                 RegisterCommands();
             }
-            keyboardInput.Update(gameTime);
+            MenuKeyboardInput.Update(gameTime);
             if (newState != MenuStateEnum.MainMenu)
             {
-                keyboardInput.ClearAllCommands();
+                MenuKeyboardInput.ClearAllCommands();
                 isKeyboardRegistered = false;
                 var transState = newState;
                 newState = MenuStateEnum.MainMenu;
@@ -86,9 +86,9 @@ namespace Client.Menu
 
         public override void RegisterCommands()
         {
-            keyboardInput.registerCommand(keyboardInput.Up, true, new IInputDevice.CommandDelegate(MoveUp));
-            keyboardInput.registerCommand(keyboardInput.Down, true, new IInputDevice.CommandDelegate(MoveDown));
-            keyboardInput.registerCommand(keyboardInput.Select, true, new IInputDevice.CommandDelegate(Select));
+            MenuKeyboardInput.registerCommand(MenuKeyboardInput.Up, true, new IInputDevice.CommandDelegate(MoveUp));
+            MenuKeyboardInput.registerCommand(MenuKeyboardInput.Down, true, new IInputDevice.CommandDelegate(MoveDown));
+            MenuKeyboardInput.registerCommand(MenuKeyboardInput.Select, true, new IInputDevice.CommandDelegate(Select));
             isKeyboardRegistered = true;
         }
 
