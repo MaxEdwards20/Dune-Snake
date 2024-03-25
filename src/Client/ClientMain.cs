@@ -88,7 +88,6 @@ namespace Client
         {
             newState = false;
             MenuStateEnum nextStateEnum = m_currentState.processInput(gameTime);
-
             // Special case for exiting the game
             if (nextStateEnum == MenuStateEnum.Exit)
             {
@@ -102,6 +101,7 @@ namespace Client
                 if (cState != m_currentState)
                 {
                     newState = true;
+                    m_currentState.initializeSession();
                 }
             }
 

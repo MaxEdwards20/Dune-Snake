@@ -14,16 +14,16 @@ namespace Client.Menu
         private const string MESSAGE = "Control Settings";
         private MenuStateEnum newState = MenuStateEnum.Controls;
         private bool isKeyboardRegistered = false;
-        private ControlStateEnum controlState = ControlStateEnum.RotateLeft;
+        private ControlStateEnum controlState = ControlStateEnum.SnakeLeft;
         private ControlStateEnum updatingKey = ControlStateEnum.None;
         private bool isUpdatingKey = false;
 
         public enum ControlStateEnum
         {
-            RotateLeft,
-            RotateRight,
-            ThrustUp, 
-            ThrustDown,
+            SnakeLeft,
+            SnakeRight,
+            SnakeUp, 
+            SnakeDown,
             None
         }
 
@@ -82,10 +82,10 @@ namespace Client.Menu
             Drawing.DrawBlurredRectangle(m_spriteBatch, new Vector2(halfWidth - headerStringSize.X, halfHeight - headerStringSize.Y-50), new Vector2(maxKeyStringSize.X + 75, headerStringSize.Y*5), 5);
 
             Drawing.DrawShadedString(m_font, MESSAGE, new Vector2(halfWidth, halfHeight - headerStringSize.Y), Colors.displayColor, m_spriteBatch);
-            Drawing.DrawShadedString(m_font, "Move Left  " + keyboardInput.SnakeLeft.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 50), getStringColor(ControlStateEnum.RotateLeft), m_spriteBatch);
-            Drawing.DrawShadedString(m_font, "Move Right  " + keyboardInput.SnakeRight.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 100), getStringColor(ControlStateEnum.RotateRight), m_spriteBatch);
-            Drawing.DrawShadedString(m_font, "Move Up  " + keyboardInput.SnakeUp.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 150), getStringColor(ControlStateEnum.ThrustUp), m_spriteBatch);
-            Drawing.DrawShadedString(m_font, "Move Down  " + keyboardInput.SnakeDown.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 200), getStringColor(ControlStateEnum.ThrustDown), m_spriteBatch);
+            Drawing.DrawShadedString(m_font, "Move Left  " + keyboardInput.SnakeLeft.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 50), getStringColor(ControlStateEnum.SnakeLeft), m_spriteBatch);
+            Drawing.DrawShadedString(m_font, "Move Right  " + keyboardInput.SnakeRight.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 100), getStringColor(ControlStateEnum.SnakeRight), m_spriteBatch);
+            Drawing.DrawShadedString(m_font, "Move Up  " + keyboardInput.SnakeUp.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 150), getStringColor(ControlStateEnum.SnakeUp), m_spriteBatch);
+            Drawing.DrawShadedString(m_font, "Move Down  " + keyboardInput.SnakeDown.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 200), getStringColor(ControlStateEnum.SnakeDown), m_spriteBatch);
 
             m_spriteBatch.End();
         }
@@ -135,40 +135,40 @@ namespace Client.Menu
 
         public void MoveUp(GameTime gameTime, float scale)
         {
-            if (controlState == ControlStateEnum.RotateLeft)
+            if (controlState == ControlStateEnum.SnakeLeft)
             {
-                controlState = ControlStateEnum.ThrustDown;
+                controlState = ControlStateEnum.SnakeDown;
             }
-            else if (controlState == ControlStateEnum.RotateRight)
+            else if (controlState == ControlStateEnum.SnakeRight)
             {
-                controlState = ControlStateEnum.RotateLeft;
+                controlState = ControlStateEnum.SnakeLeft;
             }
-            else if (controlState == ControlStateEnum.ThrustUp)
+            else if (controlState == ControlStateEnum.SnakeUp)
             {
-                controlState = ControlStateEnum.RotateRight;
-            } else if (controlState == ControlStateEnum.ThrustDown)
+                controlState = ControlStateEnum.SnakeRight;
+            } else if (controlState == ControlStateEnum.SnakeDown)
             {
-                controlState = ControlStateEnum.ThrustUp;
+                controlState = ControlStateEnum.SnakeUp;
             }
         }
 
         public void MoveDown(GameTime gameTime, float scale)
         {
-            if (controlState == ControlStateEnum.RotateLeft)
+            if (controlState == ControlStateEnum.SnakeLeft)
             {
-                controlState = ControlStateEnum.RotateRight;
+                controlState = ControlStateEnum.SnakeRight;
             }
-            else if (controlState == ControlStateEnum.RotateRight)
+            else if (controlState == ControlStateEnum.SnakeRight)
             {
-                controlState = ControlStateEnum.ThrustUp;
+                controlState = ControlStateEnum.SnakeUp;
             }
-            else if (controlState == ControlStateEnum.ThrustUp)
+            else if (controlState == ControlStateEnum.SnakeUp)
             {
-                controlState = ControlStateEnum.ThrustDown;
+                controlState = ControlStateEnum.SnakeDown;
             }
-            else if (controlState == ControlStateEnum.ThrustDown)
+            else if (controlState == ControlStateEnum.SnakeDown)
             {
-                controlState = ControlStateEnum.RotateLeft;
+                controlState = ControlStateEnum.SnakeLeft;
             }
         }
     }

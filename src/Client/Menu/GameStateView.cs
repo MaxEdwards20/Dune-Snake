@@ -17,6 +17,12 @@ namespace Client.Menu
             m_spriteBatch = new SpriteBatch(graphicsDevice);
             this.keyboardInput = keyboardInput;
         }
+
+        // Taken from the ECS SnakeGame Demo Code
+        public virtual void initializeSession()
+        {
+        }
+
         public abstract void loadContent(ContentManager contentManager);
         public abstract MenuStateEnum processInput(GameTime gameTime);
         public abstract void render(GameTime gameTime);

@@ -20,14 +20,19 @@ namespace Client.Menu
         private TimeSpan countdownTime = TimeSpan.FromSeconds(1);
         private bool isLoadedScores = false;
         private int playerScore = 0;
-        private GameModel m_gameModel = new GameModel();
+        private GameModel m_gameModel;
+
+        public override void initializeSession()
+        {
+            m_gameModel = new GameModel();
+            m_gameModel.initialize(m_contentManager);
+        }
         public override void loadContent(ContentManager contentManager)
         {
             m_contentManager = contentManager;
-            m_gameModel.initialize(m_contentManager);
             m_font = contentManager.Load<SpriteFont>("Fonts/menu");
             // Load background
-            // TODO: m_background = contentManager.Load<Texture2D>("Images/background");
+            m_background = contentManager.Load<Texture2D>("Images/background");
         }
 
         public override MenuStateEnum processInput(GameTime gameTime)
@@ -49,13 +54,16 @@ namespace Client.Menu
 
         public override void render(GameTime gameTime)
         {
-            renderBackground();
+            m_spriteBatch.Begin();
+            renderBackground(m_spriteBatch);
+            m_spriteBatch.DrawString(m_font, "Score: " + playerScore, new Vector2(10, 10), Color.White);
+            m_spriteBatch.End();
+            m_gameModel.render(gameTime.ElapsedGameTime, m_spriteBatch);
+
         }
 
-        private void renderBackground() {
-            m_spriteBatch.Begin();
+        private void renderBackground(SpriteBatch m_spriteBatch) {
             m_spriteBatch.Draw(m_background, new Rectangle(0, 0, m_graphics.PreferredBackBufferWidth, m_graphics.PreferredBackBufferHeight), Color.White);
-            m_spriteBatch.End();
         }
 
         private void resetGame() {
@@ -65,10 +73,19 @@ namespace Client.Menu
 
         public override void RegisterCommands()
         {
+            keyboardInput.registerCommand(keyboardInput.Escape, true, Escape);
+            keyboardInput.registerCommand(keyboardInput.SnakeDown, false, MoveDown);
+            keyboardInput.registerCommand(keyboardInput.SnakeUp, false, MoveUp);
+            keyboardInput.registerCommand(keyboardInput.SnakeLeft, false, MoveLeft);
+            keyboardInput.registerCommand(keyboardInput.SnakeRight, false, MoveRight);
             isKeyboardRegistered = true;
         }
 
         public void MoveUp(GameTime gameTime, float scale)
+        {
+        }
+        
+        public void MoveDown(GameTime gameTime, float scale)
         {
         }
 
@@ -79,7 +96,7 @@ namespace Client.Menu
         public void MoveRight(GameTime gameTime, float scale)
         {
         }
-
+        
         public void Escape(GameTime gameTime, float scale)
         {
             newState = MenuStateEnum.MainMenu;

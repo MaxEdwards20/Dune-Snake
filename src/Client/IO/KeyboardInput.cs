@@ -141,17 +141,20 @@ namespace Client.IO
 
         internal void updateControlKey(ControlSettingsView.ControlStateEnum v, Keys key)
         {
-            if (v == ControlSettingsView.ControlStateEnum.RotateLeft)
+            if (v == ControlSettingsView.ControlStateEnum.SnakeLeft)
             {
                 SnakeLeft.switchKey(key);
             }
-            else if (v == ControlSettingsView.ControlStateEnum.RotateRight)
+            else if (v == ControlSettingsView.ControlStateEnum.SnakeRight)
             {
                 SnakeRight.switchKey(key);
             }
-            else if (v == ControlSettingsView.ControlStateEnum.ThrustUp)
+            else if (v == ControlSettingsView.ControlStateEnum.SnakeUp)
             {
                 SnakeUp.switchKey(key);
+            } else if (v == ControlSettingsView.ControlStateEnum.SnakeDown)
+            {
+                SnakeDown.switchKey(key);
             }
             SaveControls();
         }
