@@ -16,6 +16,9 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 .DS_Store
 *.vscode/
 .vscode/
+bin/
+obj/
+*.DS_Store
 
 # Runtime data
 pids
