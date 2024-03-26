@@ -35,25 +35,30 @@ namespace Client.Menu
         {
             if (!m_isSetup)
             {
-                RegisterCommands();
-                var res = connectToServer();
-                if (res)
-                {
-                    m_isSetup = true;
-                }
-                else
-                {
-                    if (m_connectToServerTime == TimeSpan.Zero)
-                    {
-                        res = connectToServer();
-                        m_connectToServerTime = TimeSpan.FromSeconds(2);
-                        m_connectToServerTime -= gameTime.ElapsedGameTime;
-                    }
-                }
+                setup(gameTime);
             }
             MenuKeyboardInput.Update(gameTime); // essentially just checking for whether we have escaped to the main menu
             if (m_newState != MenuStateEnum.GamePlay){return handleSwitchToMainMenu();}
             return MenuStateEnum.GamePlay;
+        }
+
+        private void setup(GameTime gameTime)
+        {
+            RegisterCommands();
+            var res = connectToServer();
+            if (res)
+            {
+                m_isSetup = true; // We only want to say we are setup when we are connected to the server
+            }
+            else
+            {
+                if (m_connectToServerTime == TimeSpan.Zero)
+                {
+                    res = connectToServer();
+                    m_connectToServerTime = TimeSpan.FromSeconds(2);
+                    m_connectToServerTime -= gameTime.ElapsedGameTime;
+                }
+            }
         }
 
         public override void update(GameTime gameTime)
