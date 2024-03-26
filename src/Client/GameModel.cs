@@ -26,10 +26,14 @@ namespace Client
             m_systemKeyboardInput.update(elapsedTime);
             m_systemInterpolation.update(elapsedTime);
         }
+        
+        /// <summary>
+        /// Where we render everything
+        /// </summary>
 
         public void render(TimeSpan elapsedTime, SpriteBatch spriteBatch)
         {
-            m_systemRenderer.update(elapsedTime, spriteBatch);
+            m_systemRenderer.render(elapsedTime, spriteBatch);
         }
 
         /// <summary>
@@ -47,6 +51,11 @@ namespace Client
             { });
 
             return true;
+        }
+        
+        public void shutdown()
+        {
+
         }
 
         /// <summary>
@@ -133,6 +142,5 @@ namespace Client
         {
             removeEntity(message.id);
         }
-
     }
 }

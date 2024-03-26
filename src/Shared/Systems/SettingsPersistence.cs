@@ -42,14 +42,13 @@ public class SettingsPersistence: System
             var res = finalizeLoadAsync();
             res.Wait(); // we want to load the controls before letting the user start playing
             if (controls != null) {
-                controls.SnakeUp = m_loadedState.SnakeUp;
-                controls.SnakeLeft = m_loadedState.SnakeLeft;
-                controls.SnakeRight = m_loadedState.SnakeRight;
-                controls.SnakeDown = m_loadedState.SnakeDown;
+                // All of them have a default value in case they were not saved
+                controls.SnakeUp = m_loadedState.SnakeUp == null? new Control(Keys.Up) : m_loadedState.SnakeUp;
+                controls.SnakeLeft = m_loadedState.SnakeLeft == null? new Control(Keys.Left) : m_loadedState.SnakeLeft;
+                controls.SnakeRight = m_loadedState.SnakeRight == null? new Control(Keys.Right) : m_loadedState.SnakeRight;
+                controls.SnakeDown = m_loadedState.SnakeDown == null ? new Control(Keys.Down) : m_loadedState.SnakeDown;
                 controls.SnakeBoost = m_loadedState.SnakeBoost == null ? new Control(Keys.Space): m_loadedState.SnakeBoost;
             }
-
-            
         }
     }
     private async Task finalizeSaveAsync(Controls controls)

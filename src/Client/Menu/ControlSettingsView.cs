@@ -65,7 +65,7 @@ namespace Client.Menu
         {
             if (isUpdatingKey)
             {
-                // We are updating a key, so we need to wait for the user to press a key. Then we will update the updatingKey control key to the new value the user pressed
+                // We are updating a key, so we need to wait for the user to press a key. Then we will render the updatingKey control key to the new value the user pressed
                 foreach (var key in MenuKeyboardInput.GetPressedKeys())
                 {
                     if (key != Keys.None)

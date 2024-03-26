@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Client.IO;
 using Client.Objects;
 using System.Runtime.Serialization;
+using Microsoft.Xna.Framework.Input;
 
 namespace Client.Menu
 {
@@ -15,7 +17,7 @@ namespace Client.Menu
         private MenuStateEnum m_newState;
         private GameModel m_gameModel;
         
-        public override void initializeSession()
+        public override void initialize()
         {
             m_gameModel = new GameModel();
             m_gameModel.initialize(m_contentManager);
@@ -25,6 +27,7 @@ namespace Client.Menu
         public override void loadContent(ContentManager contentManager)
         {
             m_contentManager = contentManager;
+            MessageQueueClient.instance.initialize("localhost", 3000);
         }
 
         public override MenuStateEnum processInput(GameTime gameTime)
@@ -45,6 +48,7 @@ namespace Client.Menu
             m_gameModel.render(gameTime.ElapsedGameTime, m_spriteBatch);
         }
         
+        
         public override void RegisterCommands()
         {
             MenuKeyboardInput.registerCommand(MenuKeyboardInput.Escape, true, escape);
@@ -62,6 +66,8 @@ namespace Client.Menu
             m_isKeyboardRegistered = false;
             var temp = m_newState;
             m_newState = MenuStateEnum.GamePlay;
+            MessageQueueClient.instance.sendMessage(new Shared.Messages.Disconnect());
+            MessageQueueClient.instance.shutdown();
             return temp;
         }
     }

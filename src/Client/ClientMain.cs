@@ -91,7 +91,6 @@ namespace Client
                 item.Value.loadContent(this.Content);
             }
 
-            MessageQueueClient.instance.initialize("localhost", 3000);
         }
 
         protected override void Update(GameTime gameTime)
@@ -111,7 +110,7 @@ namespace Client
                 if (cState != m_currentState)
                 {
                     newState = true;
-                    m_currentState.initializeSession();
+                    m_currentState.initialize();
                 }
             }
             base.Update(gameTime);

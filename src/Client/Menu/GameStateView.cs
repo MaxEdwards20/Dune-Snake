@@ -18,8 +18,7 @@ namespace Client.Menu
             this.MenuKeyboardInput = menuKeyboardInput;
         }
 
-        // Taken from the ECS SnakeGame Demo Code
-        public virtual void initializeSession()
+        public virtual void initialize()
         {
         }
 

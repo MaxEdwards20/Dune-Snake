@@ -21,7 +21,7 @@ namespace Client.Systems
 
         public override void update(TimeSpan elapsedTime) { }
 
-        public void update(TimeSpan elapsedTime, SpriteBatch spriteBatch)
+        public void render(TimeSpan elapsedTime, SpriteBatch spriteBatch)
         {
 
             spriteBatch.Begin();

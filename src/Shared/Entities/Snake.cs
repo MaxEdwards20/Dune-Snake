@@ -8,18 +8,17 @@ namespace Shared.Entities
     {
         public static Entity create(string texture, Vector2 position, float size, float moveRate, float rotateRate, Controls controls = null)
         {
+            Entity entity = new Entity();
             if (controls == null)
             {
                 controls = new Controls();
             }
-            Entity entity = new Entity();
-
+            entity.add(controls);
             entity.add(new Appearance(texture));
-
             entity.add(new Position(position));
             entity.add(new Size(new Vector2(size, size)));
             entity.add(new Movement(moveRate, rotateRate));
-            entity.add(controls);
+            
             List<Input.Type> inputs = new List<Input.Type>();
             inputs.Add(Input.Type.SnakeUp);
             inputs.Add(Input.Type.RotateLeft);

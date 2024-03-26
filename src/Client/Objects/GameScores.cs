@@ -23,7 +23,7 @@ public class GameScores {
     public GameScores() {
         // set the defaults in case the file is not there
         scores = new List<GameScore>();
-        // load the file in, if it exists. This will also update the scores and high score values
+        // load the file in, if it exists
         LoadScores();
         // deleteLocalDataAsync().Wait(); // use this for testing purposes
     }

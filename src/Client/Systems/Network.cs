@@ -54,7 +54,7 @@ namespace Client.Systems
         public override void update(TimeSpan elapsedTime) { }
 
         /// <summary>
-        /// Have our own version of update, because we need a list of messages to work with, and
+        /// Have our own version of render, because we need a list of messages to work with, and
         /// messages aren't entities.
         /// </summary>
         public void update(TimeSpan elapsedTime, Queue<Message> messages)
