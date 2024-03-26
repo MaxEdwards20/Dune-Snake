@@ -16,10 +16,8 @@ using Client.Menu;
 
 namespace Client.Systems
 {
-
     public class KeyboardInput : Shared.Systems.System
     {
-        
         private HashSet<Keys> m_keysPressed = new HashSet<Keys>();
 
         private KeyboardState m_statePrevious = Keyboard.GetState();
@@ -55,6 +53,8 @@ namespace Client.Systems
                     MessageQueueClient.instance.sendMessageWithId(new Shared.Messages.Input(entity.Key, inputs, elapsedTime));
                 }
             }
+            // Move the current state to the previous state for the next time around
+            m_statePrevious = keyboardState;
         }
         
         private void checkAndPerformAction(Control control, Input.Type inputType, Entity entity, TimeSpan elapsedTime, List<Input.Type> inputs)
@@ -69,20 +69,21 @@ namespace Client.Systems
                     case Input.Type.SnakeUp:
                         Utility.thrust(entity, elapsedTime);
                         break;
+                    case Input.Type.SnakeDown:
+                        Utility.thrust(entity, elapsedTime);
+                        break;
                     case Input.Type.Boost:
                         Utility.boost(entity, elapsedTime);
                         break; 
                     case Input.Type.RotateLeft:
                         Utility.rotateLeft(entity, elapsedTime);
                         break;
-                    case Input.Type.SnakeDown:
-                        Utility.thrust(entity, elapsedTime);
-                        break;
                     case Input.Type.RotateRight:
                         Utility.rotateRight(entity, elapsedTime);
                         break;
                 }
             }
+
         }
         
         public void updateControlKey(Control v, Keys key)
@@ -103,19 +104,14 @@ namespace Client.Systems
         {
             base.remove(id);
         }
-
-        public void keyPressed(Keys key)
-        {
-            m_keysPressed.Add(key);
-        }
-
-        public void keyReleased(Keys key)
-        {
-            m_keysPressed.Remove(key);
-        }
         
-
-        
+        /// <summary>
+        /// Checks to see if a key was newly pressed
+        /// </summary>
+        private bool keyPressed(Keys key)
+        {
+            return (Keyboard.GetState().IsKeyDown(key) && !m_statePrevious.IsKeyDown(key));
+        }
 
     }
 }

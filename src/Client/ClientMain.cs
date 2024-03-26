@@ -114,7 +114,6 @@ namespace Client
                     m_currentState.initializeSession();
                 }
             }
-
             base.Update(gameTime);
         }
 

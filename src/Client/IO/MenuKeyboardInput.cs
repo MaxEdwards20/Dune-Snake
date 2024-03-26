@@ -43,7 +43,6 @@ namespace Client.IO
 
         public void registerCommand(Control control, bool keyPressOnly, IInputDevice.CommandDelegate callback)
         {
-            //
             // If already registered, remove it!
             if (m_commandEntries.ContainsKey(control))
             {
@@ -93,15 +92,12 @@ namespace Client.IO
                 if (entry.keyPressOnly && keyPressed(entry.key))
                 {
                     entry.callback(gameTime, 1.0f);
-                    // TODO: Add the system keyboard input callback here
                 }
                 else if (!entry.keyPressOnly && state.IsKeyDown(entry.key))
                 {
                     entry.callback(gameTime, 1.0f);
-                    // TODO : Add the system keyboard input callback here
                 }
             }
-            //
             // Move the current state to the previous state for the next time around
             m_statePrevious = state;
         }
@@ -114,11 +110,5 @@ namespace Client.IO
         {
             return (Keyboard.GetState().IsKeyDown(key) && !m_statePrevious.IsKeyDown(key));
         }
-
-
-        
-        
-    
-    
     }
 }

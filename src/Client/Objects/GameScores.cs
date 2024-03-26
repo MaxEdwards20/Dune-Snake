@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Linq;
@@ -17,32 +18,21 @@ public class GameScores {
     private GameScores m_loadedState = null;
 
     [DataMember(Name = "scores")]
-    public Dictionary<string, int> scores { get;  private set; }
+    public List<GameScore> scores { get;  private set; }
     
-    [DataMember(Name = "highScore")]
-    public int highScore { get; private set; }
     public GameScores() {
         // set the defaults in case the file is not there
-        scores = new Dictionary<string, int>();
-        highScore = 0;
+        scores = new List<GameScore>();
         // load the file in, if it exists. This will also update the scores and high score values
         LoadScores();
-        // deleteLocalDataAsync().Wait();
+        // deleteLocalDataAsync().Wait(); // use this for testing purposes
     }
     public void addScore(int score) {
         var today = System.DateTime.Now;
-        if (scores.ContainsKey(today.ToString())) {
-            scores[today.ToString()] = score;
-        }
-        else {
-            scores.Add(today.ToString(), score);
-        }
-        if (score > highScore) {
-            highScore = score;
-        }
+        scores.Add(new GameScore(today, score));
         SaveScores();
     }
-
+    
     public void SaveScores() {
         if (!saving) {
             saving = true;
@@ -56,31 +46,31 @@ public class GameScores {
             finalizeLoadAsync().Wait(); // we want to load the scores completely to ensure we have the most recent data
         }
     }
+
+
     public void clearScores() {
         scores.Clear();
-        highScore = 0;
     }
 
     public void removeScore(int score) {
-        foreach (var key in scores.Keys) {
-            if (scores[key] == score) {
-                scores.Remove(key);
-                break;
-            }
-        }
+        scores.RemoveAll(x => x.score == score);
+    }
+    
+    public void removeScore(GameScore score) {
+        scores.Remove(score);
     }
 
 
-    public List<(int, string)> SortScores(Dictionary<string, int> scores, int numDisplayScores) {
-        // Sort the scores by value
-        List<(int, string)> sortedScores = new List<(int, string)>();
-        foreach (var score in scores) {
-            var formattedDate = score.Key.Split(' ')[0];
-            sortedScores.Add((score.Value, formattedDate));
-        }
-        sortedScores.Sort((x, y) => y.Item1.CompareTo(x.Item1));
-        sortedScores = sortedScores.Take(numDisplayScores).ToList();
-        return sortedScores;
+    public GameScores sortScores(GameScores gameScores, int numToDisplay) {
+        
+        // Order the list of scores by the GameScore.score property
+        var orderedScores = gameScores.scores.OrderByDescending(x => x.score);
+        // Take the top numToDisplay scores
+        var topScores = orderedScores.Take(numToDisplay);
+        // Create a new GameScores object with the top scores
+        GameScores topGameScores = new GameScores();
+        topGameScores.scores = topScores.ToList();
+        return topGameScores;
     }
 
     // Used to delete the local data for testing purposes (or if you're embarrased about your score)
@@ -146,7 +136,6 @@ public class GameScores {
                                 DataContractJsonSerializer mySerializer = new DataContractJsonSerializer(typeof(GameScores));
                                 m_loadedState = (GameScores)mySerializer.ReadObject(fs);
                                 scores = m_loadedState.scores;
-                                highScore = m_loadedState.highScore;
                             }
                         }
                     }
@@ -159,6 +148,17 @@ public class GameScores {
 
             this.loading = false;
         });
+    }
+}
+
+public class GameScore {
+    [DataMember(Name = "date")]
+    public DateTime date { get; private set; }
+    [DataMember(Name = "score")]
+    public int score { get; private set; }
+    public GameScore(DateTime date, int score) {
+        this.date = date;
+        this.score = score;
     }
 }
 }
