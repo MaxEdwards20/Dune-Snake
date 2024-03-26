@@ -26,6 +26,8 @@ namespace Client.Menu
         {
             m_gameModel = new GameModel();
             m_gameModel.initialize(m_contentManager);
+            m_countdown = 3;
+            m_countdownTime = TimeSpan.FromSeconds(1);
         }
         public override void loadContent(ContentManager contentManager)
         {
@@ -50,6 +52,7 @@ namespace Client.Menu
 
         public override void update(GameTime gameTime)
         {
+            m_gameModel.update(gameTime.ElapsedGameTime);
         }
 
         public override void render(GameTime gameTime)
@@ -66,11 +69,7 @@ namespace Client.Menu
             spriteBatch.Draw(m_background, new Rectangle(0, 0, m_graphics.PreferredBackBufferWidth, m_graphics.PreferredBackBufferHeight), Color.White);
         }
 
-        private void resetGame() {
-            m_countdown = 3;
-            m_countdownTime = TimeSpan.FromSeconds(1);
-        }
-
+        
         public override void RegisterCommands()
         {
             MenuKeyboardInput.registerCommand(MenuKeyboardInput.Escape, true, escape);
@@ -80,6 +79,11 @@ namespace Client.Menu
         public void escape(GameTime gameTime, float scale)
         {
             m_newState = MenuStateEnum.MainMenu;
+        }
+        
+        private void resetGame() {
+            m_countdown = 3;
+            m_countdownTime = TimeSpan.FromSeconds(1);
         }
 
 

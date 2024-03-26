@@ -151,6 +151,7 @@ public class GameScores {
     }
 }
 
+[DataContract(Name = "GameScore")]
 public class GameScore {
     [DataMember(Name = "date")]
     public DateTime date { get; private set; }

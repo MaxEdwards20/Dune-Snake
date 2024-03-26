@@ -29,6 +29,7 @@ namespace Client.Menu
             SnakeRight,
             SnakeUp, 
             SnakeDown,
+            SnakeBoost,
             None
         }
         
@@ -88,6 +89,9 @@ namespace Client.Menu
                                 case ControlStateEnum.SnakeDown:
                                     m_controls.SnakeDown.switchKey(key);
                                     break;
+                                case ControlStateEnum.SnakeBoost:
+                                    m_controls.SnakeBoost.switchKey(key);
+                                    break;
                             }
                             // Now we persist any changes
                             m_settingsPersistence.SaveControls(m_controls);
@@ -113,7 +117,7 @@ namespace Client.Menu
             Drawing.DrawShadedString(m_font, "Move Right  " + m_controls.SnakeRight.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 100), getStringColor(ControlStateEnum.SnakeRight), m_spriteBatch);
             Drawing.DrawShadedString(m_font, "Move Up  " + m_controls.SnakeUp.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 150), getStringColor(ControlStateEnum.SnakeUp), m_spriteBatch);
             Drawing.DrawShadedString(m_font, "Move Down  " + m_controls.SnakeDown.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 200), getStringColor(ControlStateEnum.SnakeDown), m_spriteBatch);
-            Drawing.DrawShadedString(m_font, "Boost  " + m_controls.SnakeBoost.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 250), getStringColor(ControlStateEnum.None), m_spriteBatch);
+            Drawing.DrawShadedString(m_font, "Boost  " + m_controls.SnakeBoost.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 250), getStringColor(ControlStateEnum.SnakeBoost), m_spriteBatch);
     
             m_spriteBatch.End();
         }
@@ -163,40 +167,33 @@ namespace Client.Menu
 
         public void MoveUp(GameTime gameTime, float scale)
         {
+            if (isUpdatingKey)
+            {
+                return;
+            }
             if (controlState == ControlStateEnum.SnakeLeft)
             {
-                controlState = ControlStateEnum.SnakeDown;
+                controlState = ControlStateEnum.SnakeBoost;
             }
-            else if (controlState == ControlStateEnum.SnakeRight)
+            else
             {
-                controlState = ControlStateEnum.SnakeLeft;
-            }
-            else if (controlState == ControlStateEnum.SnakeUp)
-            {
-                controlState = ControlStateEnum.SnakeRight;
-            } else if (controlState == ControlStateEnum.SnakeDown)
-            {
-                controlState = ControlStateEnum.SnakeUp;
+                controlState--;
             }
         }
 
         public void MoveDown(GameTime gameTime, float scale)
         {
-            if (controlState == ControlStateEnum.SnakeLeft)
+            if (isUpdatingKey)
             {
-                controlState = ControlStateEnum.SnakeRight;
+                return;
             }
-            else if (controlState == ControlStateEnum.SnakeRight)
-            {
-                controlState = ControlStateEnum.SnakeUp;
-            }
-            else if (controlState == ControlStateEnum.SnakeUp)
-            {
-                controlState = ControlStateEnum.SnakeDown;
-            }
-            else if (controlState == ControlStateEnum.SnakeDown)
+            if (controlState == ControlStateEnum.SnakeBoost)
             {
                 controlState = ControlStateEnum.SnakeLeft;
+            }
+            else
+            {
+                controlState++;
             }
         }
     }

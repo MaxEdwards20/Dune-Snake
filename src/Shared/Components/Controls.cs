@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 using System.Runtime.Serialization;
+// Added to support serialization
 using System.IO;
 using System.IO.IsolatedStorage;
 using System.Runtime.Serialization.Json;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 namespace Shared.Components
 {
     [DataContract(Name = "Controls")]
-    public class Controls: Component
+    public class Controls : Component
     {
         [DataMember(Name = "SnakeUp")]
         public Control SnakeUp = new Control(Keys.Up);
@@ -24,6 +25,7 @@ namespace Shared.Components
         public Control SnakeBoost = new Control(Keys.Space);
     }
     
+    [DataContract(Name = "Control")]
     public class Control
     {
         [DataMember(Name = "key")]

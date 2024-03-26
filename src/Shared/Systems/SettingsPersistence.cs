@@ -46,8 +46,10 @@ public class SettingsPersistence: System
                 controls.SnakeLeft = m_loadedState.SnakeLeft;
                 controls.SnakeRight = m_loadedState.SnakeRight;
                 controls.SnakeDown = m_loadedState.SnakeDown;
-                controls.SnakeBoost = m_loadedState.SnakeBoost;
+                controls.SnakeBoost = m_loadedState.SnakeBoost == null ? new Control(Keys.Space): m_loadedState.SnakeBoost;
             }
+
+            
         }
     }
     private async Task finalizeSaveAsync(Controls controls)
