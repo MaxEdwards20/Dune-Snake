@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework;
 using System.Runtime.Serialization;
 using System.IO;
 using System.IO.IsolatedStorage;
+using System.Linq;
 using System.Runtime.Serialization.Json;
 using System.Threading.Tasks;
 using Client.Menu;
@@ -36,8 +37,14 @@ namespace Client.Systems
                 m_keysPressed.Add(key);
             }
 
+            // We have a dictionary of entities, so we need to iterate through them
             foreach (var entity in m_entities)
             {
+                // We only care about entities that have a control component
+                if (entity.Value.contains(typeof(Controls)) == false)
+                {
+                    continue;
+                }
                 var controls = entity.Value.get<Controls>();
                 var inputs = new List<Input.Type>();
 

@@ -51,7 +51,6 @@ namespace Client.Systems
                     SpriteEffects.None,
                     0);
             }
-
             spriteBatch.End();
         }
     }
