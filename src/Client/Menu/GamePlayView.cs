@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -13,26 +14,43 @@ namespace Client.Menu
     public class GamePlayView : GameStateView
     {
         private ContentManager m_contentManager;
-        private bool m_isKeyboardRegistered;
+        private bool m_isSetup;
         private MenuStateEnum m_newState;
         private GameModel m_gameModel;
+        private TimeSpan m_connectToServerTime = TimeSpan.Zero;
         
         public override void initialize()
         {
             m_gameModel = new GameModel();
             m_gameModel.initialize(m_contentManager);
-            m_isKeyboardRegistered = false;
+            m_isSetup = false;
             m_newState = MenuStateEnum.GamePlay;
         }
         public override void loadContent(ContentManager contentManager)
         {
             m_contentManager = contentManager;
-            MessageQueueClient.instance.initialize("localhost", 3000);
         }
 
         public override MenuStateEnum processInput(GameTime gameTime)
         {
-            if (!m_isKeyboardRegistered){RegisterCommands();}
+            if (!m_isSetup)
+            {
+                RegisterCommands();
+                var res = connectToServer();
+                if (res)
+                {
+                    m_isSetup = true;
+                }
+                else
+                {
+                    if (m_connectToServerTime == TimeSpan.Zero)
+                    {
+                        res = connectToServer();
+                        m_connectToServerTime = TimeSpan.FromSeconds(2);
+                        m_connectToServerTime -= gameTime.ElapsedGameTime;
+                    }
+                }
+            }
             MenuKeyboardInput.Update(gameTime); // essentially just checking for whether we have escaped to the main menu
             if (m_newState != MenuStateEnum.GamePlay){return handleSwitchToMainMenu();}
             return MenuStateEnum.GamePlay;
@@ -52,7 +70,11 @@ namespace Client.Menu
         public override void RegisterCommands()
         {
             MenuKeyboardInput.registerCommand(MenuKeyboardInput.Escape, true, escape);
-            m_isKeyboardRegistered = true;
+        }
+
+        private bool connectToServer()
+        {
+            return MessageQueueClient.instance.initialize("localhost", 3000);
         }
 
         private void escape(GameTime gameTime, float scale)
@@ -63,11 +85,18 @@ namespace Client.Menu
         private MenuStateEnum handleSwitchToMainMenu()
         {
             MenuKeyboardInput.ClearAllCommands();
-            m_isKeyboardRegistered = false;
+            m_isSetup = false;
             var temp = m_newState;
             m_newState = MenuStateEnum.GamePlay;
-            MessageQueueClient.instance.sendMessage(new Shared.Messages.Disconnect());
-            MessageQueueClient.instance.shutdown();
+            try
+            {
+                MessageQueueClient.instance.sendMessage(new Shared.Messages.Disconnect());
+                MessageQueueClient.instance.shutdown();
+            }
+            catch (SocketException e)
+            {
+                // Console.WriteLine(e); // This happens if we were not able to connect to the server and try to exit from it
+            }
             return temp;
         }
     }

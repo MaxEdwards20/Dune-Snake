@@ -12,7 +12,7 @@ namespace Server
             {
                 if (MessageQueueServer.instance.initialize(port))
                 {
-                    Console.WriteLine("Server waiting for incomming connections on port {0}", port);
+                    Console.WriteLine("Server waiting for incoming connections on port {0}", port);
                     startServer();
                     MessageQueueServer.instance.shutdown();
                 }

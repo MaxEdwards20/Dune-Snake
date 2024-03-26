@@ -65,6 +65,7 @@ namespace Client
         private Entity createEntity(Shared.Messages.NewEntity message)
         {
             Entity entity = new Entity(message.id);
+            
 
             if (message.hasAppearance)
             {
