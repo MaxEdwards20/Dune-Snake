@@ -17,3 +17,13 @@ For office hours:
 
 - How would you suggest we save the user controls? I am trying to think of this in an entity component system way. I am thinking of having a component that holds the controls and then a system that reads the controls and updates the entity. I am not sure if this is the best way to do it.
 - We already have the keyboard input system. Would that be the best place to put the controls? How do give the gameplay access to the controls component?
+
+
+## Debugging
+
+### Connection Refused
+- Try switching ports. A few options are 4000, 4010, 3000, 3010
+- Use netcat on Mac or Linux to see whether the server is available.
+
+`nc -vz 192.168.4.20 3000`
+nc: connectx to 192.168.4.20 port 3000 (tcp) failed: Connection refused

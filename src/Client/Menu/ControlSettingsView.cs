@@ -65,7 +65,6 @@ namespace Client.Menu
         {
             if (isUpdatingKey)
             {
-                // We are updating a key, so we need to wait for the user to press a key. Then we will render the updatingKey control key to the new value the user pressed
                 foreach (var key in MenuKeyboardInput.GetPressedKeys())
                 {
                     if (key != Keys.None)
@@ -106,11 +105,14 @@ namespace Client.Menu
             m_spriteBatch.Begin();
 
             Vector2 headerStringSize = m_font.MeasureString(MESSAGE);
-            Vector2 maxKeyStringSize = m_font.MeasureString("Right Key / Right Rotate:  " + m_controls.SnakeRight.key);
             var halfWidth = m_graphics.PreferredBackBufferWidth / 2;
             var halfHeight = m_graphics.PreferredBackBufferHeight / 2;
 
-            Drawing.DrawBlurredRectangle(m_spriteBatch, new Vector2(halfWidth - headerStringSize.X, halfHeight - headerStringSize.Y-50), new Vector2(maxKeyStringSize.X + 75, headerStringSize.Y*5), 5);
+            int horizontalOffset = 40;
+            int verticalOffset = 40;
+            var rectangleOrigin = new Vector2(halfWidth - (headerStringSize.X / 2) - horizontalOffset, halfHeight - headerStringSize.Y -verticalOffset);
+            var rectangleSize = new Vector2(headerStringSize.X + horizontalOffset * 3, headerStringSize.Y * 6);
+            Drawing.DrawBlurredRectangle(m_spriteBatch, rectangleOrigin, rectangleSize, 5);
 
             Drawing.DrawShadedString(m_font, MESSAGE, new Vector2(halfWidth, halfHeight - headerStringSize.Y), Colors.displayColor, m_spriteBatch);
             Drawing.DrawShadedString(m_font, "Move Left  " + m_controls.SnakeLeft.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 50), getStringColor(ControlStateEnum.SnakeLeft), m_spriteBatch);

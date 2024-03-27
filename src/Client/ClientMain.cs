@@ -21,12 +21,12 @@ namespace Client
         private IGameState m_currentState;
         private Dictionary<MenuStateEnum, IGameState> m_states;
         private MenuKeyboardInput m_menuKeyboardInput;
-        private bool newState = false;
+        private bool newState;
         private SoundEffect selectSound;
         private Texture2D m_background;
         private GameModel m_gameModel;
         private Controls m_controls;
-        private SettingsPersistence m_settingsPersistence = new SettingsPersistence();
+        private SettingsPersistence m_settingsPersistence;
 
         public ClientMain()
         {
@@ -36,6 +36,8 @@ namespace Client
             IsMouseVisible = true;
             m_gameModel = new GameModel();
             m_controls = new Controls();
+            m_settingsPersistence = new SettingsPersistence();
+            
         }
 
         protected override void Initialize()

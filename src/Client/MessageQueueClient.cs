@@ -63,9 +63,10 @@ namespace Client
                 initializeSender();
                 initializeReceiver();
             }
-            catch (SocketException)
+            catch (SocketException e)
             {
-                Console.WriteLine("Failed to connect to server");
+                Console.Error.WriteLine("Failed to connect to server");
+                Console.Error.WriteLine(e.Message);
                 return false;
             }
 
