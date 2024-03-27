@@ -12,7 +12,7 @@ namespace Server
             {
                 if (MessageQueueServer.instance.initialize(port))
                 {
-                    Console.WriteLine("Server waiting for incomming connections on port {0}", port);
+                    Console.WriteLine("Server waiting for incoming connections on port {0}", port);
                     startServer();
                     MessageQueueServer.instance.shutdown();
                 }
@@ -24,7 +24,7 @@ namespace Server
             else
             {
                 Console.WriteLine("Invalid port parameter.");
-                Console.WriteLine("Example program usage: server --port 3000");
+                Console.WriteLine("Example program usage: server --port 4010");
             }
 
             return 0;

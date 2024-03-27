@@ -20,7 +20,6 @@ namespace Shared.Messages
             {
                 this.texture = "";
             }
-
             if (entity.contains<Position>())
             {
                 this.hasPosition = true;

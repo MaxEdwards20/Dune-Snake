@@ -103,7 +103,7 @@ namespace Server.Systems
             {
                 switch (input)
                 {
-                    case Shared.Components.Input.Type.Thrust:
+                    case Shared.Components.Input.Type.SnakeUp:
                         Shared.Entities.Utility.thrust(entity, message.elapsedTime);
                         m_reportThese.Add(message.entityId);
                         break;

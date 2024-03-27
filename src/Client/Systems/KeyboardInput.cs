@@ -3,96 +3,101 @@ using Microsoft.Xna.Framework.Input;
 using Shared.Entities;
 using System;
 using System.Collections.Generic;
+using Shared.Components;
 
 namespace Client.Systems
 {
     public class KeyboardInput : Shared.Systems.System
     {
-        private class KeyToType
-        {
-            public Dictionary<Keys, Shared.Components.Input.Type> m_keyToType = new Dictionary<Keys, Shared.Components.Input.Type>();
-        }
-
-        private Dictionary<Shared.Components.Input.Type, Keys> m_typeToKey = new Dictionary<Shared.Components.Input.Type, Keys>();
-        private Dictionary<uint, KeyToType> m_keyToFunction = new Dictionary<uint, KeyToType>();
-
         private HashSet<Keys> m_keysPressed = new HashSet<Keys>();
-        private List<Shared.Components.Input.Type> m_inputEvents = new List<Shared.Components.Input.Type>();
 
-        public KeyboardInput(List<Tuple<Shared.Components.Input.Type, Keys>> mapping) : base(typeof(Shared.Components.Input))
+        private KeyboardState m_statePrevious = Keyboard.GetState();
+        private Controls m_controls;
+
+        public KeyboardInput(List<Tuple<Shared.Components.Input.Type, Keys>> mapping, Controls controls) : base(typeof(Shared.Components.Input))
         {
-            foreach (var input in mapping)
-            {
-                m_typeToKey[input.Item1] = input.Item2;
-            }
+            m_controls = controls;
         }
 
         public override void update(TimeSpan elapsedTime)
         {
-            foreach (var item in m_entities)
-            {
-                List<Shared.Components.Input.Type> inputs = new List<Shared.Components.Input.Type>();
-                foreach (var key in m_keysPressed)
-                {
-                    if (m_keyToFunction[item.Key].m_keyToType.ContainsKey(key))
-                    {
-                        var type = m_keyToFunction[item.Key].m_keyToType[key];
-                        inputs.Add(type);
+            var keyboardState = Keyboard.GetState();
+            m_keysPressed.Clear();
 
-                        // Client-side prediction of the input
-                        switch (type)
-                        {
-                            case Shared.Components.Input.Type.Thrust:
-                                Shared.Entities.Utility.thrust(item.Value, elapsedTime);
-                                break;
-                            case Shared.Components.Input.Type.RotateLeft:
-                                Shared.Entities.Utility.rotateLeft(item.Value, elapsedTime);
-                                break;
-                            case Shared.Components.Input.Type.RotateRight:
-                                Shared.Entities.Utility.rotateRight(item.Value, elapsedTime);
-                                break;
-                        }
-                    }
-                }
+            foreach (var key in keyboardState.GetPressedKeys())
+            {
+                m_keysPressed.Add(key);
+            }
+
+            // We have a dictionary of entities, so we need to iterate through them
+            foreach (var entity in m_entities)
+            {
+                var inputs = new List<Input.Type>();
+                checkAndPerformAction(m_controls.SnakeUp, Input.Type.SnakeUp, entity.Value, elapsedTime, inputs);
+                checkAndPerformAction(m_controls.SnakeLeft, Input.Type.RotateLeft, entity.Value, elapsedTime, inputs);
+                checkAndPerformAction(m_controls.SnakeRight, Input.Type.RotateRight, entity.Value, elapsedTime, inputs);
+                checkAndPerformAction(m_controls.SnakeDown, Input.Type.SnakeDown, entity.Value, elapsedTime, inputs);
+                checkAndPerformAction(m_controls.SnakeBoost, Input.Type.Boost, entity.Value, elapsedTime, inputs);
+
                 if (inputs.Count > 0)
                 {
-                    MessageQueueClient.instance.sendMessageWithId(new Shared.Messages.Input(item.Key, inputs, elapsedTime));
+                    // Assuming you have a messaging system to handle input
+                    MessageQueueClient.instance.sendMessageWithId(new Shared.Messages.Input(entity.Key, inputs, elapsedTime));
                 }
             }
+            // Move the current state to the previous state for the next time around
+            m_statePrevious = keyboardState;
         }
+        
+        private void checkAndPerformAction(Control control, Input.Type inputType, Entity entity, TimeSpan elapsedTime, List<Input.Type> inputs)
+        {
+            if (m_keysPressed.Contains(control.key))
+            {
+                inputs.Add(inputType);
+                // Perform action based on inputType
+                switch (inputType)
+                {
+                    case Input.Type.SnakeUp:
+                        Utility.thrust(entity, elapsedTime);
+                        break;
+                    case Input.Type.SnakeDown:
+                        Utility.thrust(entity, elapsedTime);
+                        break;
+                    case Input.Type.Boost:
+                        Utility.boost(entity, elapsedTime);
+                        break; 
+                    case Input.Type.RotateLeft:
+                        Utility.rotateLeft(entity, elapsedTime);
+                        break;
+                    case Input.Type.RotateRight:
+                        Utility.rotateRight(entity, elapsedTime);
+                        break;
+                }
+            }
 
+        }
+        
         public override bool add(Entity entity)
         {
             if (!base.add(entity))
             {
                 return false;
             }
-
-            KeyToType map = new KeyToType();
-            foreach (var input in entity.get<Shared.Components.Input>().inputs)
-            {
-                map.m_keyToType[m_typeToKey[input]] = input;
-            }
-            m_keyToFunction[entity.id] = map;
-
             return true;
         }
 
         public override void remove(uint id)
         {
             base.remove(id);
-
-            m_keyToFunction.Remove(id);
         }
-
-        public void keyPressed(Keys key)
+        
+        /// <summary>
+        /// Checks to see if a key was newly pressed
+        /// </summary>
+        private bool keyPressed(Keys key)
         {
-            m_keysPressed.Add(key);
+            return (Keyboard.GetState().IsKeyDown(key) && !m_statePrevious.IsKeyDown(key));
         }
 
-        public void keyReleased(Keys key)
-        {
-            m_keysPressed.Remove(key);
-        }
     }
 }

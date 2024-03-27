@@ -5,6 +5,9 @@ using Microsoft.Xna.Framework.Input;
 using Client.Menu;
 using System;
 using Client.IO;
+using Shared.Components;
+using Shared.Entities;
+using Shared.Systems;
 
 namespace Client.Menu
 {
@@ -17,6 +20,8 @@ namespace Client.Menu
         private ControlStateEnum controlState = ControlStateEnum.SnakeLeft;
         private ControlStateEnum updatingKey = ControlStateEnum.None;
         private bool isUpdatingKey = false;
+        private Controls m_controls;
+        private SettingsPersistence m_settingsPersistence = new SettingsPersistence();
 
         public enum ControlStateEnum
         {
@@ -24,7 +29,13 @@ namespace Client.Menu
             SnakeRight,
             SnakeUp, 
             SnakeDown,
+            SnakeBoost,
             None
+        }
+        
+        public ControlSettingsView(Controls controls)
+        {
+            m_controls = controls;
         }
 
 
@@ -39,27 +50,10 @@ namespace Client.Menu
             {
                 RegisterCommands();
             }
-            if (isUpdatingKey)
-            {
-                // We are updating a key, so we need to wait for the user to press a key. Then we will update the updatingKey control key to the new value the user pressed
-                foreach (var key in keyboardInput.GetPressedKeys())
-                {
-                    if (key != Keys.None)
-                    {
-                        if (key != keyboardInput.Select.key && key != keyboardInput.Escape.key) // Select is a reserved key
-                        {
-                            keyboardInput.updateControlKey(updatingKey, key);
-                            isUpdatingKey = false;
-                            updatingKey = ControlStateEnum.None;
-                            RegisterCommands(); // We need to re-register the commands to update the new key
-                        }
-                    }
-                }
 
-            }
-            keyboardInput.Update(gameTime);
+            MenuKeyboardInput.Update(gameTime);
             if (newState != MenuStateEnum.Controls) { 
-                keyboardInput.ClearAllCommands();
+                MenuKeyboardInput.ClearAllCommands();
                 isKeyboardRegistered = false;
                 var transState = newState;
                 newState = MenuStateEnum.Controls;
@@ -69,24 +63,64 @@ namespace Client.Menu
         }
         public override void update(GameTime gameTime)
         {
+            if (isUpdatingKey)
+            {
+                foreach (var key in MenuKeyboardInput.GetPressedKeys())
+                {
+                    if (key != Keys.None)
+                    {
+                        if (key != MenuKeyboardInput.Select.key &&
+                            key != MenuKeyboardInput.Escape.key) // Select is a reserved key
+                        {
+                            isUpdatingKey = false;
+                            updatingKey = ControlStateEnum.None;
+                            switch (controlState)
+                            {
+                                case ControlStateEnum.SnakeLeft:
+                                    m_controls.SnakeLeft.switchKey(key);
+                                    break;
+                                case ControlStateEnum.SnakeRight:
+                                    m_controls.SnakeRight.switchKey(key);
+                                    break;
+                                case ControlStateEnum.SnakeUp:
+                                    m_controls.SnakeUp.switchKey(key);
+                                    break;
+                                case ControlStateEnum.SnakeDown:
+                                    m_controls.SnakeDown.switchKey(key);
+                                    break;
+                                case ControlStateEnum.SnakeBoost:
+                                    m_controls.SnakeBoost.switchKey(key);
+                                    break;
+                            }
+                            // Now we persist any changes
+                            m_settingsPersistence.SaveControls(m_controls);
+                        }
+                    }
+                }
+            }
+            
         }
         public override void render(GameTime gameTime)
         {
             m_spriteBatch.Begin();
 
             Vector2 headerStringSize = m_font.MeasureString(MESSAGE);
-            Vector2 maxKeyStringSize = m_font.MeasureString("Right Key / Right Rotate:  " + keyboardInput.SnakeRight.key);
             var halfWidth = m_graphics.PreferredBackBufferWidth / 2;
             var halfHeight = m_graphics.PreferredBackBufferHeight / 2;
 
-            Drawing.DrawBlurredRectangle(m_spriteBatch, new Vector2(halfWidth - headerStringSize.X, halfHeight - headerStringSize.Y-50), new Vector2(maxKeyStringSize.X + 75, headerStringSize.Y*5), 5);
+            int horizontalOffset = 40;
+            int verticalOffset = 40;
+            var rectangleOrigin = new Vector2(halfWidth - (headerStringSize.X / 2) - horizontalOffset, halfHeight - headerStringSize.Y -verticalOffset);
+            var rectangleSize = new Vector2(headerStringSize.X + horizontalOffset * 3, headerStringSize.Y * 6);
+            Drawing.DrawBlurredRectangle(m_spriteBatch, rectangleOrigin, rectangleSize, 5);
 
             Drawing.DrawShadedString(m_font, MESSAGE, new Vector2(halfWidth, halfHeight - headerStringSize.Y), Colors.displayColor, m_spriteBatch);
-            Drawing.DrawShadedString(m_font, "Move Left  " + keyboardInput.SnakeLeft.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 50), getStringColor(ControlStateEnum.SnakeLeft), m_spriteBatch);
-            Drawing.DrawShadedString(m_font, "Move Right  " + keyboardInput.SnakeRight.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 100), getStringColor(ControlStateEnum.SnakeRight), m_spriteBatch);
-            Drawing.DrawShadedString(m_font, "Move Up  " + keyboardInput.SnakeUp.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 150), getStringColor(ControlStateEnum.SnakeUp), m_spriteBatch);
-            Drawing.DrawShadedString(m_font, "Move Down  " + keyboardInput.SnakeDown.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 200), getStringColor(ControlStateEnum.SnakeDown), m_spriteBatch);
-
+            Drawing.DrawShadedString(m_font, "Move Left  " + m_controls.SnakeLeft.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 50), getStringColor(ControlStateEnum.SnakeLeft), m_spriteBatch);
+            Drawing.DrawShadedString(m_font, "Move Right  " + m_controls.SnakeRight.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 100), getStringColor(ControlStateEnum.SnakeRight), m_spriteBatch);
+            Drawing.DrawShadedString(m_font, "Move Up  " + m_controls.SnakeUp.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 150), getStringColor(ControlStateEnum.SnakeUp), m_spriteBatch);
+            Drawing.DrawShadedString(m_font, "Move Down  " + m_controls.SnakeDown.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 200), getStringColor(ControlStateEnum.SnakeDown), m_spriteBatch);
+            Drawing.DrawShadedString(m_font, "Boost  " + m_controls.SnakeBoost.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 250), getStringColor(ControlStateEnum.SnakeBoost), m_spriteBatch);
+    
             m_spriteBatch.End();
         }
 
@@ -108,10 +142,10 @@ namespace Client.Menu
 
         public override void RegisterCommands()
         {
-            keyboardInput.registerCommand(keyboardInput.Escape, true, new IInputDevice.CommandDelegate(Escape));
-            keyboardInput.registerCommand(keyboardInput.Up, true, new IInputDevice.CommandDelegate(MoveUp));
-            keyboardInput.registerCommand(keyboardInput.Down, true, new IInputDevice.CommandDelegate(MoveDown));
-            keyboardInput.registerCommand(keyboardInput.Select, true, new IInputDevice.CommandDelegate(Select));
+            MenuKeyboardInput.registerCommand(MenuKeyboardInput.Escape, true, new IInputDevice.CommandDelegate(Escape));
+            MenuKeyboardInput.registerCommand(MenuKeyboardInput.Up, true, new IInputDevice.CommandDelegate(MoveUp));
+            MenuKeyboardInput.registerCommand(MenuKeyboardInput.Down, true, new IInputDevice.CommandDelegate(MoveDown));
+            MenuKeyboardInput.registerCommand(MenuKeyboardInput.Select, true, new IInputDevice.CommandDelegate(Select));
             isKeyboardRegistered = true;
         }
 
@@ -135,40 +169,33 @@ namespace Client.Menu
 
         public void MoveUp(GameTime gameTime, float scale)
         {
+            if (isUpdatingKey)
+            {
+                return;
+            }
             if (controlState == ControlStateEnum.SnakeLeft)
             {
-                controlState = ControlStateEnum.SnakeDown;
+                controlState = ControlStateEnum.SnakeBoost;
             }
-            else if (controlState == ControlStateEnum.SnakeRight)
+            else
             {
-                controlState = ControlStateEnum.SnakeLeft;
-            }
-            else if (controlState == ControlStateEnum.SnakeUp)
-            {
-                controlState = ControlStateEnum.SnakeRight;
-            } else if (controlState == ControlStateEnum.SnakeDown)
-            {
-                controlState = ControlStateEnum.SnakeUp;
+                controlState--;
             }
         }
 
         public void MoveDown(GameTime gameTime, float scale)
         {
-            if (controlState == ControlStateEnum.SnakeLeft)
+            if (isUpdatingKey)
             {
-                controlState = ControlStateEnum.SnakeRight;
+                return;
             }
-            else if (controlState == ControlStateEnum.SnakeRight)
-            {
-                controlState = ControlStateEnum.SnakeUp;
-            }
-            else if (controlState == ControlStateEnum.SnakeUp)
-            {
-                controlState = ControlStateEnum.SnakeDown;
-            }
-            else if (controlState == ControlStateEnum.SnakeDown)
+            if (controlState == ControlStateEnum.SnakeBoost)
             {
                 controlState = ControlStateEnum.SnakeLeft;
+            }
+            else
+            {
+                controlState++;
             }
         }
     }

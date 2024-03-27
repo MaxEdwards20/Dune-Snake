@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework.Input;
 using Shared.Entities;
 using System;
 using System.Collections.Generic;
+using Client.Menu;
+using Shared.Components;
 
 namespace Client
 {
@@ -15,6 +17,7 @@ namespace Client
         private Systems.KeyboardInput m_systemKeyboardInput;
         private Systems.Interpolation m_systemInterpolation = new Systems.Interpolation();
         private Systems.Renderer m_systemRenderer = new Systems.Renderer();
+        private Controls m_controls;
 
         /// <summary>
         /// This is where everything performs its update.
@@ -25,10 +28,14 @@ namespace Client
             m_systemKeyboardInput.update(elapsedTime);
             m_systemInterpolation.update(elapsedTime);
         }
+        
+        /// <summary>
+        /// Where we render everything
+        /// </summary>
 
         public void render(TimeSpan elapsedTime, SpriteBatch spriteBatch)
         {
-            m_systemRenderer.update(elapsedTime, spriteBatch);
+            m_systemRenderer.render(elapsedTime, spriteBatch);
         }
 
         /// <summary>
@@ -36,35 +43,22 @@ namespace Client
         /// of this "game', start by initializing the systems and then
         /// loading the art assets.
         /// </summary>
-        public bool initialize(ContentManager contentManager)
+        public bool initialize(ContentManager contentManager, Controls controls)
         {
             m_contentManager = contentManager;
-
             m_systemNetwork.registerNewEntityHandler(handleNewEntity);
             m_systemNetwork.registerRemoveEntityHandler(handleRemoveEntity);
+            m_controls = controls;
 
             m_systemKeyboardInput = new Systems.KeyboardInput(new List<Tuple<Shared.Components.Input.Type, Keys>>
-            {
-                Tuple.Create(Shared.Components.Input.Type.Thrust, Keys.W),
-                Tuple.Create(Shared.Components.Input.Type.RotateLeft, Keys.A),
-                Tuple.Create(Shared.Components.Input.Type.RotateRight, Keys.D)
-            });
+            { }, m_controls);
 
             return true;
         }
+        
         public void shutdown()
         {
 
-        }
-
-        public void signalKeyPressed(Keys key)
-        {
-            m_systemKeyboardInput.keyPressed(key);
-        }
-
-        public void signalKeyReleased(Keys key)
-        {
-            m_systemKeyboardInput.keyReleased(key);
         }
 
         /// <summary>
@@ -74,6 +68,7 @@ namespace Client
         private Entity createEntity(Shared.Messages.NewEntity message)
         {
             Entity entity = new Entity(message.id);
+            
 
             if (message.hasAppearance)
             {
@@ -151,6 +146,5 @@ namespace Client
         {
             removeEntity(message.id);
         }
-
     }
 }

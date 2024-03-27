@@ -5,10 +5,11 @@ namespace Shared.Components
     {
         public enum Type : UInt16
         {
-            Thrust,
+            SnakeUp,
+            SnakeDown,
             RotateLeft,
             RotateRight,
-            FireWeapon
+            Boost
         }
 
         public Input(List<Type> inputs)

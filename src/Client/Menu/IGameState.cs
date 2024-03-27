@@ -8,8 +8,8 @@ namespace Client.Menu
 {
     public interface IGameState
     {
-        void initializeSession();
-        void initialize(GraphicsDevice graphicsDevice, GraphicsDeviceManager graphics, KeyboardInput keyboardInput);
+        void initialize();
+        void initialize(GraphicsDevice graphicsDevice, GraphicsDeviceManager graphics, MenuKeyboardInput menuKeyboardInput);
         void loadContent(ContentManager contentManager);
         MenuStateEnum processInput(GameTime gameTime);
         void update(GameTime gameTime);

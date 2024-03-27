@@ -9,6 +9,8 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
 using System.Collections.Generic;
+using Shared.Components;
+using Shared.Systems;
 
 namespace Client
 {
@@ -18,17 +20,24 @@ namespace Client
         private SpriteBatch m_spriteBatch;
         private IGameState m_currentState;
         private Dictionary<MenuStateEnum, IGameState> m_states;
-        private KeyboardInput m_keyboardInput;
-        private bool newState = false;
+        private MenuKeyboardInput m_menuKeyboardInput;
+        private bool newState;
         private SoundEffect selectSound;
         private Texture2D m_background;
+        private GameModel m_gameModel;
+        private Controls m_controls;
+        private SettingsPersistence m_settingsPersistence;
 
         public ClientMain()
         {
             m_graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            m_keyboardInput = new KeyboardInput();
+            m_menuKeyboardInput = new MenuKeyboardInput();
             IsMouseVisible = true;
+            m_gameModel = new GameModel();
+            m_controls = new Controls();
+            m_settingsPersistence = new SettingsPersistence();
+            
         }
 
         protected override void Initialize()
@@ -37,14 +46,18 @@ namespace Client
             m_graphics.PreferredBackBufferWidth = 1920;
             m_graphics.PreferredBackBufferHeight = 1080;
             m_graphics.ApplyChanges();
+            
+            // Load the controls
+            // We pass in our own controls so we always have them as a default if they were not saved
+            m_settingsPersistence.LoadControls(m_controls); 
 
             // Create all the game states here
             m_states = new Dictionary<MenuStateEnum, IGameState>
             {
                 { MenuStateEnum.MainMenu, new MainMenuView() },
-                { MenuStateEnum.GamePlay, new GamePlayView() }, 
+                { MenuStateEnum.GamePlay, new GamePlayView(m_controls) }, 
                 { MenuStateEnum.HighScores, new HighScoresView() },
-                { MenuStateEnum.Controls, new ControlSettingsView() },
+                { MenuStateEnum.Controls, new ControlSettingsView(m_controls) },
                 { MenuStateEnum.Help, new HelpView() },
                 { MenuStateEnum.Credits, new AboutView() }
             };
@@ -52,7 +65,7 @@ namespace Client
             // Give all game states a chance to initialize, other than constructor
             foreach (var item in m_states)
             {
-                item.Value.initialize(this.GraphicsDevice, m_graphics, m_keyboardInput);
+                item.Value.initialize(this.GraphicsDevice, m_graphics, m_menuKeyboardInput);
             }
             
             // We are starting with the main menu
@@ -64,8 +77,8 @@ namespace Client
         protected override void LoadContent()
         {
             m_spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            // Load background music TODO: Pick a background song
+            
+            // Load background music 
             var backgroundMusic = Content.Load<Song>("Audio/backgroundMusic");
             MediaPlayer.Play(backgroundMusic);
             MediaPlayer.IsRepeating = true;
@@ -81,7 +94,6 @@ namespace Client
                 item.Value.loadContent(this.Content);
             }
 
-            MessageQueueClient.instance.initialize("localhost", 3000);
         }
 
         protected override void Update(GameTime gameTime)
@@ -101,10 +113,9 @@ namespace Client
                 if (cState != m_currentState)
                 {
                     newState = true;
-                    m_currentState.initializeSession();
+                    m_currentState.initialize();
                 }
             }
-
             base.Update(gameTime);
         }
 

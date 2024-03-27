@@ -18,7 +18,6 @@ namespace Client.Menu
         private bool isKeyboardRegistered = false;
         private bool isLoadedScores = false;
         private GameScores highScores;
-        // private List<(int, string)> displayScores = new List<(int, string)>();
 
         public override void loadContent(ContentManager contentManager)
         {
@@ -33,11 +32,11 @@ namespace Client.Menu
             {
                 RegisterCommands();
             }
-            keyboardInput.Update(gameTime);
+            MenuKeyboardInput.Update(gameTime);
 
             if (newState != MenuStateEnum.HighScores)
             {
-                keyboardInput.ClearAllCommands();
+                MenuKeyboardInput.ClearAllCommands();
                 isKeyboardRegistered = false;
                 isLoadedScores = false;
                 var transState = newState;
@@ -46,15 +45,7 @@ namespace Client.Menu
             }
             return MenuStateEnum.HighScores;
         }
-
-        public override void render(GameTime gameTime)
-        {
-            m_spriteBatch.Begin();
-            Drawing.DrawShadedString(m_font, MESSAGE, new Vector2(m_graphics.PreferredBackBufferWidth / 2, m_graphics.PreferredBackBufferHeight / 4), Colors.displayColor ,m_spriteBatch);
-            m_spriteBatch.End();
-            renderScores();
-        }
-
+        
         public override void update(GameTime gameTime)
         {
             if (!isLoadedScores)
@@ -64,9 +55,17 @@ namespace Client.Menu
             }
         }
 
+        public override void render(GameTime gameTime)
+        {
+            m_spriteBatch.Begin();
+            Drawing.DrawShadedString(m_font, MESSAGE, new Vector2(m_graphics.PreferredBackBufferWidth / 2, m_graphics.PreferredBackBufferHeight / 4), Colors.displayColor ,m_spriteBatch);
+            m_spriteBatch.End();
+            renderScores();
+        }
+        
         public override void RegisterCommands()
         {
-            keyboardInput.registerCommand(keyboardInput.Escape, true, new IInputDevice.CommandDelegate(Escape));
+            MenuKeyboardInput.registerCommand(MenuKeyboardInput.Escape, true, new IInputDevice.CommandDelegate(Escape));
             isKeyboardRegistered = true;
         }
 
@@ -85,16 +84,12 @@ namespace Client.Menu
                 Drawing.DrawShadedString(m_font, "No Scores Yet", new Vector2(halfWidth, halfHeight), Colors.displayColor, m_spriteBatch);
             }
             else {
-                int counter = numDisplayScores;
-                foreach (var scoreTuple in highScores.SortScores(highScores.scores, 5))
-                    {
-                        if (counter == 0) { break; }
-                        counter--;
-                        Drawing.DrawShadedString(m_font, scoreTuple.Item1.ToString() , new Vector2(halfWidth, halfHeight + y), Colors.displayColor, m_spriteBatch);
-                        // Draw to the right of it the date
-                        Drawing.DrawShadedString(m_font, scoreTuple.Item2, new Vector2(halfWidth + 200, halfHeight + y), Colors.displayColor, m_spriteBatch);
-                        y += 50;
-                    }
+                var topScores = highScores.sortScores(highScores, numDisplayScores);
+                foreach (var score in topScores.scores)
+                {
+                    y += 100;
+                    Drawing.DrawShadedString(m_font, score.score.ToString(), new Vector2(halfWidth, halfHeight + y), Colors.displayColor, m_spriteBatch);
+                }
             }
 
             m_spriteBatch.End();

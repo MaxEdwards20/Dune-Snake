@@ -18,8 +18,8 @@ namespace Client.Systems
         /// <summary>
         /// Interested in entities that have both Movement and Position components,
         /// but not if they have an Input component.  Furthermore, this
-        /// system adds an Goal component in order to properly update the
-        /// entity's state during the update stage.
+        /// system adds an Goal component in order to properly render the
+        /// entity's state during the render stage.
         /// </summary>
         public override bool add(Entity entity)
         {
