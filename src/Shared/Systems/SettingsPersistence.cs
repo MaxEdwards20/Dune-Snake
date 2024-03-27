@@ -21,7 +21,7 @@ public class SettingsPersistence: System
     // Now we want to make all of these control settings persist across game sessions. We will use the same serialization technique we used for the high scores.
     private bool saving = false;
     private bool loading = false;
-    private Controls m_loadedState;
+    private Controls m_loadedState = new Controls();
 
     public override void update(TimeSpan timeSpan)
     {
@@ -41,14 +41,12 @@ public class SettingsPersistence: System
             loading = true;
             var res = finalizeLoadControlsAsync();
             res.Wait(); // we want to load the controls before letting the user start playing
-            if (controls != null) {
-                // All of them have a default value in case they were not saved
-                controls.SnakeUp = m_loadedState.SnakeUp == null? new Control(Keys.Up) : m_loadedState.SnakeUp;
-                controls.SnakeLeft = m_loadedState.SnakeLeft == null? new Control(Keys.Left) : m_loadedState.SnakeLeft;
-                controls.SnakeRight = m_loadedState.SnakeRight == null? new Control(Keys.Right) : m_loadedState.SnakeRight;
-                controls.SnakeDown = m_loadedState.SnakeDown == null ? new Control(Keys.Down) : m_loadedState.SnakeDown;
-                controls.SnakeBoost = m_loadedState.SnakeBoost == null ? new Control(Keys.Space): m_loadedState.SnakeBoost;
-            }
+            // All of them have a default value in case they were not saved
+            controls.SnakeUp = m_loadedState.SnakeUp == null? new Control(Keys.Up) : m_loadedState.SnakeUp;
+            controls.SnakeLeft = m_loadedState.SnakeLeft == null? new Control(Keys.Left) : m_loadedState.SnakeLeft;
+            controls.SnakeRight = m_loadedState.SnakeRight == null? new Control(Keys.Right) : m_loadedState.SnakeRight;
+            controls.SnakeDown = m_loadedState.SnakeDown == null ? new Control(Keys.Down) : m_loadedState.SnakeDown;
+            controls.SnakeBoost = m_loadedState.SnakeBoost == null ? new Control(Keys.Space): m_loadedState.SnakeBoost;
         }
     }
     private async Task finalizeSaveControlsAsync(Controls controls)
