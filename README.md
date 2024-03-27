@@ -24,6 +24,5 @@ For office hours:
 ### Connection Refused
 - Try switching ports. A few options are 4000, 4010, 3000, 3010
 - Use netcat on Mac or Linux to see whether the server is available.
-
-`nc -vz 192.168.4.20 3000`
-nc: connectx to 192.168.4.20 port 3000 (tcp) failed: Connection refused
+    `nc -vz 192.168.4.20 3000`
+- Turn off your firewall. On macOS that is found in System Preferences > Security & Privacy > Firewall
