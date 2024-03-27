@@ -32,7 +32,6 @@ namespace Client.Systems
             // We have a dictionary of entities, so we need to iterate through them
             foreach (var entity in m_entities)
             {
-                // We only care about entities that have a control component
                 var inputs = new List<Input.Type>();
                 checkAndPerformAction(m_controls.SnakeUp, Input.Type.SnakeUp, entity.Value, elapsedTime, inputs);
                 checkAndPerformAction(m_controls.SnakeLeft, Input.Type.RotateLeft, entity.Value, elapsedTime, inputs);

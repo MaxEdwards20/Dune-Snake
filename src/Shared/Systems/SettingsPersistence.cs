@@ -32,14 +32,14 @@ public class SettingsPersistence: System
     {
         if (!saving) {
             saving = true;
-            finalizeSaveAsync(controls);
+            finalizeSaveControlsAsync(controls);
         }
     }
 
     public void LoadControls(Controls controls) { 
         if (!loading) {
             loading = true;
-            var res = finalizeLoadAsync();
+            var res = finalizeLoadControlsAsync();
             res.Wait(); // we want to load the controls before letting the user start playing
             if (controls != null) {
                 // All of them have a default value in case they were not saved
@@ -51,7 +51,7 @@ public class SettingsPersistence: System
             }
         }
     }
-    private async Task finalizeSaveAsync(Controls controls)
+    private async Task finalizeSaveControlsAsync(Controls controls)
         {
             await Task.Run(() =>
             {
@@ -76,7 +76,7 @@ public class SettingsPersistence: System
                 this.saving = false;
             });
         }
-    private async Task finalizeLoadAsync()
+    private async Task finalizeLoadControlsAsync()
     {
         await Task.Run(() =>
         {

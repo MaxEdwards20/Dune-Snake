@@ -48,7 +48,8 @@ namespace Client
             m_graphics.ApplyChanges();
             
             // Load the controls
-            m_settingsPersistence.LoadControls(m_controls);
+            // We pass in our own controls so we always have them as a default if they were not saved
+            m_settingsPersistence.LoadControls(m_controls); 
 
             // Create all the game states here
             m_states = new Dictionary<MenuStateEnum, IGameState>
