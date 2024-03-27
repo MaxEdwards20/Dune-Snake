@@ -9,10 +9,13 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 <!-- TODO -->
 <!-- Screenshots: -->
 
+## In Progress
+
+- [ ] MAX: Decide how to build the snake. Tons of entities? Or one entity with a list of positions? 
+
 ## Items to Develop
 
 - [ ] Pick head, body, and tail texture for the sandworm
-- [ ] Decide how to build the snake. Tons of entities? Or one entity with a list of positions?
 - [ ] Animated Sprite for the spice
 - [ ] Collision detection. Know whether we hit spice or another sandworm
 - [ ] Map generation
