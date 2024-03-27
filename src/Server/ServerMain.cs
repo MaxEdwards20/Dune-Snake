@@ -24,7 +24,7 @@ namespace Server
             else
             {
                 Console.WriteLine("Invalid port parameter.");
-                Console.WriteLine("Example program usage: server --port 3000");
+                Console.WriteLine("Example program usage: server --port 4010");
             }
 
             return 0;

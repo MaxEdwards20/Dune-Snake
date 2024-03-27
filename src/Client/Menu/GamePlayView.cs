@@ -8,6 +8,7 @@ using Client.IO;
 using Client.Objects;
 using System.Runtime.Serialization;
 using Microsoft.Xna.Framework.Input;
+using Shared.Components;
 
 namespace Client.Menu
 {
@@ -15,15 +16,24 @@ namespace Client.Menu
     {
         private ContentManager m_contentManager;
         private bool m_isSetup;
+        private bool m_isKeyboardRegistered;
         private MenuStateEnum m_newState;
         private GameModel m_gameModel;
         private TimeSpan m_connectToServerTime = TimeSpan.Zero;
+        private Controls m_controls;
+        
+        
+        public GamePlayView(Controls controls)
+        {
+            m_controls = controls;
+        }
         
         public override void initialize()
         {
             m_gameModel = new GameModel();
-            m_gameModel.initialize(m_contentManager);
+            m_gameModel.initialize(m_contentManager, m_controls);
             m_isSetup = false;
+            m_isKeyboardRegistered = false;
             m_newState = MenuStateEnum.GamePlay;
         }
         public override void loadContent(ContentManager contentManager)
@@ -33,10 +43,17 @@ namespace Client.Menu
 
         public override MenuStateEnum processInput(GameTime gameTime)
         {
+            if (!m_isKeyboardRegistered)
+            {
+                RegisterCommands();
+                m_isKeyboardRegistered = true;
+            }
+
             if (!m_isSetup)
             {
                 setup(gameTime);
             }
+
             MenuKeyboardInput.Update(gameTime); // essentially just checking for whether we have escaped to the main menu
             if (m_newState != MenuStateEnum.GamePlay){return handleSwitchToMainMenu();}
             return MenuStateEnum.GamePlay;
@@ -44,19 +61,21 @@ namespace Client.Menu
 
         private void setup(GameTime gameTime)
         {
-            RegisterCommands();
-            var res = connectToServer();
-            if (res)
+            if (m_connectToServerTime == TimeSpan.Zero)
             {
-                m_isSetup = true; // We only want to say we are setup when we are connected to the server
+                m_connectToServerTime = TimeSpan.FromSeconds(2); // Try to connect every 2 seconds
+                var res = connectToServer();
+                if (res)
+                {
+                    m_isSetup = true;
+                }
             }
             else
             {
-                if (m_connectToServerTime == TimeSpan.Zero)
+                m_connectToServerTime -= gameTime.ElapsedGameTime;
+                if (m_connectToServerTime <= TimeSpan.Zero)
                 {
-                    res = connectToServer();
-                    m_connectToServerTime = TimeSpan.FromSeconds(2);
-                    m_connectToServerTime -= gameTime.ElapsedGameTime;
+                    m_connectToServerTime = TimeSpan.Zero;
                 }
             }
         }
@@ -79,7 +98,7 @@ namespace Client.Menu
 
         private bool connectToServer()
         {
-            return MessageQueueClient.instance.initialize("localhost", 3000);
+            return MessageQueueClient.instance.initialize("localhost", 4010);
         }
 
         private void escape(GameTime gameTime, float scale)

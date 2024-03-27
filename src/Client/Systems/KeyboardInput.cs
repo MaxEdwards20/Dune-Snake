@@ -22,9 +22,11 @@ namespace Client.Systems
         private HashSet<Keys> m_keysPressed = new HashSet<Keys>();
 
         private KeyboardState m_statePrevious = Keyboard.GetState();
+        private Controls m_controls;
 
-        public KeyboardInput(List<Tuple<Shared.Components.Input.Type, Keys>> mapping) : base(typeof(Shared.Components.Input))
+        public KeyboardInput(List<Tuple<Shared.Components.Input.Type, Keys>> mapping, Controls controls) : base(typeof(Shared.Components.Input))
         {
+            m_controls = controls;
         }
 
         public override void update(TimeSpan elapsedTime)
@@ -41,18 +43,12 @@ namespace Client.Systems
             foreach (var entity in m_entities)
             {
                 // We only care about entities that have a control component
-                if (entity.Value.contains(typeof(Controls)) == false)
-                {
-                    continue;
-                }
-                var controls = entity.Value.get<Controls>();
                 var inputs = new List<Input.Type>();
-
-                checkAndPerformAction(controls.SnakeUp, Input.Type.SnakeUp, entity.Value, elapsedTime, inputs);
-                checkAndPerformAction(controls.SnakeLeft, Input.Type.RotateLeft, entity.Value, elapsedTime, inputs);
-                checkAndPerformAction(controls.SnakeRight, Input.Type.RotateRight, entity.Value, elapsedTime, inputs);
-                checkAndPerformAction(controls.SnakeDown, Input.Type.SnakeDown, entity.Value, elapsedTime, inputs);
-                checkAndPerformAction(controls.SnakeBoost, Input.Type.Boost, entity.Value, elapsedTime, inputs);
+                checkAndPerformAction(m_controls.SnakeUp, Input.Type.SnakeUp, entity.Value, elapsedTime, inputs);
+                checkAndPerformAction(m_controls.SnakeLeft, Input.Type.RotateLeft, entity.Value, elapsedTime, inputs);
+                checkAndPerformAction(m_controls.SnakeRight, Input.Type.RotateRight, entity.Value, elapsedTime, inputs);
+                checkAndPerformAction(m_controls.SnakeDown, Input.Type.SnakeDown, entity.Value, elapsedTime, inputs);
+                checkAndPerformAction(m_controls.SnakeBoost, Input.Type.Boost, entity.Value, elapsedTime, inputs);
 
                 if (inputs.Count > 0)
                 {
@@ -69,7 +65,6 @@ namespace Client.Systems
             if (m_keysPressed.Contains(control.key))
             {
                 inputs.Add(inputType);
-
                 // Perform action based on inputType
                 switch (inputType)
                 {
@@ -93,11 +88,6 @@ namespace Client.Systems
 
         }
         
-        public void updateControlKey(Control v, Keys key)
-        {
-            v.switchKey(key);
-        }
-
         public override bool add(Entity entity)
         {
             if (!base.add(entity))

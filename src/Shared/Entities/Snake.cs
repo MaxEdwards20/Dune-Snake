@@ -6,14 +6,10 @@ namespace Shared.Entities
 {
     public class Snake
     {
-        public static Entity create(string texture, Vector2 position, float size, float moveRate, float rotateRate, Controls controls = null)
+        public static Entity create(string texture, Vector2 position, float size, float moveRate, float rotateRate)
         {
             Entity entity = new Entity();
-            if (controls == null)
-            {
-                controls = new Controls();
-            }
-            entity.add(controls);
+            entity.add(new Controls());
             entity.add(new Appearance(texture));
             entity.add(new Position(position));
             entity.add(new Size(new Vector2(size, size)));

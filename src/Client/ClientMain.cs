@@ -52,7 +52,7 @@ namespace Client
             m_states = new Dictionary<MenuStateEnum, IGameState>
             {
                 { MenuStateEnum.MainMenu, new MainMenuView() },
-                { MenuStateEnum.GamePlay, new GamePlayView() }, 
+                { MenuStateEnum.GamePlay, new GamePlayView(m_controls) }, 
                 { MenuStateEnum.HighScores, new HighScoresView() },
                 { MenuStateEnum.Controls, new ControlSettingsView(m_controls) },
                 { MenuStateEnum.Help, new HelpView() },
