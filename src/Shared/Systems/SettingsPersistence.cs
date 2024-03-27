@@ -59,7 +59,6 @@ public class SettingsPersistence: System
                 {
                     try
                     {
-                        // TODO: Check if this is the correct filename
                         using (IsolatedStorageFileStream fs = storage.OpenFile("Controls.json", FileMode.Create))
                         {
                             if (fs != null)

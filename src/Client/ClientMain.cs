@@ -77,8 +77,8 @@ namespace Client
         protected override void LoadContent()
         {
             m_spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            // Load background music TODO: Pick a background song
+            
+            // Load background music 
             var backgroundMusic = Content.Load<Song>("Audio/backgroundMusic");
             MediaPlayer.Play(backgroundMusic);
             MediaPlayer.IsRepeating = true;
