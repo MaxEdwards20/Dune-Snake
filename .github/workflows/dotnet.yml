@@ -16,6 +16,6 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Restore dependencies
-      run: dotnet restore src/Entity\ Interpolation.sln
+      run: dotnet restore src/DuneSnake.sln
     - name: Build
-      run: dotnet build src/Entity\ Interpolation.sln --no-restore
+      run: dotnet build src/DuneSnake.sln --no-restore

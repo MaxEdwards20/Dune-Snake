@@ -2,9 +2,10 @@ using System;
 
 namespace Client.Systems;
 
-public class WormMovement : Shared.Systems.System
+public class Camera : Shared.Systems.System
 {
     public override void update(TimeSpan elapsedTime)
     {
+        throw new NotImplementedException();
     }
 }

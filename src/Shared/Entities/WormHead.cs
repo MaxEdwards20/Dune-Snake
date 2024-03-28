@@ -4,6 +4,7 @@ using Shared.Components.Appearance;
 
 namespace Shared.Entities;
 
+// This is the Player. We only move the head, all the other parts of the snake follow.
 public class WormHead
 {
     public static Entity create(Color color, Vector2 position, float size, float moveRate, float rotateRate)
@@ -15,6 +16,7 @@ public class WormHead
         entity.add(new Size(new Vector2(size, size)));
         entity.add(new Movement(moveRate, rotateRate));
         entity.add(new Collision());
+        entity.add(new SpicePower(0));
             
         List<Input.Type> inputs = new List<Input.Type>();
         inputs.Add(Input.Type.SnakeUp);
