@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.Xna.Framework;
 using Shared.Components;
+using Shared.Components.Appearance;
 using Shared.Entities;
 using Shared.Messages;
 
@@ -122,25 +123,40 @@ namespace Server
             // Step 1: Tell the newly connected player about all other entities
             reportAllEntities(clientId);
 
-            // Step 2: Create an entity for the newly joined player and sent it
+            // Step 2: Create a new wormHead for the newly joined player and sent it
             //         to the newly joined client
-            Entity player = Shared.Entities.Snake.create("Textures/playerShip1_blue", new Vector2(100, 100), 50, 0.1f, (float)Math.PI / 1000);
+            createNewWorm(clientId);
+            
+        }
+
+        private void createNewWorm(int clientId)
+        {
+            var location = new Vector2(50, 100);
+            var rotationRate = (float) Math.PI / 1000;
+            var moveRate = 0.1f;
+            // Create the head
+            Entity player = WormHead.create( Color.Aqua, location, 30, moveRate, rotationRate);
             addEntity(player);
             m_clientToEntityId[clientId] = player.id;
-
+            // Create a body segment
+            Entity segment = WormSegment.create(Color.Aqua, location + Vector2.One * 5, 20, moveRate, rotationRate, player.get<SegmentID>().id);
+            addEntity(segment);
+            m_clientToEntityId[clientId] = segment.id;
+            // Create a tail segment
+            Entity tail = WormTail.create(Color.Aqua, location + Vector2.One * 10, 20, moveRate, rotationRate, segment.get<SegmentID>().id);
+            m_clientToEntityId[clientId] = tail.id;
+            
             // Step 3: Send the new player entity to the newly joined client
             MessageQueueServer.instance.sendMessage(clientId, new NewEntity(player));
-
-
+            MessageQueueServer.instance.sendMessage(clientId, new NewEntity(segment));
+            MessageQueueServer.instance.sendMessage(clientId, new NewEntity(tail));
+            addEntity(tail);
+            
+            
             // Step 4: Let all other clients know about this new player entity
-
-            // We change the appearance for a player ship entity for all other clients to a different texture
-            player.remove<Appearance>();
-            player.add(new Appearance("Textures/playerShip1_red"));
-
+            
             // Remove components not needed for "other" players
             player.remove<Shared.Components.Input>();
-
             Message message = new NewEntity(player);
             foreach (int otherId in m_clients)
             {
@@ -149,6 +165,7 @@ namespace Server
                     MessageQueueServer.instance.sendMessage(otherId, message);
                 }
             }
+            
         }
     }
 }

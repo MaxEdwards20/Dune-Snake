@@ -65,7 +65,6 @@ namespace Client
             }
             catch (SocketException e)
             {
-                Console.Error.WriteLine("Failed to connect to server");
                 Console.Error.WriteLine(e.Message);
                 return false;
             }
@@ -253,7 +252,7 @@ namespace Client
                     }
                     catch (SocketException)
                     {
-                        // We expect this when a timeout occurs on the receive
+                        // We expect this when a timeout occurs on the receiver
                     }
 
                 }
