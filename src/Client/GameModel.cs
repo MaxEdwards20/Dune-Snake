@@ -15,11 +15,11 @@ namespace Client
     public class GameModel
     {
         private ContentManager m_contentManager;
-        private Dictionary<uint, Entity> m_entities = new Dictionary<uint, Entity>();
-        private Systems.Network m_systemNetwork = new Systems.Network();
+        private Dictionary<uint, Entity> m_entities;
+        private Systems.Network m_systemNetwork;
         private Systems.KeyboardInput m_systemKeyboardInput;
-        private Systems.Interpolation m_systemInterpolation = new Systems.Interpolation();
-        private Systems.Renderer m_systemRenderer = new Systems.Renderer();
+        private Systems.Interpolation m_systemInterpolation;
+        private Systems.Renderer m_systemRenderer;
         private Controls m_controls;
 
         /// <summary>
@@ -49,6 +49,11 @@ namespace Client
         public bool initialize(ContentManager contentManager, Controls controls)
         {
             m_contentManager = contentManager;
+            m_entities = new Dictionary<uint, Entity>();
+            m_systemInterpolation = new Systems.Interpolation();
+            m_systemRenderer = new Systems.Renderer();
+            m_systemNetwork = new Systems.Network();
+            
             m_systemNetwork.registerNewEntityHandler(handleNewEntity);
             m_systemNetwork.registerRemoveEntityHandler(handleRemoveEntity);
             m_controls = controls;
@@ -77,7 +82,6 @@ namespace Client
                 Texture2D texture = m_contentManager.Load<Texture2D>(message.texture);
                 entity.add(new Components.Sprite(texture));
             }
-            createSandWormAppearance(message, entity);
             if (message.hasPosition)
             {
                 entity.add(new Shared.Components.Position(message.position, message.orientation));
@@ -147,24 +151,7 @@ namespace Client
         {
             removeEntity(message.id);
         }
-
-        private void createSandWormAppearance(Shared.Messages.NewEntity message, Entity entity)
-        {
-            if (message.hasHead)
-            {
-                entity.add(new Head(parseColor(message.colorHead)));
-            }
-            if (message.hasTail)
-            {
-                entity.add(new Tail(parseColor(message.colorTail)));
-            }
-
-            if (message.hasBody)
-            {
-                entity.add(new Body(parseColor(message.colorBody)));
-            }
-        }
-
+        
         private Color parseColor(string color)
         {
             // Pattern to extract the RGBA values from the string

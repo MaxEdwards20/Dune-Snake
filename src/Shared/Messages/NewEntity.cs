@@ -21,7 +21,6 @@ namespace Shared.Messages
             {
                 this.texture = "";
             }
-            handleWormAppearance(entity);            
             
             if (entity.contains<Position>())
             {
@@ -105,7 +104,6 @@ namespace Shared.Messages
                 data.AddRange(Encoding.UTF8.GetBytes(texture));
             }
             
-            serializeWormAppearance(data);
 
             data.AddRange(BitConverter.GetBytes(hasPosition));
             if (hasPosition)
@@ -160,7 +158,6 @@ namespace Shared.Messages
                 offset += textureSize;
             }
             
-            offset = deserializeWormAppearance(data, offset);
 
             this.hasPosition = BitConverter.ToBoolean(data, offset);
             offset += sizeof(bool);
@@ -208,100 +205,6 @@ namespace Shared.Messages
                     inputs.Add((Components.Input.Type)BitConverter.ToUInt16(data, offset));
                     offset += sizeof(UInt16);
                 }
-            }
-
-            return offset;
-        }
-        
-        private void handleWormAppearance(Entity entity)
-        {
-            if (entity.contains<Head>())
-            {
-                this.hasHead = true;
-                this.colorHead = entity.get<Head>().color.ToString();
-            }
-            else
-            {
-                this.colorHead = "";
-            }
-
-            if (entity.contains<Body>())
-            {
-                this.hasBody = true;
-                this.colorBody = entity.get<Body>().color.ToString();
-            }
-            else
-            {
-                this.colorBody = "";
-            }
-
-            if (entity.contains<Tail>())
-            {
-                this.hasTail = true;
-                this.colorTail = entity.get<Tail>().color.ToString();
-            }
-            else
-            {
-                this.colorTail = "";
-            }
-        }
-        
-        
-        private void serializeWormAppearance(List<byte> data)
-        {
-            data.AddRange(BitConverter.GetBytes(hasHead));
-            if (hasHead)
-            {
-                data.AddRange(BitConverter.GetBytes(colorHead.Length));
-                data.AddRange(Encoding.UTF8.GetBytes(colorHead));
-            }
-
-            data.AddRange(BitConverter.GetBytes(hasBody));
-            if (hasBody)
-            {
-                data.AddRange(BitConverter.GetBytes(colorBody.Length));
-                data.AddRange(Encoding.UTF8.GetBytes(colorBody));
-            }
-
-            data.AddRange(BitConverter.GetBytes(hasTail));
-            if (hasTail)
-            {
-                data.AddRange(BitConverter.GetBytes(colorTail.Length));
-                data.AddRange(Encoding.UTF8.GetBytes(colorTail));
-            }
-        }
-        
-        
-        private int deserializeWormAppearance(byte[] data, int offset)
-        {
-            this.hasHead = BitConverter.ToBoolean(data, offset);
-            offset += sizeof(bool);
-            if (hasHead)
-            {
-                int textureSize = BitConverter.ToInt32(data, offset);
-                offset += sizeof(Int32);
-                this.colorHead = Encoding.UTF8.GetString(data, offset, textureSize);
-                offset += textureSize;
-            }
-            
-            this.hasBody = BitConverter.ToBoolean(data, offset);
-            offset += sizeof(bool);
-            if (hasBody)
-            {
-                int textureSize = BitConverter.ToInt32(data, offset);
-                offset += sizeof(Int32);
-                this.colorBody = Encoding.UTF8.GetString(data, offset, textureSize);
-                offset += textureSize;
-            }
-            
-            this.hasTail = BitConverter.ToBoolean(data, offset);
-            offset += sizeof(bool);
-            if (hasTail)
-            {
-                int textureSize = BitConverter.ToInt32(data, offset);
-                offset += sizeof(Int32);
-                this.colorTail = Encoding.UTF8.GetString(data, offset, textureSize);
-                offset += textureSize;
             }
 
             return offset;

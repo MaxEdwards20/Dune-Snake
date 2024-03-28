@@ -1,7 +1,5 @@
 using Microsoft.Xna.Framework;
-
 namespace Shared.Components;
-
 public class Spice
 {
     public int spiceLevel { get; private set; }
