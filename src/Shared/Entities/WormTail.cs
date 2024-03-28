@@ -13,7 +13,7 @@ public class WormTail
         entity.add(new SegmentID());
         entity.add(new ParentID(parent));
         entity.add(new Position(position));
-        entity.add(new Appearance("Textures/head")); // TODO: Make this a tail texture
+        entity.add(new Appearance("Textures/tail")); 
         entity.add(new Size(new Vector2(size, size)));
         entity.add(new Movement(moveRate, rotateRate));
         entity.add(new Collision());

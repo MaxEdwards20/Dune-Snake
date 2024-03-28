@@ -11,7 +11,7 @@ namespace Shared.Entities
         {
             Entity entity = new Entity();
             entity.add(new SegmentID());
-            entity.add(new Appearance("Textures/head")); // TODO: Make this a body texture
+            entity.add(new Appearance("Textures/body")); 
             entity.add(new Position(position));
             entity.add(new Size(new Vector2(size, size)));
             entity.add(new Movement(moveRate, rotateRate));
