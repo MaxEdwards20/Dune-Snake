@@ -11,7 +11,8 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 
 ## In Progress
 
-- [ ] MAX: Decide how to build the snake. Tons of entities? Or one entity with a list of positions? 
+- [ ] MAX: Decide how to build the snake. Tons of entities? Or one entity with a list of positions?
+- [ ] Satchel: Pick head, body, and tail texture for the sandworm
 
 ## Items to Develop
 
