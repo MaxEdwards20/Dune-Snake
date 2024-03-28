@@ -3,6 +3,8 @@ using Shared.Components;
 
 namespace Shared.Entities;
 
+
+// NOTE: We will probably move this over to the wormMovement system where behavior lives
 public class Utility
 {
     public static void thrust(Entity entity, TimeSpan elapsedTime)

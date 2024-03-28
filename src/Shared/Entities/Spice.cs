@@ -13,6 +13,7 @@ public class Spice
         entity.add(new Position(position));
         entity.add(new Size(new Vector2(size, size)));
         entity.add(new Collision());
+        entity.add(new SpicePower(0));
         return entity;
     }
 }

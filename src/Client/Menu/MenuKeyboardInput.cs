@@ -16,8 +16,7 @@ namespace Client.IO
     /// Derived input device for the PC Keyboard
     /// </summary>
     // Added to support serialization
-
-
+    
     public class MenuKeyboardInput : IInputDevice
     {
         private KeyboardState m_statePrevious = Keyboard.GetState();
