@@ -2,10 +2,12 @@
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Client.Objects;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 using Client.IO;
+using Shared.Components;
+using Shared.Systems;
 
 namespace Client.Menu
 {
@@ -18,6 +20,7 @@ namespace Client.Menu
         private bool isKeyboardRegistered = false;
         private bool isLoadedScores = false;
         private GameScores highScores;
+        private GameScoresPersistence gameScoresPersistence = new GameScoresPersistence();
 
         public override void loadContent(ContentManager contentManager)
         {
@@ -50,7 +53,8 @@ namespace Client.Menu
         {
             if (!isLoadedScores)
             {
-                highScores.LoadScores();
+                highScores = gameScoresPersistence.LoadScores();
+                highScores.sortScores();
                 isLoadedScores = true;
             }
         }
@@ -83,9 +87,9 @@ namespace Client.Menu
             {
                 Drawing.DrawShadedString(m_font, "No Scores Yet", new Vector2(halfWidth, halfHeight), Colors.displayColor, m_spriteBatch);
             }
-            else {
-                var topScores = highScores.sortScores(highScores, numDisplayScores);
-                foreach (var score in topScores.scores)
+            else
+            {
+                foreach (var score in highScores.scores.Take(numDisplayScores))
                 {
                     y += 100;
                     Drawing.DrawShadedString(m_font, score.score.ToString(), new Vector2(halfWidth, halfHeight + y), Colors.displayColor, m_spriteBatch);

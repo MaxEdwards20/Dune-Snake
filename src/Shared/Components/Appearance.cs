@@ -1,5 +1,5 @@
 ﻿
-namespace Shared.Components
+namespace Shared.Components.Appearance
 {
     public class Appearance : Component
     {
