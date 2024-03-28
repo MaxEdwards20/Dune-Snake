@@ -11,12 +11,11 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 
 ## In Progress
 
-- [ ] MAX: Decide how to build the snake. Tons of entities? Or one entity with a list of positions?
+- [ ] Max: Setup Snake Movement in the screen
 - [ ] Satchel: Pick head, body, and tail texture for the sandworm
 
 ## Items to Develop
 
-- [ ] Pick head, body, and tail texture for the sandworm - Satchel 
 - [ ] Animated Sprite for the spice - Satchel 
 - [ ] Collision detection. Know whether we hit spice or another sandworm
 - [ ] Map generation
@@ -27,7 +26,12 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 - [ ] Record players score, kills and highest position. Probably can be added to the `GameScores` object.
 - [ ] Game over screen with score, kills, and highest position achieved
 - [ ] Particle system for the death of a sandworm
-- [ ] Sound effects on death of worm and when food is eaten - Satchel 
+- [ ] Sound effects on death of worm and when food is eaten - Satchel
+
+
+## Done :)
+- [x] MAX: Decide how to build the snake. Tons of entities? Or one entity with a list of positions?
+- [x] MAX: Setup basic menuing
 
 ## Debugging
 
