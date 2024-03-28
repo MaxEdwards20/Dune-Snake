@@ -67,11 +67,11 @@ namespace Shared.Messages
         
         // Worm Appearance
         public bool hasHead { get; private set; } = false;
-        public string textureHead { get; private set; }
+        public string colorHead { get; private set; }
         public bool hasBody { get; private set; } = false;
-        public string textureBody { get; private set; }
+        public string colorBody { get; private set; }
         public bool hasTail { get; private set; } = false;
-        public string textureTail { get; private set; }
+        public string colorTail { get; private set; }
 
         // Position
         public bool hasPosition { get; private set; } = false;
@@ -141,8 +141,7 @@ namespace Shared.Messages
 
             return data.ToArray();
         }
-
-
+        
 
         public override int parse(byte[] data)
         {
@@ -161,7 +160,7 @@ namespace Shared.Messages
                 offset += textureSize;
             }
             
-            offset += deserializeWormAppearance(data, offset);
+            offset = deserializeWormAppearance(data, offset);
 
             this.hasPosition = BitConverter.ToBoolean(data, offset);
             offset += sizeof(bool);
@@ -219,31 +218,31 @@ namespace Shared.Messages
             if (entity.contains<Head>())
             {
                 this.hasHead = true;
-                this.textureHead = entity.get<Head>().color.ToString();
+                this.colorHead = entity.get<Head>().color.ToString();
             }
             else
             {
-                this.textureHead = "";
+                this.colorHead = "";
             }
 
             if (entity.contains<Body>())
             {
                 this.hasBody = true;
-                this.textureBody = entity.get<Body>().color.ToString();
+                this.colorBody = entity.get<Body>().color.ToString();
             }
             else
             {
-                this.textureBody = "";
+                this.colorBody = "";
             }
 
             if (entity.contains<Tail>())
             {
                 this.hasTail = true;
-                this.textureTail = entity.get<Tail>().color.ToString();
+                this.colorTail = entity.get<Tail>().color.ToString();
             }
             else
             {
-                this.textureTail = "";
+                this.colorTail = "";
             }
         }
         
@@ -253,22 +252,22 @@ namespace Shared.Messages
             data.AddRange(BitConverter.GetBytes(hasHead));
             if (hasHead)
             {
-                data.AddRange(BitConverter.GetBytes(textureHead.Length));
-                data.AddRange(Encoding.UTF8.GetBytes(textureHead));
+                data.AddRange(BitConverter.GetBytes(colorHead.Length));
+                data.AddRange(Encoding.UTF8.GetBytes(colorHead));
             }
 
             data.AddRange(BitConverter.GetBytes(hasBody));
             if (hasBody)
             {
-                data.AddRange(BitConverter.GetBytes(textureBody.Length));
-                data.AddRange(Encoding.UTF8.GetBytes(textureBody));
+                data.AddRange(BitConverter.GetBytes(colorBody.Length));
+                data.AddRange(Encoding.UTF8.GetBytes(colorBody));
             }
 
             data.AddRange(BitConverter.GetBytes(hasTail));
             if (hasTail)
             {
-                data.AddRange(BitConverter.GetBytes(textureTail.Length));
-                data.AddRange(Encoding.UTF8.GetBytes(textureTail));
+                data.AddRange(BitConverter.GetBytes(colorTail.Length));
+                data.AddRange(Encoding.UTF8.GetBytes(colorTail));
             }
         }
         
@@ -281,7 +280,7 @@ namespace Shared.Messages
             {
                 int textureSize = BitConverter.ToInt32(data, offset);
                 offset += sizeof(Int32);
-                this.textureHead = Encoding.UTF8.GetString(data, offset, textureSize);
+                this.colorHead = Encoding.UTF8.GetString(data, offset, textureSize);
                 offset += textureSize;
             }
             
@@ -291,7 +290,7 @@ namespace Shared.Messages
             {
                 int textureSize = BitConverter.ToInt32(data, offset);
                 offset += sizeof(Int32);
-                this.textureBody = Encoding.UTF8.GetString(data, offset, textureSize);
+                this.colorBody = Encoding.UTF8.GetString(data, offset, textureSize);
                 offset += textureSize;
             }
             
@@ -301,7 +300,7 @@ namespace Shared.Messages
             {
                 int textureSize = BitConverter.ToInt32(data, offset);
                 offset += sizeof(Int32);
-                this.textureTail = Encoding.UTF8.GetString(data, offset, textureSize);
+                this.colorTail = Encoding.UTF8.GetString(data, offset, textureSize);
                 offset += textureSize;
             }
 

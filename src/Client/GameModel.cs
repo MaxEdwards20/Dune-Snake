@@ -4,8 +4,11 @@ using Microsoft.Xna.Framework.Input;
 using Shared.Entities;
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using Client.Menu;
+using Microsoft.Xna.Framework;
 using Shared.Components;
+using Shared.Components.Appearance;
 
 namespace Client
 {
@@ -28,7 +31,7 @@ namespace Client
             m_systemKeyboardInput.update(elapsedTime);
             m_systemInterpolation.update(elapsedTime);
         }
-        
+
         /// <summary>
         /// Where we render everything
         /// </summary>
@@ -51,11 +54,11 @@ namespace Client
             m_controls = controls;
 
             m_systemKeyboardInput = new Systems.KeyboardInput(new List<Tuple<Shared.Components.Input.Type, Keys>>
-            { }, m_controls);
+                { }, m_controls);
 
             return true;
         }
-        
+
         public void shutdown()
         {
 
@@ -69,13 +72,12 @@ namespace Client
         {
             Entity entity = new Entity(message.id);
             
-
             if (message.hasAppearance)
             {
                 Texture2D texture = m_contentManager.Load<Texture2D>(message.texture);
                 entity.add(new Components.Sprite(texture));
             }
-
+            createSandWormAppearance(message, entity);
             if (message.hasPosition)
             {
                 entity.add(new Shared.Components.Position(message.position, message.orientation));
@@ -125,7 +127,6 @@ namespace Client
         private void removeEntity(uint id)
         {
             m_entities.Remove(id);
-
             m_systemKeyboardInput.remove(id);
             m_systemNetwork.remove(id);
             m_systemRenderer.remove(id);
@@ -145,6 +146,44 @@ namespace Client
         private void handleRemoveEntity(Shared.Messages.RemoveEntity message)
         {
             removeEntity(message.id);
+        }
+
+        private void createSandWormAppearance(Shared.Messages.NewEntity message, Entity entity)
+        {
+            if (message.hasHead)
+            {
+                entity.add(new Head(parseColor(message.colorHead)));
+            }
+            if (message.hasTail)
+            {
+                entity.add(new Tail(parseColor(message.colorTail)));
+            }
+
+            if (message.hasBody)
+            {
+                entity.add(new Body(parseColor(message.colorBody)));
+            }
+        }
+
+        private Color parseColor(string color)
+        {
+            // Pattern to extract the RGBA values from the string
+            var pattern = @"\{R:(\d+)\sG:(\d+)\sB:(\d+)\sA:(\d+)\}";
+            var match = Regex.Match(color, pattern);
+            if (match.Success)
+            {
+                // Extracting the RGBA values
+                int r = int.Parse(match.Groups[1].Value);
+                int g = int.Parse(match.Groups[2].Value);
+                int b = int.Parse(match.Groups[3].Value);
+                int a = int.Parse(match.Groups[4].Value);
+            
+                // Creating a new Color object with the extracted values
+                return new Color(r, g, b, a);
+            }else{
+                // If the string does not match the pattern, return a default color
+                return Color.White;
+            }
         }
     }
 }

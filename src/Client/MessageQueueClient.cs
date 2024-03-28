@@ -252,7 +252,7 @@ namespace Client
                     }
                     catch (SocketException)
                     {
-                        // We expect this when a timeout occurs on the receive
+                        // We expect this when a timeout occurs on the receiver
                     }
 
                 }
