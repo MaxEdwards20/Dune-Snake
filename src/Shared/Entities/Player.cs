@@ -4,7 +4,7 @@ using Shared.Systems;
 
 namespace Shared.Entities
 {
-    public class Snake
+    public class Player
     {
         public static Entity create(string texture, Vector2 position, float size, float moveRate, float rotateRate)
         {
