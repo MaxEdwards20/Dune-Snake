@@ -14,8 +14,8 @@ public class Utility
         var vectorY = Math.Sin(position.orientation);
 
         position.position = new Vector2(
-            (float)(position.position.X + vectorX * movement.moveRate * elapsedTime.Milliseconds),
-            (float)(position.position.Y + vectorY * movement.moveRate * elapsedTime.Milliseconds));
+            (float)(position.position.X - vectorX * movement.moveRate * elapsedTime.Milliseconds),
+            (float)(position.position.Y - vectorY * movement.moveRate * elapsedTime.Milliseconds));
     }
 
     public static void rotateLeft(Entity entity, TimeSpan elapsedTime)
