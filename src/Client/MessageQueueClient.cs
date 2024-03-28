@@ -65,7 +65,6 @@ namespace Client
             }
             catch (SocketException e)
             {
-                Console.Error.WriteLine("Failed to connect to server");
                 Console.Error.WriteLine(e.Message);
                 return false;
             }

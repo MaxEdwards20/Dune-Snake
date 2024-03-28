@@ -2,6 +2,7 @@
 using Shared.Components;
 using Shared.Entities;
 using System.Text;
+using Shared.Components.Appearance;
 
 namespace Shared.Messages
 {
@@ -20,6 +21,8 @@ namespace Shared.Messages
             {
                 this.texture = "";
             }
+            handleWormAppearance(entity);            
+            
             if (entity.contains<Position>())
             {
                 this.hasPosition = true;
@@ -61,6 +64,14 @@ namespace Shared.Messages
         // Appearance
         public bool hasAppearance { get; private set; } = false;
         public string texture { get; private set; }
+        
+        // Worm Appearance
+        public bool hasHead { get; private set; } = false;
+        public string textureHead { get; private set; }
+        public bool hasBody { get; private set; } = false;
+        public string textureBody { get; private set; }
+        public bool hasTail { get; private set; } = false;
+        public string textureTail { get; private set; }
 
         // Position
         public bool hasPosition { get; private set; } = false;
@@ -93,6 +104,8 @@ namespace Shared.Messages
                 data.AddRange(BitConverter.GetBytes(texture.Length));
                 data.AddRange(Encoding.UTF8.GetBytes(texture));
             }
+            
+            serializeWormAppearance(data);
 
             data.AddRange(BitConverter.GetBytes(hasPosition));
             if (hasPosition)
@@ -129,6 +142,8 @@ namespace Shared.Messages
             return data.ToArray();
         }
 
+
+
         public override int parse(byte[] data)
         {
             int offset = base.parse(data);
@@ -145,6 +160,8 @@ namespace Shared.Messages
                 this.texture = Encoding.UTF8.GetString(data, offset, textureSize);
                 offset += textureSize;
             }
+            
+            offset += deserializeWormAppearance(data, offset);
 
             this.hasPosition = BitConverter.ToBoolean(data, offset);
             offset += sizeof(bool);
@@ -196,5 +213,101 @@ namespace Shared.Messages
 
             return offset;
         }
+        
+        private void handleWormAppearance(Entity entity)
+        {
+            if (entity.contains<Head>())
+            {
+                this.hasHead = true;
+                this.textureHead = entity.get<Head>().color.ToString();
+            }
+            else
+            {
+                this.textureHead = "";
+            }
+
+            if (entity.contains<Body>())
+            {
+                this.hasBody = true;
+                this.textureBody = entity.get<Body>().color.ToString();
+            }
+            else
+            {
+                this.textureBody = "";
+            }
+
+            if (entity.contains<Tail>())
+            {
+                this.hasTail = true;
+                this.textureTail = entity.get<Tail>().color.ToString();
+            }
+            else
+            {
+                this.textureTail = "";
+            }
+        }
+        
+        
+        private void serializeWormAppearance(List<byte> data)
+        {
+            data.AddRange(BitConverter.GetBytes(hasHead));
+            if (hasHead)
+            {
+                data.AddRange(BitConverter.GetBytes(textureHead.Length));
+                data.AddRange(Encoding.UTF8.GetBytes(textureHead));
+            }
+
+            data.AddRange(BitConverter.GetBytes(hasBody));
+            if (hasBody)
+            {
+                data.AddRange(BitConverter.GetBytes(textureBody.Length));
+                data.AddRange(Encoding.UTF8.GetBytes(textureBody));
+            }
+
+            data.AddRange(BitConverter.GetBytes(hasTail));
+            if (hasTail)
+            {
+                data.AddRange(BitConverter.GetBytes(textureTail.Length));
+                data.AddRange(Encoding.UTF8.GetBytes(textureTail));
+            }
+        }
+        
+        
+        private int deserializeWormAppearance(byte[] data, int offset)
+        {
+            this.hasHead = BitConverter.ToBoolean(data, offset);
+            offset += sizeof(bool);
+            if (hasHead)
+            {
+                int textureSize = BitConverter.ToInt32(data, offset);
+                offset += sizeof(Int32);
+                this.textureHead = Encoding.UTF8.GetString(data, offset, textureSize);
+                offset += textureSize;
+            }
+            
+            this.hasBody = BitConverter.ToBoolean(data, offset);
+            offset += sizeof(bool);
+            if (hasBody)
+            {
+                int textureSize = BitConverter.ToInt32(data, offset);
+                offset += sizeof(Int32);
+                this.textureBody = Encoding.UTF8.GetString(data, offset, textureSize);
+                offset += textureSize;
+            }
+            
+            this.hasTail = BitConverter.ToBoolean(data, offset);
+            offset += sizeof(bool);
+            if (hasTail)
+            {
+                int textureSize = BitConverter.ToInt32(data, offset);
+                offset += sizeof(Int32);
+                this.textureTail = Encoding.UTF8.GetString(data, offset, textureSize);
+                offset += textureSize;
+            }
+
+            return offset;
+        }
     }
+    
+    
 }

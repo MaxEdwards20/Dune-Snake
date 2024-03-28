@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.Xna.Framework;
 using Shared.Components;
+using Shared.Components.Appearance;
 using Shared.Entities;
 using Shared.Messages;
 
@@ -124,7 +125,7 @@ namespace Server
 
             // Step 2: Create an entity for the newly joined player and sent it
             //         to the newly joined client
-            Entity player = Shared.Entities.Player.create("Textures/playerShip1_blue", new Vector2(100, 100), 50, 0.1f, (float)Math.PI / 1000);
+            Entity player = Shared.Entities.Player.create(Color.White, new Vector2(100, 100), 50, 0.1f, (float)Math.PI / 1000);
             addEntity(player);
             m_clientToEntityId[clientId] = player.id;
 
