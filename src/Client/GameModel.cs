@@ -116,7 +116,7 @@ namespace Client
             {
                 return;
             }
-
+            // TODO: Update the systems we use here
             m_entities[entity.id] = entity;
             m_systemKeyboardInput.add(entity);
             m_systemRenderer.add(entity);
@@ -130,6 +130,7 @@ namespace Client
         /// </summary>
         private void removeEntity(uint id)
         {
+            // TODO: Update the systems we use here
             m_entities.Remove(id);
             m_systemKeyboardInput.remove(id);
             m_systemNetwork.remove(id);

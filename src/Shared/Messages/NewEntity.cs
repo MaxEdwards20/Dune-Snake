@@ -10,6 +10,8 @@ namespace Shared.Messages
     {
         public NewEntity(Entity entity) : base(Type.NewEntity)
         {
+            
+            // TODO: Add new entity checks for all components on the WormHead, WormSegment, and WormTail entities
             this.id = entity.id;
 
             if (entity.contains<Appearance>())
@@ -92,6 +94,7 @@ namespace Shared.Messages
 
         public override byte[] serialize()
         {
+            // TODO: Add serializer for the components on the WormHead, WormSegment, and WormTail entities
             List<byte> data = new List<byte>();
 
             data.AddRange(base.serialize());
@@ -143,6 +146,8 @@ namespace Shared.Messages
 
         public override int parse(byte[] data)
         {
+            
+            // TODO: Add parser for the components on the WormHead, WormSegment, and WormTail entities
             int offset = base.parse(data);
 
             this.id = BitConverter.ToUInt32(data, offset);
@@ -206,7 +211,6 @@ namespace Shared.Messages
                     offset += sizeof(UInt16);
                 }
             }
-
             return offset;
         }
     }

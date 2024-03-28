@@ -16,6 +16,7 @@ public class WormTail
         entity.add(new Appearance("Textures/head")); // TODO: Make this a tail texture
         entity.add(new Size(new Vector2(size, size)));
         entity.add(new Movement(moveRate, rotateRate));
+        entity.add(new Collision());
         return entity;
     }
 }

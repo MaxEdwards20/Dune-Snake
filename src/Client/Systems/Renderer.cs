@@ -11,8 +11,6 @@ namespace Client.Systems
 {
     public class Renderer : Shared.Systems.System
     {
-
-
         public Renderer() :
             base(
                 typeof(Client.Components.Sprite),

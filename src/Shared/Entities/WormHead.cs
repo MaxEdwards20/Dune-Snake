@@ -14,6 +14,7 @@ public class WormHead
         entity.add(new Appearance("Textures/head"));
         entity.add(new Size(new Vector2(size, size)));
         entity.add(new Movement(moveRate, rotateRate));
+        entity.add(new Collision());
             
         List<Input.Type> inputs = new List<Input.Type>();
         inputs.Add(Input.Type.SnakeUp);

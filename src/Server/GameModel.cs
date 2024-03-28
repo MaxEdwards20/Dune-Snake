@@ -131,16 +131,19 @@ namespace Server
 
         private void createNewWorm(int clientId)
         {
+            var location = new Vector2(50, 100);
+            var rotationRate = (float) Math.PI / 1000;
+            var moveRate = 0.1f;
             // Create the head
-            Entity player = WormHead.create( Color.Aqua, Vector2.Zero, 1.0f, 1.0f, 1.0f);
+            Entity player = WormHead.create( Color.Aqua, location, 30, moveRate, rotationRate);
             addEntity(player);
             m_clientToEntityId[clientId] = player.id;
             // Create a body segment
-            Entity segment = WormSegment.create(Color.Aqua, Vector2.Zero, 1.0f, 1.0f, 1.0f, player.get<SegmentID>().id);
+            Entity segment = WormSegment.create(Color.Aqua, location + Vector2.One * 5, 20, moveRate, rotationRate, player.get<SegmentID>().id);
             addEntity(segment);
             m_clientToEntityId[clientId] = segment.id;
             // Create a tail segment
-            Entity tail = WormTail.create(Color.Aqua, Vector2.Zero, 1.0f, 1.0f, 1.0f, segment.get<SegmentID>().id);
+            Entity tail = WormTail.create(Color.Aqua, location + Vector2.One * 10, 20, moveRate, rotationRate, segment.get<SegmentID>().id);
             m_clientToEntityId[clientId] = tail.id;
             
             // Step 3: Send the new player entity to the newly joined client
