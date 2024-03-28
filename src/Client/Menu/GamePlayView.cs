@@ -5,7 +5,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Client.IO;
-using Client.Objects;
 using System.Runtime.Serialization;
 using Microsoft.Xna.Framework.Input;
 using Shared.Components;
@@ -98,7 +97,7 @@ namespace Client.Menu
 
         private bool connectToServer()
         {
-            return MessageQueueClient.instance.initialize("localhost", 3000);
+            return MessageQueueClient.instance.initialize("localhost", 4000);
         }
 
         private void escape(GameTime gameTime, float scale)

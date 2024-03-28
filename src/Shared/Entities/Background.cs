@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Shared.Components;
+using Shared.Components.Appearance;
 
 namespace Shared.Entities
 {

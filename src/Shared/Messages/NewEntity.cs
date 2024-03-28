@@ -2,6 +2,7 @@
 using Shared.Components;
 using Shared.Entities;
 using System.Text;
+using Shared.Components.Appearance;
 
 namespace Shared.Messages
 {
@@ -9,6 +10,8 @@ namespace Shared.Messages
     {
         public NewEntity(Entity entity) : base(Type.NewEntity)
         {
+            
+            // TODO: Add new entity checks for all components on the WormHead, WormSegment, and WormTail entities
             this.id = entity.id;
 
             if (entity.contains<Appearance>())
@@ -20,6 +23,7 @@ namespace Shared.Messages
             {
                 this.texture = "";
             }
+            
             if (entity.contains<Position>())
             {
                 this.hasPosition = true;
@@ -61,6 +65,14 @@ namespace Shared.Messages
         // Appearance
         public bool hasAppearance { get; private set; } = false;
         public string texture { get; private set; }
+        
+        // Worm Appearance
+        public bool hasHead { get; private set; } = false;
+        public string colorHead { get; private set; }
+        public bool hasBody { get; private set; } = false;
+        public string colorBody { get; private set; }
+        public bool hasTail { get; private set; } = false;
+        public string colorTail { get; private set; }
 
         // Position
         public bool hasPosition { get; private set; } = false;
@@ -82,6 +94,7 @@ namespace Shared.Messages
 
         public override byte[] serialize()
         {
+            // TODO: Add serializer for the components on the WormHead, WormSegment, and WormTail entities
             List<byte> data = new List<byte>();
 
             data.AddRange(base.serialize());
@@ -93,6 +106,7 @@ namespace Shared.Messages
                 data.AddRange(BitConverter.GetBytes(texture.Length));
                 data.AddRange(Encoding.UTF8.GetBytes(texture));
             }
+            
 
             data.AddRange(BitConverter.GetBytes(hasPosition));
             if (hasPosition)
@@ -128,9 +142,12 @@ namespace Shared.Messages
 
             return data.ToArray();
         }
+        
 
         public override int parse(byte[] data)
         {
+            
+            // TODO: Add parser for the components on the WormHead, WormSegment, and WormTail entities
             int offset = base.parse(data);
 
             this.id = BitConverter.ToUInt32(data, offset);
@@ -145,6 +162,7 @@ namespace Shared.Messages
                 this.texture = Encoding.UTF8.GetString(data, offset, textureSize);
                 offset += textureSize;
             }
+            
 
             this.hasPosition = BitConverter.ToBoolean(data, offset);
             offset += sizeof(bool);
@@ -193,8 +211,9 @@ namespace Shared.Messages
                     offset += sizeof(UInt16);
                 }
             }
-
             return offset;
         }
     }
+    
+    
 }
