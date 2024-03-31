@@ -8,7 +8,7 @@ public class GameScoresPersistence
 {
     private bool saving = false;
     private bool loading = false;
-    private GameScores m_loadedState = null;
+    private GameScores m_loadedState = new GameScores();
 
 
     public void SaveScores(GameScores gameScores)
