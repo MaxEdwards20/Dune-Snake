@@ -13,14 +13,13 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 
 - [ ] Max: Setup Snake Movement in the screen
 - [ ] Satchel: Pick head, body, and tail texture for the sandworm
+- [ ] Caden: Camera movement, map generation
 
 ## Items to Develop
 
 - [ ] 3 different animated sprites for the spice - Satchel
 - [ ] Collision detection. Know whether we hit spice or another sandworm
 - [ ] Keyboard vs. Mouse input menu screen
-- [ ] Camera movement
-- [ ] Map generation
 - [ ] Let player name themselves
 - [ ] Mouse input support - Satchel
 - [ ] Food generation that refreshes as we play the game
