@@ -9,7 +9,8 @@ namespace Shared.Components
             SnakeDown,
             RotateLeft,
             RotateRight,
-            Boost
+            Boost,
+            FollowMouse // for following the mouse cursor
         }
 
         public Input(List<Type> inputs)
