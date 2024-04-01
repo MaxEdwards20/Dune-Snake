@@ -21,7 +21,6 @@ namespace Client.Menu
         private TimeSpan m_connectToServerTime = TimeSpan.Zero;
         private Controls m_controls;
         
-        
         public GamePlayView(Controls controls)
         {
             m_controls = controls;
@@ -30,7 +29,7 @@ namespace Client.Menu
         public override void initialize()
         {
             m_gameModel = new GameModel();
-            m_gameModel.initialize(m_contentManager, m_controls);
+            m_gameModel.initialize(m_contentManager, m_controls, m_graphics);
             m_isSetup = false;
             m_isKeyboardRegistered = false;
             m_newState = MenuStateEnum.GamePlay;

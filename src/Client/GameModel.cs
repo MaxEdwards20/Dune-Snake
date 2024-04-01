@@ -22,6 +22,7 @@ public class GameModel
     private Systems.Interpolation m_systemInterpolation;
     private Systems.Renderer m_systemRenderer;
     private Controls m_controls;
+    private GraphicsDeviceManager m_graphics;
 
     /// <summary>
     /// This is where everything performs its update.
@@ -48,14 +49,14 @@ public class GameModel
     /// of this "game', start by initializing the systems and then
     /// loading the art assets.
     /// </summary>
-    public bool initialize(ContentManager contentManager, Controls controls)
+    public bool initialize(ContentManager contentManager, Controls controls, GraphicsDeviceManager graphics)
     {
         m_contentManager = contentManager;
         m_entities = new Dictionary<uint, Entity>();
         m_systemInterpolation = new Systems.Interpolation();
-        m_systemRenderer = new Systems.Renderer();
-        m_systemNetwork = new Systems.Network();
         m_systemCamera = new Systems.Camera();
+        m_systemRenderer = new Systems.Renderer(m_systemCamera, graphics);
+        m_systemNetwork = new Systems.Network();
 
         m_systemNetwork.registerNewEntityHandler(handleNewEntity);
         m_systemNetwork.registerRemoveEntityHandler(handleRemoveEntity);
