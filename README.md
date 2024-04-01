@@ -13,6 +13,7 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 
 - [ ] Max: Setup Snake Movement in the screen
 - [ ] Satchel: Pick head, body, and tail texture for the sandworm
+- [ ] Satchel: Mouse Input Support
 - [ ] Caden: Camera movement, map generation
 
 ## Items to Develop
