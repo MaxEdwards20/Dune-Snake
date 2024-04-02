@@ -2,7 +2,7 @@
   "profiles": {
     "Server": {
       "commandName": "Project",
-      "commandLineArgs": "--port 4010"
+      "commandLineArgs": "--port 4000"
     }
   }
 }
