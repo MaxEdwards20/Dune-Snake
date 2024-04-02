@@ -30,12 +30,15 @@ public class Renderer : Shared.Systems.System
 
     public void render(TimeSpan elapsedTime, SpriteBatch spriteBatch)
     {
+        float scale = m_camera.Zoom;
         Matrix matrix = Matrix.Identity;
         Vector2 offset = -m_camera.Viewport.Location.ToVector2()
-            + new Vector2(m_graphics.PreferredBackBufferWidth / 2, m_graphics.PreferredBackBufferHeight / 2);
-        matrix.Translation = new Vector3(offset, 0);
+            + new Vector2(m_camera.Viewport.Width,m_camera.Viewport.Height) / scale / 2;
+        float scaleX = m_graphics.PreferredBackBufferWidth / (float)m_camera.Viewport.Width * scale;
+        float scaleY = m_graphics.PreferredBackBufferHeight / (float)m_camera.Viewport.Height * scale;
 
-        // TODO: Account for viewport width and height
+        matrix *= Matrix.CreateTranslation(new Vector3(offset, 0));
+        matrix *= Matrix.CreateScale(scaleX, scaleY, 1);
 
         spriteBatch.Begin(transformMatrix: matrix);
         foreach (Entity entity in m_entities.Values)
