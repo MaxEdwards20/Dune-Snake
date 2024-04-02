@@ -13,16 +13,12 @@ namespace Shared.Components
     [DataContract(Name = "Controls")]
     public class Controls : Component
     {
-        [DataMember(Name = "SnakeUp")]
-        public Control SnakeUp = new Control(Keys.Up);
         [DataMember(Name = "SnakeLeft")]
         public Control SnakeLeft = new Control(Keys.Left);
         [DataMember(Name = "SnakeRight")]
         public Control SnakeRight = new Control(Keys.Right);
-        [DataMember(Name = "SnakeDown")]
-        public Control SnakeDown = new Control(Keys.Down);
-        [DataMember (Name = "SnakeBoost")]
-        public Control SnakeBoost = new Control(Keys.Space);
+        [DataMember (Name = "UseKeyboard")]
+        public bool UseKeyboard = true;
     }
     
     [DataContract(Name = "Control")]

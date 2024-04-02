@@ -20,6 +20,10 @@ namespace Client.Systems
 
         public override void update(TimeSpan elapsedTime)
         {
+            if (!m_controls.UseKeyboard)
+            {
+                return;
+            }
             var keyboardState = Keyboard.GetState();
             m_keysPressed.Clear();
 
@@ -32,18 +36,21 @@ namespace Client.Systems
             foreach (var entity in m_entities)
             {
                 var inputs = new List<Input.Type>();
-                inputs.Add(Input.Type.SnakeUp);
                 if (keyPressed(m_controls.SnakeLeft.key))
                 {
                     inputs.Add(Input.Type.RotateLeft);
+                    Utility.rotateLeft(entity.Value, elapsedTime, m_entities);
+
                 }
                 if (keyPressed(m_controls.SnakeRight.key))
                 {
                     inputs.Add(Input.Type.RotateRight);
+                    Utility.rotateRight(entity.Value, elapsedTime, m_entities);
+
                 }
-                
-                // Now we handle the input locally before sending the message to the server
-                performInputAction(entity.Value, elapsedTime, inputs);
+                // Always add thrust
+                inputs.Add(Input.Type.SnakeUp);
+                Utility.thrust(entity.Value, elapsedTime, m_entities);
 
                 if (inputs.Count > 0)
                 {
@@ -55,27 +62,7 @@ namespace Client.Systems
             m_statePrevious = keyboardState;
         }
         
-        private void performInputAction(Entity entity, TimeSpan elapsedTime, List<Input.Type> inputs)
-        {
-            for (int i = 0; i < inputs.Count; i++)
-            {
-                var inputType = inputs[i];
-                // Perform action based on inputType
-                // NOTE: Could do an optimization here where we have all of the combinations of possible inputs
-                switch (inputType)
-                {
-                    case Input.Type.SnakeUp:
-                        Utility.thrust(entity, elapsedTime, m_entities);
-                        break;
-                    case Input.Type.RotateLeft:
-                        Utility.rotateLeft(entity, elapsedTime, m_entities);
-                        break;
-                    case Input.Type.RotateRight:
-                        Utility.rotateRight(entity, elapsedTime, m_entities);
-                        break;
-                }
-            }
-        }
+
         
         public override bool add(Entity entity)
         {
