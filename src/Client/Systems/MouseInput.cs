@@ -9,28 +9,57 @@ namespace Client.Systems
 {
     public class MouseInput : Shared.Systems.System
     {
-        private MouseState m_previousState = Mouse.GetState();
+        private MouseState previousMouseState = Mouse.GetState();
+        private Controls m_controls;
 
-        public MouseInput() : base(typeof(Shared.Components.Input))
+        public MouseInput(Controls controls) : base(typeof(Shared.Components.Input))
         {
+            m_controls = controls; 
         }
 
         public override void update(TimeSpan elapsedTime)
         {
-            var currentState = Mouse.GetState();
+            var mouseState = Mouse.GetState();
+            var currentPosition = new Vector2(mouseState.X, mouseState.Y);
 
-            if (currentState.Position != m_previousState.Position)
+            foreach (var entityPair in m_entities)
             {
-                foreach (var entity in m_entities)
+                var entity = entityPair.Value;
+                // Try to get the Position component safely
+                try
                 {
-                    // Here, we need to determine the direction for the snake to move
-                    var inputs = new List<Input.Type> { Input.Type.FollowMouse };
+                    var positionComponent = entity.get<Position>();
 
-                    MessageQueueClient.instance.sendMessageWithId(new Shared.Messages.Input(entity.Key, inputs, elapsedTime));
+                    var wormHeadPosition = positionComponent.position;
+                    var direction = currentPosition - wormHeadPosition;
+
+                    // Check mouse movement relative to the worm head's position to decide on turn direction
+                    if (direction.X < 0 && currentPosition != previousMouseState.Position.ToVector2()) // Mouse moved left
+                    {
+                        HandleTurnLeft(entity, elapsedTime);
+                    }
+                    else if (direction.X > 0 && currentPosition != previousMouseState.Position.ToVector2()) // Mouse moved right
+                    {
+                        HandleTurnRight(entity, elapsedTime);
+                    }
+                }
+                catch (KeyNotFoundException)
+                {
+                    // Component not found, skip this entity
                 }
             }
 
-            m_previousState = currentState;
+            previousMouseState = mouseState; 
+        }
+
+        private void HandleTurnLeft(Entity entity, TimeSpan elapsedTime)
+        {
+            // Logic for left turn
+        }
+
+        private void HandleTurnRight(Entity entity, TimeSpan elapsedTime)
+        {
+            // Logic for right turn
         }
     }
 }
