@@ -65,13 +65,13 @@ namespace Client.Systems
                 switch (inputType)
                 {
                     case Input.Type.SnakeUp:
-                        Utility.thrust(entity, elapsedTime);
+                        Utility.thrust(entity, elapsedTime, m_entities);
                         break;
                     case Input.Type.RotateLeft:
-                        Utility.rotateLeft(entity, elapsedTime);
+                        Utility.rotateLeft(entity, elapsedTime, m_entities);
                         break;
                     case Input.Type.RotateRight:
-                        Utility.rotateRight(entity, elapsedTime);
+                        Utility.rotateRight(entity, elapsedTime, m_entities);
                         break;
                 }
             }

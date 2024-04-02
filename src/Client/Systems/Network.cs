@@ -81,6 +81,8 @@ namespace Client.Systems
 
             // After processing all the messages, perform server reconciliation by
             // resimulating the inputs from any sent messages not yet acknowledged by the server.
+            
+            // This is where all of the other worms are updated
             var sent = MessageQueueClient.instance.getSendMessageHistory(m_lastMessageId);
             while (sent.Count > 0)
             {
@@ -95,13 +97,13 @@ namespace Client.Systems
                             switch (input)
                             {
                                 case Shared.Components.Input.Type.SnakeUp:
-                                    Shared.Entities.Utility.thrust(entity, message.elapsedTime);
+                                    Shared.Entities.Utility.thrust(entity, message.elapsedTime, m_entities);
                                     break;
                                 case Shared.Components.Input.Type.RotateLeft:
-                                    Shared.Entities.Utility.rotateLeft(entity, message.elapsedTime);
+                                    Shared.Entities.Utility.rotateLeft(entity, message.elapsedTime, m_entities);
                                     break;
                                 case Shared.Components.Input.Type.RotateRight:
-                                    Shared.Entities.Utility.rotateRight(entity, message.elapsedTime);
+                                    Shared.Entities.Utility.rotateRight(entity, message.elapsedTime, m_entities);
                                     break;
                             }
                         }
