@@ -7,7 +7,6 @@ using Shared.Components;
 using Shared.Components.Appearance;
 
 using System;
-using System.Reflection.Metadata.Ecma335;
 
 namespace Client.Systems;
 
