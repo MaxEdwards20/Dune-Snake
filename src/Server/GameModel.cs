@@ -145,11 +145,13 @@ namespace Server
             // Create a body segment
             Entity segment = WormSegment.create( startLocation + Vector2.One * 50, bodySize, moveRate, rotationRate, player.id);
             addEntity(segment);
+            player.add(new ChildId(segment.id));
             m_clientToEntityId[clientId] = segment.id;
             
             // Create a tail segment
             Entity tail = WormTail.create(startLocation + Vector2.One * 100, bodySize, moveRate, rotationRate, segment.id);
             addEntity(tail);
+            segment.add(new ChildId(tail.id));
             m_clientToEntityId[clientId] = tail.id;
             
             // Step 3: Send the new player entity to the newly joined client

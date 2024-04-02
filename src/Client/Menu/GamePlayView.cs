@@ -96,7 +96,7 @@ namespace Client.Menu
 
         private bool connectToServer()
         {
-            return MessageQueueClient.instance.initialize("localhost", 4000);
+            return MessageQueueClient.instance.initialize("localhost", 4010);
         }
 
         private void escape(GameTime gameTime, float scale)
@@ -117,7 +117,7 @@ namespace Client.Menu
             }
             catch (SocketException e)
             {
-                // Console.WriteLine(e); // This happens if we were not able to connect to the server and try to exit from it
+                // Console.WriteLine(e); // This happens if we were not able to connect to the server and try to exit from the menu screen
             }
             return temp;
         }
