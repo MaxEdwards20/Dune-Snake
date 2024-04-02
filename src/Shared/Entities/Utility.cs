@@ -35,17 +35,4 @@ public class Utility
 
         position.orientation = position.orientation + movement.rotateRate * elapsedTime.Milliseconds;
     }
-        
-    public static void boost(Entity entity, TimeSpan elapsedTime)
-    {
-        var position = entity.get<Position>();
-        var movement = entity.get<Movement>();
-
-        var vectorX = Math.Cos(position.orientation);
-        var vectorY = Math.Sin(position.orientation);
-
-        position.position = new Vector2(
-            (float)(position.position.X + vectorX * movement.moveRate * elapsedTime.Milliseconds * 2),
-            (float)(position.position.Y + vectorY * movement.moveRate * elapsedTime.Milliseconds * 2));
-    }
 }
