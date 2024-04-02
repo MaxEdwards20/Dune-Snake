@@ -26,7 +26,7 @@ namespace Client
         private Texture2D m_background;
         private GameModel m_gameModel;
         private Controls m_controls;
-        private SettingsPersistence m_settingsPersistence;
+        private ControlsPersistence _mControlsPersistence;
 
         public ClientMain()
         {
@@ -36,7 +36,7 @@ namespace Client
             IsMouseVisible = true;
             m_gameModel = new GameModel();
             m_controls = new Controls();
-            m_settingsPersistence = new SettingsPersistence();
+            _mControlsPersistence = new ControlsPersistence();
             
         }
 
@@ -49,7 +49,7 @@ namespace Client
             
             // Load the controls
             // We pass in our own controls so we always have them as a default if they were not saved
-            m_settingsPersistence.LoadControls(m_controls); 
+            _mControlsPersistence.LoadControls(m_controls); 
 
             // Create all the game states here
             m_states = new Dictionary<MenuStateEnum, IGameState>

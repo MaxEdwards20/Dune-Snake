@@ -19,6 +19,7 @@ public class GameModel
     private Systems.Network m_systemNetwork;
     private Systems.Camera m_systemCamera;
     private Systems.KeyboardInput m_systemKeyboardInput;
+    private Systems.MouseInput m_systemMouseInput;
     private Systems.Interpolation m_systemInterpolation;
     private Systems.Renderer m_systemRenderer;
     private Controls m_controls;
@@ -31,6 +32,7 @@ public class GameModel
     {
         m_systemNetwork.update(elapsedTime, MessageQueueClient.instance.getMessages());
         m_systemKeyboardInput.update(elapsedTime);
+        m_systemMouseInput.update(elapsedTime);
         m_systemInterpolation.update(elapsedTime);
         m_systemCamera.update(elapsedTime);
     }
@@ -64,6 +66,7 @@ public class GameModel
 
         m_systemKeyboardInput = new Systems.KeyboardInput(new List<Tuple<Shared.Components.Input.Type, Keys>>
         { }, m_controls);
+        m_systemMouseInput = new Systems.MouseInput(m_controls);
 
         return true;
     }
@@ -147,9 +150,10 @@ public class GameModel
         {
             return;
         }
-        // TODO: Update the systems we use here
+        // NOTE: Update the systems we use here
         m_entities[entity.id] = entity;
         m_systemKeyboardInput.add(entity);
+        m_systemMouseInput.add(entity);
         m_systemRenderer.add(entity);
         m_systemNetwork.add(entity);
         m_systemInterpolation.add(entity);
@@ -162,9 +166,10 @@ public class GameModel
     /// </summary>
     private void removeEntity(uint id)
     {
-        // TODO: Update the systems we use here
+        // NOTE: Update the systems we use here
         m_entities.Remove(id);
         m_systemKeyboardInput.remove(id);
+        m_systemMouseInput.remove(id);
         m_systemNetwork.remove(id);
         m_systemRenderer.remove(id);
         m_systemInterpolation.remove(id);
