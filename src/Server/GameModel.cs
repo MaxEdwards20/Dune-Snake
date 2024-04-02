@@ -131,31 +131,38 @@ namespace Server
 
         private void createNewWorm(int clientId)
         {
-            var location = new Vector2(100, 100);
+            var startLocation = new Vector2(200, 200);
             var rotationRate = (float) Math.PI / 1000;
             var moveRate = 0.1f;
             var headSize = 100;
             var bodySize = 80;
+            
             // Create the head
-            Entity player = WormHead.create( Color.Aqua, location, 100, moveRate, rotationRate);
-            addEntity(player);
-            m_clientToEntityId[clientId] = player.id;
+            Entity player = WormHead.create(startLocation, 100, moveRate, rotationRate);
+            
             // Create a body segment
-            Entity segment = WormSegment.create(Color.Aqua, location + Vector2.One * 20, bodySize, moveRate, rotationRate, player.get<SegmentID>().id);
-            addEntity(segment);
-            m_clientToEntityId[clientId] = segment.id;
+            Entity segment = WormSegment.create( new Vector2(startLocation.X + 75, startLocation.Y - 20)  , bodySize, moveRate, rotationRate, player.id);
+            player.add(new ChildId(segment.id));
+            
             // Create a tail segment
-            Entity tail = WormTail.create(Color.Aqua, location + Vector2.One * 21, bodySize, moveRate, rotationRate, segment.get<SegmentID>().id);
+            Entity tail = WormTail.create(new Vector2(startLocation.X + 130, startLocation.Y), bodySize, moveRate, rotationRate, segment.id);
+            segment.add(new ChildId(tail.id));
+            
+            addEntity(player);
+            addEntity(segment);
+            addEntity(tail);
+            
+            m_clientToEntityId[clientId] = player.id;
+            m_clientToEntityId[clientId] = segment.id;
             m_clientToEntityId[clientId] = tail.id;
+
             
             // Step 3: Send the new player entity to the newly joined client
             MessageQueueServer.instance.sendMessage(clientId, new NewEntity(player));
             MessageQueueServer.instance.sendMessage(clientId, new NewEntity(segment));
             MessageQueueServer.instance.sendMessage(clientId, new NewEntity(tail));
-            addEntity(tail);
 
             // Step 4: Let all other clients know about this new player entity
-            
             // Remove components not needed for "other" players
             player.remove<Shared.Components.Input>();
             Message message = new NewEntity(player);

@@ -10,8 +10,6 @@ namespace Shared.Messages
     {
         public NewEntity(Entity entity) : base(Type.NewEntity)
         {
-            
-            // TODO: Add new entity checks for all components on the WormHead, WormSegment, and WormTail entities
             this.id = entity.id;
 
             if (entity.contains<Appearance>())
@@ -53,6 +51,36 @@ namespace Shared.Messages
             {
                 this.inputs = new List<Components.Input.Type>();
             }
+            
+            // Worm parts
+            if (entity.contains<Head>())
+            {
+                this.hasHead = true;
+            }
+            
+            if (entity.contains<Tail>())
+            {
+                this.hasTail = true;
+            }
+            
+            if (entity.contains<ParentId>())
+            {
+                this.hasParent = true;
+                this.parentId = entity.get<ParentId>().id;
+            }
+            
+            if (entity.contains<ChildId>())
+            {
+                this.hasChild = true;
+                this.childId = entity.get<ChildId>().id;
+            }
+            
+            if (entity.contains<Collision>())
+            {
+                this.collision = true;
+            }
+            
+            
         }
         public NewEntity() : base(Type.NewEntity)
         {
@@ -66,13 +94,18 @@ namespace Shared.Messages
         public bool hasAppearance { get; private set; } = false;
         public string texture { get; private set; }
         
-        // Worm Appearance
+        // Worm parts
         public bool hasHead { get; private set; } = false;
-        public string colorHead { get; private set; }
-        public bool hasBody { get; private set; } = false;
-        public string colorBody { get; private set; }
+
         public bool hasTail { get; private set; } = false;
-        public string colorTail { get; private set; }
+        
+        public bool collision { get; private set; } = false;
+        
+        public bool hasParent { get; private set; } = false;
+        public uint parentId { get; private set; }
+        public bool hasChild { get; private set; } = false;
+        public uint childId { get; private set; }
+
 
         // Position
         public bool hasPosition { get; private set; } = false;
@@ -139,6 +172,22 @@ namespace Shared.Messages
                     data.AddRange(BitConverter.GetBytes((UInt16)input));
                 }
             }
+            
+            // Worm parts
+            data.AddRange(BitConverter.GetBytes(hasHead));
+            data.AddRange(BitConverter.GetBytes(hasTail));
+            data.AddRange(BitConverter.GetBytes(collision));
+            data.AddRange(BitConverter.GetBytes(hasParent));
+            if (hasParent)
+            {
+                data.AddRange(BitConverter.GetBytes(parentId));
+            }
+            data.AddRange(BitConverter.GetBytes(hasChild));
+            if (hasChild)
+            {
+                data.AddRange(BitConverter.GetBytes(childId));
+            }
+            
 
             return data.ToArray();
         }
@@ -147,7 +196,7 @@ namespace Shared.Messages
         public override int parse(byte[] data)
         {
             
-            // TODO: Add parser for the components on the WormHead, WormSegment, and WormTail entities
+            // NOTE: Add parser for the components on the WormHead, WormSegment, and WormTail entities
             int offset = base.parse(data);
 
             this.id = BitConverter.ToUInt32(data, offset);
@@ -211,6 +260,29 @@ namespace Shared.Messages
                     offset += sizeof(UInt16);
                 }
             }
+            
+            // Worm parts
+            this.hasHead = BitConverter.ToBoolean(data, offset);
+            offset += sizeof(bool);
+            this.hasTail = BitConverter.ToBoolean(data, offset);
+            offset += sizeof(bool);
+            this.collision = BitConverter.ToBoolean(data, offset);
+            offset += sizeof(bool);
+            this.hasParent = BitConverter.ToBoolean(data, offset);
+            offset += sizeof(bool);
+            if (hasParent)
+            {
+                this.parentId = BitConverter.ToUInt32(data, offset);
+                offset += sizeof(uint);
+            }
+            this.hasChild = BitConverter.ToBoolean(data, offset);
+            offset += sizeof(bool);
+            if (hasChild)
+            {
+                this.childId = BitConverter.ToUInt32(data, offset);
+                offset += sizeof(uint);
+            }
+            
             return offset;
         }
     }
