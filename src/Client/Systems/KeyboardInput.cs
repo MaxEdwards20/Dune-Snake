@@ -36,9 +36,7 @@ namespace Client.Systems
                 checkAndPerformAction(m_controls.SnakeUp, Input.Type.SnakeUp, entity.Value, elapsedTime, inputs);
                 checkAndPerformAction(m_controls.SnakeLeft, Input.Type.RotateLeft, entity.Value, elapsedTime, inputs);
                 checkAndPerformAction(m_controls.SnakeRight, Input.Type.RotateRight, entity.Value, elapsedTime, inputs);
-                checkAndPerformAction(m_controls.SnakeDown, Input.Type.SnakeDown, entity.Value, elapsedTime, inputs);
-                checkAndPerformAction(m_controls.SnakeBoost, Input.Type.Boost, entity.Value, elapsedTime, inputs);
-
+                
                 if (inputs.Count > 0)
                 {
                     // Assuming you have a messaging system to handle input
@@ -60,12 +58,6 @@ namespace Client.Systems
                     case Input.Type.SnakeUp:
                         Utility.thrust(entity, elapsedTime);
                         break;
-                    case Input.Type.SnakeDown:
-                        Utility.thrust(entity, elapsedTime);
-                        break;
-                    case Input.Type.Boost:
-                        Utility.boost(entity, elapsedTime);
-                        break; 
                     case Input.Type.RotateLeft:
                         Utility.rotateLeft(entity, elapsedTime);
                         break;

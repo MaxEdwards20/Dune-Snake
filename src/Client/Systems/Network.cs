@@ -103,12 +103,6 @@ namespace Client.Systems
                                 case Shared.Components.Input.Type.RotateRight:
                                     Shared.Entities.Utility.rotateRight(entity, message.elapsedTime);
                                     break;
-                                case Input.Type.Boost:
-                                    Shared.Entities.Utility.boost(entity, message.elapsedTime);
-                                    break;
-                                case Input.Type.SnakeDown:
-                                    Shared.Entities.Utility.thrust(entity, -message.elapsedTime);
-                                    break;
                             }
                         }
                     }

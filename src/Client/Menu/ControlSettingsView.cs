@@ -27,9 +27,6 @@ namespace Client.Menu
         {
             SnakeLeft,
             SnakeRight,
-            SnakeUp, 
-            SnakeDown,
-            SnakeBoost,
             None
         }
         
@@ -82,15 +79,6 @@ namespace Client.Menu
                                 case ControlStateEnum.SnakeRight:
                                     m_controls.SnakeRight.switchKey(key);
                                     break;
-                                case ControlStateEnum.SnakeUp:
-                                    m_controls.SnakeUp.switchKey(key);
-                                    break;
-                                case ControlStateEnum.SnakeDown:
-                                    m_controls.SnakeDown.switchKey(key);
-                                    break;
-                                case ControlStateEnum.SnakeBoost:
-                                    m_controls.SnakeBoost.switchKey(key);
-                                    break;
                             }
                             // Now we persist any changes
                             m_settingsPersistence.SaveControls(m_controls);
@@ -117,10 +105,6 @@ namespace Client.Menu
             Drawing.DrawShadedString(m_font, MESSAGE, new Vector2(halfWidth, halfHeight - headerStringSize.Y), Colors.displayColor, m_spriteBatch);
             Drawing.DrawShadedString(m_font, "Move Left  " + m_controls.SnakeLeft.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 50), getStringColor(ControlStateEnum.SnakeLeft), m_spriteBatch);
             Drawing.DrawShadedString(m_font, "Move Right  " + m_controls.SnakeRight.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 100), getStringColor(ControlStateEnum.SnakeRight), m_spriteBatch);
-            Drawing.DrawShadedString(m_font, "Move Up  " + m_controls.SnakeUp.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 150), getStringColor(ControlStateEnum.SnakeUp), m_spriteBatch);
-            Drawing.DrawShadedString(m_font, "Move Down  " + m_controls.SnakeDown.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 200), getStringColor(ControlStateEnum.SnakeDown), m_spriteBatch);
-            Drawing.DrawShadedString(m_font, "Boost  " + m_controls.SnakeBoost.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 250), getStringColor(ControlStateEnum.SnakeBoost), m_spriteBatch);
-    
             m_spriteBatch.End();
         }
 
@@ -175,7 +159,7 @@ namespace Client.Menu
             }
             if (controlState == ControlStateEnum.SnakeLeft)
             {
-                controlState = ControlStateEnum.SnakeBoost;
+                controlState = ControlStateEnum.SnakeRight;
             }
             else
             {
@@ -189,7 +173,7 @@ namespace Client.Menu
             {
                 return;
             }
-            if (controlState == ControlStateEnum.SnakeBoost)
+            if (controlState == ControlStateEnum.SnakeRight)
             {
                 controlState = ControlStateEnum.SnakeLeft;
             }

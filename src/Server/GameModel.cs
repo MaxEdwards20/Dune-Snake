@@ -131,31 +131,33 @@ namespace Server
 
         private void createNewWorm(int clientId)
         {
-            var location = new Vector2(100, 100);
+            var startLocation = new Vector2(200, 200);
             var rotationRate = (float) Math.PI / 1000;
             var moveRate = 0.1f;
             var headSize = 100;
             var bodySize = 80;
+            
             // Create the head
-            Entity player = WormHead.create( Color.Aqua, location, 100, moveRate, rotationRate);
+            Entity player = WormHead.create(startLocation, 100, moveRate, rotationRate);
             addEntity(player);
             m_clientToEntityId[clientId] = player.id;
+            
             // Create a body segment
-            Entity segment = WormSegment.create(Color.Aqua, location + Vector2.One * 20, bodySize, moveRate, rotationRate, player.get<SegmentID>().id);
+            Entity segment = WormSegment.create( startLocation + Vector2.One * 50, bodySize, moveRate, rotationRate, player.id);
             addEntity(segment);
             m_clientToEntityId[clientId] = segment.id;
+            
             // Create a tail segment
-            Entity tail = WormTail.create(Color.Aqua, location + Vector2.One * 21, bodySize, moveRate, rotationRate, segment.get<SegmentID>().id);
+            Entity tail = WormTail.create(startLocation + Vector2.One * 100, bodySize, moveRate, rotationRate, segment.id);
+            addEntity(tail);
             m_clientToEntityId[clientId] = tail.id;
             
             // Step 3: Send the new player entity to the newly joined client
             MessageQueueServer.instance.sendMessage(clientId, new NewEntity(player));
             MessageQueueServer.instance.sendMessage(clientId, new NewEntity(segment));
             MessageQueueServer.instance.sendMessage(clientId, new NewEntity(tail));
-            addEntity(tail);
 
             // Step 4: Let all other clients know about this new player entity
-            
             // Remove components not needed for "other" players
             player.remove<Shared.Components.Input>();
             Message message = new NewEntity(player);
