@@ -105,6 +105,33 @@ public class GameModel
         {
             entity.add(new Shared.Components.Input(message.inputs));
         }
+        
+        // Worm parts
+        
+        if (message.hasHead)
+        {
+            entity.add(new Head());
+        }
+        
+        if (message.hasTail)
+        {
+            entity.add(new Tail());
+        }
+
+        if (message.hasParent)
+        {
+            entity.add(new ParentId(message.parentId));
+        }
+
+        if (message.hasChild)
+        {
+            entity.add(new ChildId(message.childId));
+        }
+
+        if (message.collision)
+        {
+            entity.add(new Collision());
+        }
 
         return entity;
     }

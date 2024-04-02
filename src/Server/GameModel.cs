@@ -139,20 +139,23 @@ namespace Server
             
             // Create the head
             Entity player = WormHead.create(startLocation, 100, moveRate, rotationRate);
-            addEntity(player);
-            m_clientToEntityId[clientId] = player.id;
             
             // Create a body segment
-            Entity segment = WormSegment.create( startLocation + Vector2.One * 50, bodySize, moveRate, rotationRate, player.id);
-            addEntity(segment);
+            Entity segment = WormSegment.create( new Vector2(startLocation.X + 75, startLocation.Y - 20)  , bodySize, moveRate, rotationRate, player.id);
             player.add(new ChildId(segment.id));
-            m_clientToEntityId[clientId] = segment.id;
             
             // Create a tail segment
-            Entity tail = WormTail.create(startLocation + Vector2.One * 100, bodySize, moveRate, rotationRate, segment.id);
-            addEntity(tail);
+            Entity tail = WormTail.create(new Vector2(startLocation.X + 130, startLocation.Y), bodySize, moveRate, rotationRate, segment.id);
             segment.add(new ChildId(tail.id));
+            
+            addEntity(player);
+            addEntity(segment);
+            addEntity(tail);
+            
+            m_clientToEntityId[clientId] = player.id;
+            m_clientToEntityId[clientId] = segment.id;
             m_clientToEntityId[clientId] = tail.id;
+
             
             // Step 3: Send the new player entity to the newly joined client
             MessageQueueServer.instance.sendMessage(clientId, new NewEntity(player));

@@ -41,6 +41,7 @@ public class Renderer : Shared.Systems.System
         matrix *= Matrix.CreateScale(scaleX, scaleY, 1);
 
         spriteBatch.Begin(transformMatrix: matrix);
+        // TODO: Adjust this to render all of the tails first, then body segments, then heads
         foreach (Entity entity in m_entities.Values)
             renderEntity(elapsedTime, spriteBatch, entity);
         spriteBatch.End();
