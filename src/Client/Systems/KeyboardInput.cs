@@ -10,7 +10,6 @@ namespace Client.Systems
     public class KeyboardInput : Shared.Systems.System
     {
         private HashSet<Keys> m_keysPressed = new HashSet<Keys>();
-
         private KeyboardState m_statePrevious = Keyboard.GetState();
         private Controls m_controls;
 
@@ -33,11 +32,18 @@ namespace Client.Systems
             foreach (var entity in m_entities)
             {
                 var inputs = new List<Input.Type>();
-                checkAndPerformAction(m_controls.SnakeUp, Input.Type.SnakeUp, entity.Value, elapsedTime, inputs);
-                checkAndPerformAction(m_controls.SnakeLeft, Input.Type.RotateLeft, entity.Value, elapsedTime, inputs);
-                checkAndPerformAction(m_controls.SnakeRight, Input.Type.RotateRight, entity.Value, elapsedTime, inputs);
-                checkAndPerformAction(m_controls.SnakeDown, Input.Type.SnakeDown, entity.Value, elapsedTime, inputs);
-                checkAndPerformAction(m_controls.SnakeBoost, Input.Type.Boost, entity.Value, elapsedTime, inputs);
+                inputs.Add(Input.Type.SnakeUp);
+                if (keyPressed(m_controls.SnakeLeft.key))
+                {
+                    inputs.Add(Input.Type.RotateLeft);
+                }
+                if (keyPressed(m_controls.SnakeRight.key))
+                {
+                    inputs.Add(Input.Type.RotateRight);
+                }
+                
+                // Now we handle the input locally before sending the message to the server
+                performInputAction(entity.Value, elapsedTime, inputs);
 
                 if (inputs.Count > 0)
                 {
@@ -49,32 +55,26 @@ namespace Client.Systems
             m_statePrevious = keyboardState;
         }
         
-        private void checkAndPerformAction(Control control, Input.Type inputType, Entity entity, TimeSpan elapsedTime, List<Input.Type> inputs)
+        private void performInputAction(Entity entity, TimeSpan elapsedTime, List<Input.Type> inputs)
         {
-            if (m_keysPressed.Contains(control.key))
+            for (int i = 0; i < inputs.Count; i++)
             {
-                inputs.Add(inputType);
+                var inputType = inputs[i];
                 // Perform action based on inputType
+                // NOTE: Could do an optimization here where we have all of the combinations of possible inputs
                 switch (inputType)
                 {
                     case Input.Type.SnakeUp:
-                        Utility.thrust(entity, elapsedTime);
+                        Utility.thrust(entity, elapsedTime, m_entities);
                         break;
-                    case Input.Type.SnakeDown:
-                        Utility.thrust(entity, elapsedTime);
-                        break;
-                    case Input.Type.Boost:
-                        Utility.boost(entity, elapsedTime);
-                        break; 
                     case Input.Type.RotateLeft:
-                        Utility.rotateLeft(entity, elapsedTime);
+                        Utility.rotateLeft(entity, elapsedTime, m_entities);
                         break;
                     case Input.Type.RotateRight:
-                        Utility.rotateRight(entity, elapsedTime);
+                        Utility.rotateRight(entity, elapsedTime, m_entities);
                         break;
                 }
             }
-
         }
         
         public override bool add(Entity entity)
@@ -94,10 +94,14 @@ namespace Client.Systems
         /// <summary>
         /// Checks to see if a key was newly pressed
         /// </summary>
-        private bool keyPressed(Keys key)
+        private bool keyNewlyPressed(Keys key)
         {
             return (Keyboard.GetState().IsKeyDown(key) && !m_statePrevious.IsKeyDown(key));
         }
 
+        private bool keyPressed(Keys key)
+        {
+            return m_keysPressed.Contains(key);
+        }
     }
 }
