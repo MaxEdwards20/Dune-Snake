@@ -21,7 +21,7 @@ namespace Client.Menu
         private ControlStateEnum updatingKey = ControlStateEnum.None;
         private bool isUpdatingKey = false;
         private Controls m_controls;
-        private SettingsPersistence m_settingsPersistence = new SettingsPersistence();
+        private ControlsPersistence _mControlsPersistence = new ControlsPersistence();
 
         public enum ControlStateEnum
         {
@@ -81,7 +81,7 @@ namespace Client.Menu
                                     break;
                             }
                             // Now we persist any changes
-                            m_settingsPersistence.SaveControls(m_controls);
+                            _mControlsPersistence.SaveControls(m_controls);
                         }
                     }
                 }

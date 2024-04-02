@@ -6,7 +6,7 @@ using System.Runtime.Serialization.Json;
 
 namespace Shared.Systems;
 
-public class SettingsPersistence: System
+public class ControlsPersistence: System
 {
     // Now we want to make all of these control settings persist across game sessions. We will use the same serialization technique we used for the high scores.
     private bool saving = false;
@@ -34,7 +34,8 @@ public class SettingsPersistence: System
             // All of them have a default value in case they were not saved
             controls.SnakeLeft = m_loadedState.SnakeLeft == null? new Control(Keys.Left) : m_loadedState.SnakeLeft;
             controls.SnakeRight = m_loadedState.SnakeRight == null? new Control(Keys.Right) : m_loadedState.SnakeRight;
-            controls.UseKeyboard = m_loadedState.UseKeyboard == null ? true: m_loadedState.UseKeyboard;
+            // controls.UseKeyboard = m_loadedState.UseKeyboard == null ? true: m_loadedState.UseKeyboard; // Real. 
+            controls.UseKeyboard = true; // FOR TESTING. Allow us to switch keyboard on and off.
         }
     }
     private async Task finalizeSaveControlsAsync(Controls controls)
