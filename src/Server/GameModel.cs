@@ -120,16 +120,15 @@ namespace Server
         /// </summary>
         private void handleJoin(int clientId, Shared.Messages.Message message)
         {
-            // Type cast the message into the correct type
-            var joinMessage = (NewEntity)message;
-            var name = joinMessage.name;
+            // Create a default name for the player
+            var joinMessage = (Join)message;
+            string name = "Player" + clientId;
             // Step 1: Tell the newly connected player about all other entities
             reportAllEntities(clientId);
 
             // Step 2: Create a new wormHead for the newly joined player and sent it
             //         to the newly joined client
             createNewWorm(clientId, name);
-            
         }
 
         private void createNewWorm(int clientId, string name)
@@ -159,7 +158,6 @@ namespace Server
             m_clientToEntityId[clientId] = segment.id;
             m_clientToEntityId[clientId] = tail.id;
 
-            
             // Step 3: Send the new player entity to the newly joined client
             MessageQueueServer.instance.sendMessage(clientId, new NewEntity(player));
             MessageQueueServer.instance.sendMessage(clientId, new NewEntity(segment));
