@@ -7,6 +7,7 @@ using Shared.Components;
 using Shared.Components.Appearance;
 
 using System;
+using Client.Menu;
 
 namespace Client.Systems;
 
@@ -14,8 +15,9 @@ public class Renderer : Shared.Systems.System
 {
     private Systems.Camera m_camera;
     private GraphicsDeviceManager m_graphics;
+    private SpriteFont m_font;
 
-    public Renderer(Systems.Camera camera, GraphicsDeviceManager graphics) :
+    public Renderer(Systems.Camera camera, GraphicsDeviceManager graphics, SpriteFont font) :
         base(
             typeof(Client.Components.Sprite),
             typeof(Shared.Components.Position),
@@ -24,6 +26,7 @@ public class Renderer : Shared.Systems.System
     {
         m_camera = camera;
         m_graphics = graphics;
+        m_font = font;
     }
 
     public override void update(TimeSpan elapsedTime) { }
@@ -71,6 +74,14 @@ public class Renderer : Shared.Systems.System
             texCenter,
             SpriteEffects.None,
             0);
+
+        if (entity.contains<Name>())
+        {
+            // We want the name position to be above the entity
+            Vector2 namePosition = new Vector2(position.X, position.Y - size.Y / 2 - 10);
+            Drawing.DrawPlayerName(m_font, entity.get<Name>().name, namePosition, Color.White, spriteBatch);
+        }
+
     }
 
 }

@@ -24,14 +24,14 @@ public class NameRenderer : Shared.Systems.System
     
     public void render(TimeSpan elapsedTime, SpriteBatch spriteBatch)
     {
-        spriteBatch.Begin();
-        // For every item that has a name, render it
-        foreach (var entity in m_entities)
-        {
-            var position = entity.Value.get<Shared.Components.Position>().position;
-            var name = entity.Value.get<Name>().name;
-            Drawing.DrawShadedString(m_font, name, position, Color.White, spriteBatch);
-        }
-        spriteBatch.End();
+        // spriteBatch.Begin();
+        // // For every item that has a name, render it
+        // foreach (var entity in m_entities)
+        // {
+        //     var position = entity.Value.get<Shared.Components.Position>().position;
+        //     var name = entity.Value.get<Name>().name;
+        //     Drawing.DrawShadedString(m_font, name, position, Color.White, spriteBatch);
+        // }
+        // spriteBatch.End();
     }
 }

@@ -61,7 +61,7 @@ public class GameModel
         m_entities = new Dictionary<uint, Entity>();
         m_systemInterpolation = new Systems.Interpolation();
         m_systemCamera = new Systems.Camera(new Vector2(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight));
-        m_systemRenderer = new Systems.Renderer(m_systemCamera, graphics);
+        m_systemRenderer = new Systems.Renderer(m_systemCamera, graphics, m_font);
         m_systemNameRenderer = new Systems.NameRenderer(graphics, m_font);
         m_systemNetwork = new Systems.Network();
 
