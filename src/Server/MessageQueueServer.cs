@@ -298,7 +298,7 @@ namespace Server
                 byte[] size = new byte[sizeof(int)];
 
                 List<int> remove = new List<int>();
-                // TODO: This is a busy loop, would be nice to efficiently wait for an incoming message
+                // NOTE: This is a busy loop, would be nice to efficiently wait for an incoming message
                 //       from a client
                 while (m_keepRunning)
                 {

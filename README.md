@@ -10,7 +10,7 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 ## In Progress
 
 - [ ] Satchel: Pick head, body, and tail texture for the sandworm
-- [ ] Satchel: Mouse Input Support
+- [ ] Satchel: Keyboard vs. Mouse input menu screen - Satchel
 - [ ] Caden: Map generation
 - [ ] Max: Let player name themselves
 
@@ -20,7 +20,7 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 - [ ] Mouse input support - Satchel
 - [ ] Sound effects on death of worm and when food is eaten - Satchel
 - [ ] Collision detection. Know whether we hit spice or another sandworm
-- [ ] Keyboard vs. Mouse input menu screen
+- [ ] Keyboard vs. Mouse input menu screen - Satchel
 - [ ] Spice generation that refreshes as we play the game
 - [ ] On collision, sandworm breaks apart and is available as food for other snakes
 - [ ] Record players score, kills and highest position. Probably can be added to the `GameScores` object.
@@ -35,6 +35,8 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 - [x] Max: Decide how to build the snake. Tons of entities? Or one entity with a list of positions?
 - [x] Max: Setup basic menuing
 - [x] Caden: Camera movement
+- [x] Satchel: Mouse Input Support
+
 
 ## Debugging
 
