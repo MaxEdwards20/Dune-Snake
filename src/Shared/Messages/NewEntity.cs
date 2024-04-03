@@ -136,24 +136,18 @@ namespace Shared.Messages
             data.AddRange(BitConverter.GetBytes(id));
             
             serializeAppearance(data);
-            
             serializePosition(data);
- 
             serializeSize(data);
- 
             serializeMovement(data);
- 
             serializeInput(data);
-
             data.AddRange(BitConverter.GetBytes(hasCollision));
             
             // Worm entities
-            
             data.AddRange(BitConverter.GetBytes(hasHead));
             data.AddRange(BitConverter.GetBytes(hasTail));
             serializeParentId(data);
             serializeChild(data);
-            serializeName(data);
+            serializeName(data); // Make sure this is the last item to serialize
             
             return data.ToArray();
         }
@@ -180,7 +174,7 @@ namespace Shared.Messages
             offset = parseTail(data, offset);
             offset = parseParent(data, offset);
             offset = parseChild(data, offset);
-            offset = parseName(data, offset);
+            offset = parseName(data, offset); // Make sure this is the last item to parse
             return offset;
         }
 
@@ -227,7 +221,6 @@ namespace Shared.Messages
                 this.childId = BitConverter.ToUInt32(data, offset);
                 offset += sizeof(uint);
             }
-
             return offset;
         }
 
@@ -237,8 +230,9 @@ namespace Shared.Messages
             offset += sizeof(bool);
             if (hasName)
             {
-                int nameSize = BitConverter.ToInt32(data, offset);
-                offset += sizeof(Int32);
+                // int nameSize = BitConverter.ToInt32(data, offset);
+                // offset += sizeof(Int32);
+                int nameSize = data.Length - offset;
                 this.name = Encoding.UTF8.GetString(data, offset, nameSize);
                 offset += nameSize;
             }

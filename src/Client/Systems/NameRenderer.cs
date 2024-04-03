@@ -24,6 +24,7 @@ public class NameRenderer : Shared.Systems.System
     
     public void render(TimeSpan elapsedTime, SpriteBatch spriteBatch)
     {
+        spriteBatch.Begin();
         // For every item that has a name, render it
         foreach (var entity in m_entities)
         {
@@ -31,5 +32,6 @@ public class NameRenderer : Shared.Systems.System
             var name = entity.Value.get<Name>().name;
             Drawing.DrawShadedString(m_font, name, position, Color.White, spriteBatch);
         }
+        spriteBatch.End();
     }
 }
