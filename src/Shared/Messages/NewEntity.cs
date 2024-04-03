@@ -80,6 +80,12 @@ namespace Shared.Messages
                 this.collision = true;
             }
             
+            if (entity.contains<Name>())
+            {
+                this.hasName = true;
+                this.name = entity.get<Name>().name;
+            }
+            
             
         }
         public NewEntity() : base(Type.NewEntity)
@@ -105,6 +111,9 @@ namespace Shared.Messages
         public uint parentId { get; private set; }
         public bool hasChild { get; private set; } = false;
         public uint childId { get; private set; }
+        
+        public bool hasName { get; private set; } = false;
+        public string name { get; private set; }
 
 
         // Position
@@ -127,7 +136,6 @@ namespace Shared.Messages
 
         public override byte[] serialize()
         {
-            // TODO: Add serializer for the components on the WormHead, WormSegment, and WormTail entities
             List<byte> data = new List<byte>();
 
             data.AddRange(base.serialize());
@@ -187,8 +195,12 @@ namespace Shared.Messages
             {
                 data.AddRange(BitConverter.GetBytes(childId));
             }
+            data.AddRange(BitConverter.GetBytes(hasName));
+            if (hasName)
+            {
+                data.AddRange(Encoding.UTF8.GetBytes(name));
+            }
             
-
             return data.ToArray();
         }
         
@@ -282,7 +294,15 @@ namespace Shared.Messages
                 this.childId = BitConverter.ToUInt32(data, offset);
                 offset += sizeof(uint);
             }
-            
+            this.hasName = BitConverter.ToBoolean(data, offset);
+            offset += sizeof(bool);
+            if (hasName)
+            {
+                int nameSize = BitConverter.ToInt32(data, offset);
+                offset += sizeof(Int32);
+                this.name = Encoding.UTF8.GetString(data, offset, nameSize);
+                offset += nameSize;
+            }
             return offset;
         }
     }

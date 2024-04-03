@@ -118,18 +118,21 @@ namespace Server
         /// added to the server game model, and notifies the requesting client
         /// of the player.
         /// </summary>
-        private void handleJoin(int clientId)
+        private void handleJoin(int clientId, Shared.Messages.Message message)
         {
+            // Type cast the message into the correct type
+            var joinMessage = (NewEntity)message;
+            var name = joinMessage.name;
             // Step 1: Tell the newly connected player about all other entities
             reportAllEntities(clientId);
 
             // Step 2: Create a new wormHead for the newly joined player and sent it
             //         to the newly joined client
-            createNewWorm(clientId);
+            createNewWorm(clientId, name);
             
         }
 
-        private void createNewWorm(int clientId)
+        private void createNewWorm(int clientId, string name)
         {
             var startLocation = new Vector2(200, 200);
             var rotationRate = (float) Math.PI / 1000;
@@ -138,7 +141,7 @@ namespace Server
             var bodySize = 80;
             
             // Create the head
-            Entity player = WormHead.create(startLocation, 100, moveRate, rotationRate);
+            Entity player = WormHead.create(startLocation, 100, moveRate, rotationRate, name);
             
             // Create a body segment
             Entity segment = WormSegment.create( new Vector2(startLocation.X + 75, startLocation.Y - 20)  , bodySize, moveRate, rotationRate, player.id);

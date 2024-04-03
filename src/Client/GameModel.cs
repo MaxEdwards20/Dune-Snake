@@ -135,6 +135,11 @@ public class GameModel
         {
             entity.add(new Collision());
         }
+        
+        if (message.hasName)
+        {
+            entity.add(new Name(message.name));
+        }
 
         return entity;
     }
@@ -189,29 +194,6 @@ public class GameModel
     private void handleRemoveEntity(Shared.Messages.RemoveEntity message)
     {
         removeEntity(message.id);
-    }
-
-    private Color parseColor(string color)
-    {
-        // Pattern to extract the RGBA values from the string
-        var pattern = @"\{R:(\d+)\sG:(\d+)\sB:(\d+)\sA:(\d+)\}";
-        var match = Regex.Match(color, pattern);
-        if (match.Success)
-        {
-            // Extracting the RGBA values
-            int r = int.Parse(match.Groups[1].Value);
-            int g = int.Parse(match.Groups[2].Value);
-            int b = int.Parse(match.Groups[3].Value);
-            int a = int.Parse(match.Groups[4].Value);
-
-            // Creating a new Color object with the extracted values
-            return new Color(r, g, b, a);
-        }
-        else
-        {
-            // If the string does not match the pattern, return a default color
-            return Color.White;
-        }
     }
 }
 
