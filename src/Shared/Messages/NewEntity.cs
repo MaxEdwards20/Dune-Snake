@@ -146,9 +146,15 @@ namespace Shared.Messages
             serializeInput(data);
 
             data.AddRange(BitConverter.GetBytes(hasCollision));
-
-            serializeWormEntities(data);
-
+            
+            // Worm entities
+            
+            data.AddRange(BitConverter.GetBytes(hasHead));
+            data.AddRange(BitConverter.GetBytes(hasTail));
+            serializeParentId(data);
+            serializeChild(data);
+            serializeName(data);
+            
             return data.ToArray();
         }
 
@@ -162,20 +168,19 @@ namespace Shared.Messages
             int offset = base.parse(data);
             
             offset = parseId(data, offset);
-            
             offset = parseAppearance(data, offset);
-            
             offset = parsePosition(data, offset);
-            
             offset = parseSize(data, offset);
-            
             offset = parseMovement(data, offset);
-            
             offset = parseInput(data, offset);
-            
             offset = parseCollision(data, offset);
             
-            offset = parseWormEntities(data, offset);
+            // Worm Entities
+            offset = parseHead(data, offset);
+            offset = parseTail(data, offset);
+            offset = parseParent(data, offset);
+            offset = parseChild(data, offset);
+            offset = parseName(data, offset);
             return offset;
         }
 
@@ -185,13 +190,23 @@ namespace Shared.Messages
             offset += sizeof(uint);
             return offset;
         }
+        
+        private int parseTail(byte[] data, int offset)
+        {
+            this.hasTail = BitConverter.ToBoolean(data, offset);
+            offset += sizeof(bool);
+            return offset;
+        }
 
-        private int parseWormEntities(byte[] data, int offset)
+        private int parseHead(byte[] data, int offset)
         {
             this.hasHead = BitConverter.ToBoolean(data, offset);
             offset += sizeof(bool);
-            this.hasTail = BitConverter.ToBoolean(data, offset);
-            offset += sizeof(bool);
+            return offset;
+        }
+
+        private int parseParent(byte[] data, int offset)
+        {
             this.hasParent = BitConverter.ToBoolean(data, offset);
             offset += sizeof(bool);
             if (hasParent)
@@ -200,6 +215,11 @@ namespace Shared.Messages
                 offset += sizeof(uint);
             }
 
+            return offset;
+        }
+
+        private int parseChild(byte[] data, int offset)
+        {
             this.hasChild = BitConverter.ToBoolean(data, offset);
             offset += sizeof(bool);
             if (hasChild)
@@ -207,8 +227,6 @@ namespace Shared.Messages
                 this.childId = BitConverter.ToUInt32(data, offset);
                 offset += sizeof(uint);
             }
-
-            offset = parseName(data, offset);
 
             return offset;
         }
@@ -224,7 +242,6 @@ namespace Shared.Messages
                 this.name = Encoding.UTF8.GetString(data, offset, nameSize);
                 offset += nameSize;
             }
-
             return offset;
         }
 
@@ -321,20 +338,26 @@ namespace Shared.Messages
         
         private void serializeWormEntities(List<byte> data)
         {
-            data.AddRange(BitConverter.GetBytes(hasHead));
-            data.AddRange(BitConverter.GetBytes(hasTail));
-            data.AddRange(BitConverter.GetBytes(hasParent));
-            if (hasParent)
-            {
-                data.AddRange(BitConverter.GetBytes(parentId));
-            }
 
+
+        }
+
+        private void serializeChild(List<byte> data)
+        {
             data.AddRange(BitConverter.GetBytes(hasChild));
             if (hasChild)
             {
                 data.AddRange(BitConverter.GetBytes(childId));
             }
-            serializeName(data);
+        }
+
+        private void serializeParentId(List<byte> data)
+        {
+            data.AddRange(BitConverter.GetBytes(hasParent));
+            if (hasParent)
+            {
+                data.AddRange(BitConverter.GetBytes(parentId));
+            }
         }
 
         private void serializeName(List<byte> data)
