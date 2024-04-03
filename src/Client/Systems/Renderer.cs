@@ -7,6 +7,7 @@ using Shared.Components;
 using Shared.Components.Appearance;
 
 using System;
+using System.Collections.Generic;
 using Client.Menu;
 
 namespace Client.Systems;
@@ -45,8 +46,40 @@ public class Renderer : Shared.Systems.System
 
         spriteBatch.Begin(transformMatrix: matrix);
         // TODO: Adjust this to render all of the tails first, then body segments, then heads
+        var heads = new List<Entity>();
+        var bodies = new List<Entity>();
+        var tails = new List<Entity>();
+        var others = new List<Entity>();
+        
         foreach (Entity entity in m_entities.Values)
+        {
+            if (entity.contains<Head>())
+                heads.Add(entity);
+            else if (entity.contains<Tail>())
+                tails.Add(entity);
+            else if (entity.contains<ParentId>()) // The body has these
+                bodies.Add(entity);
+            else
+                others.Add(entity);
+        }
+        
+        foreach (Entity entity in others)
+        {
             renderEntity(elapsedTime, spriteBatch, entity);
+        }
+        foreach (Entity entity in tails)
+        {
+            renderEntity(elapsedTime, spriteBatch, entity);
+        }
+        foreach (Entity entity in bodies)
+        {
+            renderEntity(elapsedTime, spriteBatch, entity);
+        }
+        foreach (Entity entity in heads)
+        {
+            renderEntity(elapsedTime, spriteBatch, entity);
+        }
+        
         spriteBatch.End();
     }
 

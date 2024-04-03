@@ -40,7 +40,7 @@ namespace Client.Menu {
         
         public static void DrawPlayerName(SpriteFont font, string name, Vector2 position, Color color, SpriteBatch spriteBatch) {
             // We need to downsize the font for the player name
-            DrawShadedString(font, name, position, color, spriteBatch, true, true, true, scale:0.3f);
+            DrawShadedString(font, name, position, color, spriteBatch, false, false, true, scale:0.4f);
         }
 
     }
