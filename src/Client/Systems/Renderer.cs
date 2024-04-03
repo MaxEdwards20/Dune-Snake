@@ -111,7 +111,7 @@ public class Renderer : Shared.Systems.System
         if (entity.contains<Name>())
         {
             // We want the name position to be above the entity
-            Vector2 namePosition = new Vector2(position.X, position.Y - size.Y / 2 - 10);
+            Vector2 namePosition = new Vector2(position.X - size.X + 10, position.Y - size.Y - 10);
             Drawing.DrawPlayerName(m_font, entity.get<Name>().name, namePosition, Color.White, spriteBatch);
         }
 

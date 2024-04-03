@@ -38,7 +38,7 @@ namespace Client.Menu
         public override void render(GameTime gameTime)
         {
             m_spriteBatch.Begin();
-            Drawing.DrawShadedString(m_font, MESSAGE, new Vector2(m_graphics.PreferredBackBufferWidth / 2, m_graphics.PreferredBackBufferHeight / 2), Colors.displayColor ,m_spriteBatch, boxed: true);
+            Drawing.CustomDrawString(m_font, MESSAGE, new Vector2(m_graphics.PreferredBackBufferWidth / 2, m_graphics.PreferredBackBufferHeight / 2), Colors.displayColor ,m_spriteBatch, boxed: true);
             m_spriteBatch.End();
         }
 
