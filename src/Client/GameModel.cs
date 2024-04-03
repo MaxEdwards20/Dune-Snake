@@ -22,8 +22,10 @@ public class GameModel
     private Systems.MouseInput m_systemMouseInput;
     private Systems.Interpolation m_systemInterpolation;
     private Systems.Renderer m_systemRenderer;
+    private Systems.NameRenderer m_systemNameRenderer;
     private Controls m_controls;
     private GraphicsDeviceManager m_graphics;
+    private SpriteFont m_font;
 
     /// <summary>
     /// This is where everything performs its update.
@@ -44,6 +46,7 @@ public class GameModel
     public void render(TimeSpan elapsedTime, SpriteBatch spriteBatch)
     {
         m_systemRenderer.render(elapsedTime, spriteBatch);
+        m_systemNameRenderer.render(elapsedTime, spriteBatch);
     }
 
     /// <summary>
@@ -53,11 +56,13 @@ public class GameModel
     /// </summary>
     public bool initialize(ContentManager contentManager, Controls controls, GraphicsDeviceManager graphics)
     {
+        m_font = contentManager.Load<SpriteFont>("Fonts/menu");
         m_contentManager = contentManager;
         m_entities = new Dictionary<uint, Entity>();
         m_systemInterpolation = new Systems.Interpolation();
         m_systemCamera = new Systems.Camera(new Vector2(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight));
         m_systemRenderer = new Systems.Renderer(m_systemCamera, graphics);
+        m_systemNameRenderer = new Systems.NameRenderer(graphics, m_font);
         m_systemNetwork = new Systems.Network();
 
         m_systemNetwork.registerNewEntityHandler(handleNewEntity);
@@ -109,6 +114,11 @@ public class GameModel
             entity.add(new Shared.Components.Input(message.inputs));
         }
         
+        if (message.hasCollision)
+        {
+            entity.add(new Collision());
+        }
+        
         // Worm parts
         
         if (message.hasHead)
@@ -131,11 +141,6 @@ public class GameModel
             entity.add(new ChildId(message.childId));
         }
 
-        if (message.collision)
-        {
-            entity.add(new Collision());
-        }
-        
         if (message.hasName)
         {
             entity.add(new Name(message.name));
@@ -160,6 +165,7 @@ public class GameModel
         m_systemKeyboardInput.add(entity);
         m_systemMouseInput.add(entity);
         m_systemRenderer.add(entity);
+        m_systemNameRenderer.add(entity);
         m_systemNetwork.add(entity);
         m_systemInterpolation.add(entity);
         m_systemCamera.add(entity);
@@ -177,6 +183,7 @@ public class GameModel
         m_systemMouseInput.remove(id);
         m_systemNetwork.remove(id);
         m_systemRenderer.remove(id);
+        m_systemNameRenderer.remove(id);
         m_systemInterpolation.remove(id);
         m_systemCamera.remove(id);
     }

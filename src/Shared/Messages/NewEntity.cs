@@ -77,7 +77,7 @@ namespace Shared.Messages
             
             if (entity.contains<Collision>())
             {
-                this.collision = true;
+                this.hasCollision = true;
             }
             
             if (entity.contains<Name>())
@@ -104,9 +104,7 @@ namespace Shared.Messages
         public bool hasHead { get; private set; } = false;
 
         public bool hasTail { get; private set; } = false;
-        
-        public bool collision { get; private set; } = false;
-        
+        public bool hasCollision { get; private set; } = false;
         public bool hasParent { get; private set; } = false;
         public uint parentId { get; private set; }
         public bool hasChild { get; private set; } = false;
@@ -184,7 +182,7 @@ namespace Shared.Messages
             // Worm parts
             data.AddRange(BitConverter.GetBytes(hasHead));
             data.AddRange(BitConverter.GetBytes(hasTail));
-            data.AddRange(BitConverter.GetBytes(collision));
+            data.AddRange(BitConverter.GetBytes(hasCollision));
             data.AddRange(BitConverter.GetBytes(hasParent));
             if (hasParent)
             {
@@ -278,7 +276,7 @@ namespace Shared.Messages
             offset += sizeof(bool);
             this.hasTail = BitConverter.ToBoolean(data, offset);
             offset += sizeof(bool);
-            this.collision = BitConverter.ToBoolean(data, offset);
+            this.hasCollision = BitConverter.ToBoolean(data, offset);
             offset += sizeof(bool);
             this.hasParent = BitConverter.ToBoolean(data, offset);
             offset += sizeof(bool);
