@@ -85,8 +85,6 @@ namespace Shared.Messages
                 this.hasName = true;
                 this.name = entity.get<Name>().name;
             }
-            
-            
         }
         public NewEntity() : base(Type.NewEntity)
         {
@@ -95,7 +93,6 @@ namespace Shared.Messages
         }
 
         public uint id { get; private set; }
-
         // Appearance
         public bool hasAppearance { get; private set; } = false;
         public string texture { get; private set; }
