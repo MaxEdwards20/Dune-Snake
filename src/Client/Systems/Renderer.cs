@@ -7,6 +7,8 @@ using Shared.Components;
 using Shared.Components.Appearance;
 
 using System;
+using System.Collections.Generic;
+using Client.Menu;
 
 namespace Client.Systems;
 
@@ -14,8 +16,9 @@ public class Renderer : Shared.Systems.System
 {
     private Systems.Camera m_camera;
     private GraphicsDeviceManager m_graphics;
+    private SpriteFont m_font;
 
-    public Renderer(Systems.Camera camera, GraphicsDeviceManager graphics) :
+    public Renderer(Systems.Camera camera, GraphicsDeviceManager graphics, SpriteFont font) :
         base(
             typeof(Client.Components.Sprite),
             typeof(Shared.Components.Position),
@@ -24,6 +27,7 @@ public class Renderer : Shared.Systems.System
     {
         m_camera = camera;
         m_graphics = graphics;
+        m_font = font;
     }
 
     public override void update(TimeSpan elapsedTime) { }
@@ -42,8 +46,40 @@ public class Renderer : Shared.Systems.System
 
         spriteBatch.Begin(transformMatrix: matrix);
         // TODO: Adjust this to render all of the tails first, then body segments, then heads
+        var heads = new List<Entity>();
+        var bodies = new List<Entity>();
+        var tails = new List<Entity>();
+        var others = new List<Entity>();
+        
         foreach (Entity entity in m_entities.Values)
+        {
+            if (entity.contains<Head>())
+                heads.Add(entity);
+            else if (entity.contains<Tail>())
+                tails.Add(entity);
+            else if (entity.contains<ParentId>()) // The body has these
+                bodies.Add(entity);
+            else
+                others.Add(entity);
+        }
+        
+        foreach (Entity entity in others)
+        {
             renderEntity(elapsedTime, spriteBatch, entity);
+        }
+        foreach (Entity entity in tails)
+        {
+            renderEntity(elapsedTime, spriteBatch, entity);
+        }
+        foreach (Entity entity in bodies)
+        {
+            renderEntity(elapsedTime, spriteBatch, entity);
+        }
+        foreach (Entity entity in heads)
+        {
+            renderEntity(elapsedTime, spriteBatch, entity);
+        }
+        
         spriteBatch.End();
     }
 
@@ -71,6 +107,14 @@ public class Renderer : Shared.Systems.System
             texCenter,
             SpriteEffects.None,
             0);
+
+        if (entity.contains<Name>())
+        {
+            // We want the name position to be above the entity
+            Vector2 namePosition = new Vector2(position.X - size.X + 10, position.Y - size.Y - 10);
+            Drawing.DrawPlayerName(m_font, entity.get<Name>().name, namePosition, Color.White, spriteBatch);
+        }
+
     }
 
 }

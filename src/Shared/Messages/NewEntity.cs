@@ -77,10 +77,14 @@ namespace Shared.Messages
             
             if (entity.contains<Collision>())
             {
-                this.collision = true;
+                this.hasCollision = true;
             }
             
-            
+            if (entity.contains<Name>())
+            {
+                this.hasName = true;
+                this.name = entity.get<Name>().name;
+            }
         }
         public NewEntity() : base(Type.NewEntity)
         {
@@ -89,22 +93,21 @@ namespace Shared.Messages
         }
 
         public uint id { get; private set; }
-
         // Appearance
         public bool hasAppearance { get; private set; } = false;
         public string texture { get; private set; }
         
+        public bool hasCollision { get; private set; } = false;
+
         // Worm parts
         public bool hasHead { get; private set; } = false;
-
         public bool hasTail { get; private set; } = false;
-        
-        public bool collision { get; private set; } = false;
-        
         public bool hasParent { get; private set; } = false;
         public uint parentId { get; private set; }
         public bool hasChild { get; private set; } = false;
         public uint childId { get; private set; }
+        public bool hasName { get; private set; } = false;
+        public string name { get; private set; }
 
 
         // Position
@@ -112,7 +115,7 @@ namespace Shared.Messages
         public Vector2 position { get; private set; }
         public float orientation { get; private set; }
         
-        // size
+        // Size
         public bool hasSize { get; private set; } = false;
         public Vector2 size { get; private set; }
 
@@ -127,92 +130,173 @@ namespace Shared.Messages
 
         public override byte[] serialize()
         {
-            // TODO: Add serializer for the components on the WormHead, WormSegment, and WormTail entities
             List<byte> data = new List<byte>();
 
             data.AddRange(base.serialize());
             data.AddRange(BitConverter.GetBytes(id));
-
-            data.AddRange(BitConverter.GetBytes(hasAppearance));
-            if (hasAppearance)
-            {
-                data.AddRange(BitConverter.GetBytes(texture.Length));
-                data.AddRange(Encoding.UTF8.GetBytes(texture));
-            }
             
-
-            data.AddRange(BitConverter.GetBytes(hasPosition));
-            if (hasPosition)
-            {
-                data.AddRange(BitConverter.GetBytes(position.X));
-                data.AddRange(BitConverter.GetBytes(position.Y));
-                data.AddRange(BitConverter.GetBytes(orientation));
-            }
-
-            data.AddRange(BitConverter.GetBytes(hasSize));
-            if (hasSize)
-            {
-                data.AddRange(BitConverter.GetBytes(size.X));
-                data.AddRange(BitConverter.GetBytes(size.Y));
-            }
-
-            data.AddRange(BitConverter.GetBytes(hasMovement));
-            if (hasMovement)
-            {
-                data.AddRange(BitConverter.GetBytes(moveRate));
-                data.AddRange(BitConverter.GetBytes(rotateRate));
-            }
-
-            data.AddRange(BitConverter.GetBytes(hasInput));
-            if (hasInput)
-            {
-                data.AddRange(BitConverter.GetBytes(inputs.Count));
-                foreach (var input in inputs)
-                {
-                    data.AddRange(BitConverter.GetBytes((UInt16)input));
-                }
-            }
+            serializeAppearance(data);
+            serializePosition(data);
+            serializeSize(data);
+            serializeMovement(data);
+            serializeInput(data);
+            data.AddRange(BitConverter.GetBytes(hasCollision));
             
-            // Worm parts
+            // Worm entities
             data.AddRange(BitConverter.GetBytes(hasHead));
             data.AddRange(BitConverter.GetBytes(hasTail));
-            data.AddRange(BitConverter.GetBytes(collision));
-            data.AddRange(BitConverter.GetBytes(hasParent));
-            if (hasParent)
-            {
-                data.AddRange(BitConverter.GetBytes(parentId));
-            }
-            data.AddRange(BitConverter.GetBytes(hasChild));
-            if (hasChild)
-            {
-                data.AddRange(BitConverter.GetBytes(childId));
-            }
+            serializeParentId(data);
+            serializeChild(data);
+            serializeName(data); // Make sure this is the last item to serialize
             
-
             return data.ToArray();
         }
-        
+
+
 
         public override int parse(byte[] data)
         {
-            
             // NOTE: Add parser for the components on the WormHead, WormSegment, and WormTail entities
+            
+            // Upgrade: Could move all of these methods to the associated components
             int offset = base.parse(data);
+            
+            offset = parseId(data, offset);
+            offset = parseAppearance(data, offset);
+            offset = parsePosition(data, offset);
+            offset = parseSize(data, offset);
+            offset = parseMovement(data, offset);
+            offset = parseInput(data, offset);
+            offset = parseCollision(data, offset);
+            
+            // Worm Entities
+            offset = parseHead(data, offset);
+            offset = parseTail(data, offset);
+            offset = parseParent(data, offset);
+            offset = parseChild(data, offset);
+            offset = parseName(data, offset); // Make sure this is the last item to parse
+            return offset;
+        }
 
+        private int parseId(byte[] data, int offset)
+        {
             this.id = BitConverter.ToUInt32(data, offset);
             offset += sizeof(uint);
-
-            this.hasAppearance = BitConverter.ToBoolean(data, offset);
+            return offset;
+        }
+        
+        private int parseTail(byte[] data, int offset)
+        {
+            this.hasTail = BitConverter.ToBoolean(data, offset);
             offset += sizeof(bool);
-            if (hasAppearance)
-            {
-                int textureSize = BitConverter.ToInt32(data, offset);
-                offset += sizeof(Int32);
-                this.texture = Encoding.UTF8.GetString(data, offset, textureSize);
-                offset += textureSize;
-            }
-            
+            return offset;
+        }
 
+        private int parseHead(byte[] data, int offset)
+        {
+            this.hasHead = BitConverter.ToBoolean(data, offset);
+            offset += sizeof(bool);
+            return offset;
+        }
+
+        private int parseParent(byte[] data, int offset)
+        {
+            this.hasParent = BitConverter.ToBoolean(data, offset);
+            offset += sizeof(bool);
+            if (hasParent)
+            {
+                this.parentId = BitConverter.ToUInt32(data, offset);
+                offset += sizeof(uint);
+            }
+
+            return offset;
+        }
+
+        private int parseChild(byte[] data, int offset)
+        {
+            this.hasChild = BitConverter.ToBoolean(data, offset);
+            offset += sizeof(bool);
+            if (hasChild)
+            {
+                this.childId = BitConverter.ToUInt32(data, offset);
+                offset += sizeof(uint);
+            }
+            return offset;
+        }
+
+        private int parseName(byte[] data, int offset)
+        {
+            this.hasName = BitConverter.ToBoolean(data, offset);
+            offset += sizeof(bool);
+            if (hasName)
+            {
+                // int nameSize = BitConverter.ToInt32(data, offset);
+                // offset += sizeof(Int32);
+                int nameSize = data.Length - offset;
+                this.name = Encoding.UTF8.GetString(data, offset, nameSize);
+                offset += nameSize;
+            }
+            return offset;
+        }
+
+        private int parseCollision(byte[] data, int offset)
+        {
+            this.hasCollision = BitConverter.ToBoolean(data, offset);
+            offset += sizeof(bool);
+            return offset;
+        }
+
+        private int parseInput(byte[] data, int offset)
+        {
+            this.hasInput = BitConverter.ToBoolean(data, offset);
+            offset += sizeof(bool);
+            if (hasInput)
+            {
+                int howMany = BitConverter.ToInt32(data, offset);
+                offset += sizeof(int);
+                for (int i = 0; i < howMany; i++)
+                {
+                    inputs.Add((Components.Input.Type) BitConverter.ToUInt16(data, offset));
+                    offset += sizeof(UInt16);
+                }
+            }
+
+            return offset;
+        }
+
+        private int parseMovement(byte[] data, int offset)
+        {
+            this.hasMovement = BitConverter.ToBoolean(data, offset);
+            offset += sizeof(bool);
+            if (hasMovement)
+            {
+                this.moveRate = BitConverter.ToSingle(data, offset);
+                offset += sizeof(Single);
+                this.rotateRate = BitConverter.ToSingle(data, offset);
+                offset += sizeof(Single);
+            }
+
+            return offset;
+        }
+
+        private int parseSize(byte[] data, int offset)
+        {
+            this.hasSize = BitConverter.ToBoolean(data, offset);
+            offset += sizeof(bool);
+            if (hasSize)
+            {
+                float sizeX = BitConverter.ToSingle(data, offset);
+                offset += sizeof(Single);
+                float sizeY = BitConverter.ToSingle(data, offset);
+                offset += sizeof(Single);
+                this.size = new Vector2(sizeX, sizeY);
+            }
+
+            return offset;
+        }
+
+        private int parsePosition(byte[] data, int offset)
+        {
             this.hasPosition = BitConverter.ToBoolean(data, offset);
             offset += sizeof(bool);
             if (hasPosition)
@@ -226,65 +310,113 @@ namespace Shared.Messages
                 offset += sizeof(Single);
             }
 
-
-            this.hasSize = BitConverter.ToBoolean(data, offset);
-            offset += sizeof(bool);
-            if (hasSize)
-            {
-                float sizeX = BitConverter.ToSingle(data, offset);
-                offset += sizeof(Single);
-                float sizeY = BitConverter.ToSingle(data, offset);
-                offset += sizeof(Single);
-                this.size = new Vector2(sizeX, sizeY);
-            }
-
-            this.hasMovement = BitConverter.ToBoolean(data, offset);
-            offset += sizeof(bool);
-            if (hasMovement)
-            {
-                this.moveRate = BitConverter.ToSingle(data, offset);
-                offset += sizeof(Single);
-                this.rotateRate = BitConverter.ToSingle(data, offset);
-                offset += sizeof(Single);
-            }
-
-            this.hasInput = BitConverter.ToBoolean(data, offset);
-            offset += sizeof(bool);
-            if (hasInput)
-            {
-                int howMany = BitConverter.ToInt32(data, offset);
-                offset += sizeof(int);
-                for (int i = 0; i < howMany; i++)
-                {
-                    inputs.Add((Components.Input.Type)BitConverter.ToUInt16(data, offset));
-                    offset += sizeof(UInt16);
-                }
-            }
-            
-            // Worm parts
-            this.hasHead = BitConverter.ToBoolean(data, offset);
-            offset += sizeof(bool);
-            this.hasTail = BitConverter.ToBoolean(data, offset);
-            offset += sizeof(bool);
-            this.collision = BitConverter.ToBoolean(data, offset);
-            offset += sizeof(bool);
-            this.hasParent = BitConverter.ToBoolean(data, offset);
-            offset += sizeof(bool);
-            if (hasParent)
-            {
-                this.parentId = BitConverter.ToUInt32(data, offset);
-                offset += sizeof(uint);
-            }
-            this.hasChild = BitConverter.ToBoolean(data, offset);
-            offset += sizeof(bool);
-            if (hasChild)
-            {
-                this.childId = BitConverter.ToUInt32(data, offset);
-                offset += sizeof(uint);
-            }
-            
             return offset;
         }
+
+        private int parseAppearance(byte[] data, int offset)
+        {
+            this.hasAppearance = BitConverter.ToBoolean(data, offset);
+            offset += sizeof(bool);
+            if (hasAppearance)
+            {
+                int textureSize = BitConverter.ToInt32(data, offset);
+                offset += sizeof(Int32);
+                this.texture = Encoding.UTF8.GetString(data, offset, textureSize);
+                offset += textureSize;
+            }
+
+            return offset;
+        }
+        
+        
+        
+        private void serializeWormEntities(List<byte> data)
+        {
+
+
+        }
+
+        private void serializeChild(List<byte> data)
+        {
+            data.AddRange(BitConverter.GetBytes(hasChild));
+            if (hasChild)
+            {
+                data.AddRange(BitConverter.GetBytes(childId));
+            }
+        }
+
+        private void serializeParentId(List<byte> data)
+        {
+            data.AddRange(BitConverter.GetBytes(hasParent));
+            if (hasParent)
+            {
+                data.AddRange(BitConverter.GetBytes(parentId));
+            }
+        }
+
+        private void serializeName(List<byte> data)
+        {
+            data.AddRange(BitConverter.GetBytes(hasName));
+            if (hasName)
+            {
+                data.AddRange(Encoding.UTF8.GetBytes(name));
+            }
+        }
+
+        private void serializeInput(List<byte> data)
+        {
+            data.AddRange(BitConverter.GetBytes(hasInput));
+            if (hasInput)
+            {
+                data.AddRange(BitConverter.GetBytes(inputs.Count));
+                foreach (var input in inputs)
+                {
+                    data.AddRange(BitConverter.GetBytes((UInt16) input));
+                }
+            }
+        }
+
+        private void serializeMovement(List<byte> data)
+        {
+            data.AddRange(BitConverter.GetBytes(hasMovement));
+            if (hasMovement)
+            {
+                data.AddRange(BitConverter.GetBytes(moveRate));
+                data.AddRange(BitConverter.GetBytes(rotateRate));
+            }
+        }
+
+        private void serializeSize(List<byte> data)
+        {
+            data.AddRange(BitConverter.GetBytes(hasSize));
+            if (hasSize)
+            {
+                data.AddRange(BitConverter.GetBytes(size.X));
+                data.AddRange(BitConverter.GetBytes(size.Y));
+            }
+        }
+
+        private void serializePosition(List<byte> data)
+        {
+            data.AddRange(BitConverter.GetBytes(hasPosition));
+            if (hasPosition)
+            {
+                data.AddRange(BitConverter.GetBytes(position.X));
+                data.AddRange(BitConverter.GetBytes(position.Y));
+                data.AddRange(BitConverter.GetBytes(orientation));
+            }
+        }
+
+        private void serializeAppearance(List<byte> data)
+        {
+            data.AddRange(BitConverter.GetBytes(hasAppearance));
+            if (hasAppearance)
+            {
+                data.AddRange(BitConverter.GetBytes(texture.Length));
+                data.AddRange(Encoding.UTF8.GetBytes(texture));
+            }
+        }
+
     }
     
     

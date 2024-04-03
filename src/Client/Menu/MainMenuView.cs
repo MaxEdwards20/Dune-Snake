@@ -80,7 +80,7 @@ namespace Client.Menu
         private float drawMenuItem(SpriteFont font, string text, float y, Color color)
         {
             Vector2 stringSize = font.MeasureString(text);
-            Drawing.DrawShadedString(font, text, new Vector2(m_graphics.PreferredBackBufferWidth / 2, y), color, m_spriteBatch);
+            Drawing.CustomDrawString(font, text, new Vector2(m_graphics.PreferredBackBufferWidth / 2, y), color, m_spriteBatch);
             return y + stringSize.Y;
         }
 

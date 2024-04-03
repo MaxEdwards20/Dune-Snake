@@ -24,6 +24,7 @@ public class GameModel
     private Systems.Renderer m_systemRenderer;
     private Controls m_controls;
     private GraphicsDeviceManager m_graphics;
+    private SpriteFont m_font;
 
     /// <summary>
     /// This is where everything performs its update.
@@ -53,11 +54,12 @@ public class GameModel
     /// </summary>
     public bool initialize(ContentManager contentManager, Controls controls, GraphicsDeviceManager graphics)
     {
+        m_font = contentManager.Load<SpriteFont>("Fonts/menu");
         m_contentManager = contentManager;
         m_entities = new Dictionary<uint, Entity>();
         m_systemInterpolation = new Systems.Interpolation();
         m_systemCamera = new Systems.Camera(new Vector2(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight));
-        m_systemRenderer = new Systems.Renderer(m_systemCamera, graphics);
+        m_systemRenderer = new Systems.Renderer(m_systemCamera, graphics, m_font);
         m_systemNetwork = new Systems.Network();
 
         m_systemNetwork.registerNewEntityHandler(handleNewEntity);
@@ -109,6 +111,11 @@ public class GameModel
             entity.add(new Shared.Components.Input(message.inputs));
         }
         
+        if (message.hasCollision)
+        {
+            entity.add(new Collision());
+        }
+        
         // Worm parts
         
         if (message.hasHead)
@@ -131,9 +138,9 @@ public class GameModel
             entity.add(new ChildId(message.childId));
         }
 
-        if (message.collision)
+        if (message.hasName)
         {
-            entity.add(new Collision());
+            entity.add(new Name(message.name));
         }
 
         return entity;
@@ -189,29 +196,6 @@ public class GameModel
     private void handleRemoveEntity(Shared.Messages.RemoveEntity message)
     {
         removeEntity(message.id);
-    }
-
-    private Color parseColor(string color)
-    {
-        // Pattern to extract the RGBA values from the string
-        var pattern = @"\{R:(\d+)\sG:(\d+)\sB:(\d+)\sA:(\d+)\}";
-        var match = Regex.Match(color, pattern);
-        if (match.Success)
-        {
-            // Extracting the RGBA values
-            int r = int.Parse(match.Groups[1].Value);
-            int g = int.Parse(match.Groups[2].Value);
-            int b = int.Parse(match.Groups[3].Value);
-            int a = int.Parse(match.Groups[4].Value);
-
-            // Creating a new Color object with the extracted values
-            return new Color(r, g, b, a);
-        }
-        else
-        {
-            // If the string does not match the pattern, return a default color
-            return Color.White;
-        }
     }
 }
 

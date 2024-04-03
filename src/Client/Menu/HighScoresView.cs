@@ -62,7 +62,7 @@ namespace Client.Menu
         public override void render(GameTime gameTime)
         {
             m_spriteBatch.Begin();
-            Drawing.DrawShadedString(m_font, MESSAGE, new Vector2(m_graphics.PreferredBackBufferWidth / 2, m_graphics.PreferredBackBufferHeight / 4), Colors.displayColor ,m_spriteBatch);
+            Drawing.CustomDrawString(m_font, MESSAGE, new Vector2(m_graphics.PreferredBackBufferWidth / 2, m_graphics.PreferredBackBufferHeight / 4), Colors.displayColor ,m_spriteBatch);
             m_spriteBatch.End();
             renderScores();
         }
@@ -85,14 +85,14 @@ namespace Client.Menu
             float y = -100;
             if (highScores.scores == null || highScores.scores.Count == 0)
             {
-                Drawing.DrawShadedString(m_font, "No Scores Yet", new Vector2(halfWidth, halfHeight), Colors.displayColor, m_spriteBatch);
+                Drawing.CustomDrawString(m_font, "No Scores Yet", new Vector2(halfWidth, halfHeight), Colors.displayColor, m_spriteBatch);
             }
             else
             {
                 foreach (var score in highScores.scores.Take(numDisplayScores))
                 {
                     y += 100;
-                    Drawing.DrawShadedString(m_font, score.score.ToString(), new Vector2(halfWidth, halfHeight + y), Colors.displayColor, m_spriteBatch);
+                    Drawing.CustomDrawString(m_font, score.score.ToString(), new Vector2(halfWidth, halfHeight + y), Colors.displayColor, m_spriteBatch);
                 }
             }
 

@@ -6,7 +6,7 @@ namespace Server.Systems
     public class Network : Shared.Systems.System
     {
         public delegate void Handler(int clientId, TimeSpan elapsedTime, Shared.Messages.Message message);
-        public delegate void JoinHandler(int clientId);
+        public delegate void JoinHandler(int clientId, Shared.Messages.Message message);
         public delegate void DisconnectHandler(int clientId);
         public delegate void InputHandler(Entity entity, Shared.Components.Input.Type type, TimeSpan elapsedTime);
 
@@ -31,7 +31,7 @@ namespace Server.Systems
             {
                 if (m_joinHandler != null)
                 {
-                    m_joinHandler(clientId);
+                    m_joinHandler(clientId, message);
                 }
             });
 
