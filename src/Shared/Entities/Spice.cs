@@ -6,14 +6,17 @@ namespace Shared.Entities;
 
 public class Spice
 {
-    public Entity create(Color color, Vector2 position, float size)
+    private Random random = new Random();
+    public Entity create(Color color, Vector2 position)
     {
+        int power = random.Next(1, 10);
+        float size = 10;
         Entity entity = new Entity();
         entity.add(new Appearance("Textures/spice")); // TODO: Make this a spice texture
         entity.add(new Position(position));
-        entity.add(new Size(new Vector2(size, size)));
+        entity.add(new Size(new Vector2(size * power, size * power)));
         entity.add(new Collision());
-        entity.add(new SpicePower(0));
+        entity.add(new SpicePower(power));
         return entity;
     }
 }
