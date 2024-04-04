@@ -166,6 +166,8 @@ namespace Server
             // Step 4: Let all other clients know about this new player entity
             // Remove components not needed for "other" players
             player.remove<Shared.Components.Input>();
+            
+            // Now send the new entities to all other clients
             Message playerMessage = new NewEntity(player);
             Message segmentMessage = new NewEntity(segment);
             Message tailMessage = new NewEntity(tail);

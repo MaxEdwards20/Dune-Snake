@@ -8,11 +8,12 @@ namespace Shared.Entities;
 public class Utility
 {
     // The entity that hits these endpoints should be the head of the worm, with the rest of the worm in the entities
-    public static void thrust(Entity entity, TimeSpan elapsedTime, Dictionary<uint, Entity> entities)
+    public static List<Entity> thrust(Entity entity, TimeSpan elapsedTime, Dictionary<uint, Entity> entities)
     {
         var head = getHead(entity, entities);
         var snake = getSnakeFromHead(head, entities);
         applyThrust(snake, elapsedTime);
+        return snake;
     }
 
     public static void rotateLeft(Entity entity, TimeSpan elapsedTime, Dictionary<uint, Entity> entities)
