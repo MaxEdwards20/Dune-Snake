@@ -25,10 +25,10 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 - [ ] Record players score, kills and highest position. Probably can be added to the `GameScores` object.
 - [ ] Game over screen with score, kills, and highest position achieved
 - [ ] Particle system for the death of a sandworm
-- [ ] Upgrade our movement system to reduce the lag in rotation
 
 ## Done
 
+- [x] Max: Upgrade our movement system to reduce the lag in rotation
 - [x] Max: Add name support for the player
 - [x] Max: Setup Snake Movement in the screen
 - [x] Max: Decide how to build the snake. Tons of entities? Or one entity with a list of positions?

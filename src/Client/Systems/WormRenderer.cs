@@ -12,17 +12,15 @@ using Client.Menu;
 
 namespace Client.Systems;
 
-public class Renderer : Shared.Systems.System
+public class WormRenderer : Shared.Systems.System
 {
     private Systems.Camera m_camera;
     private GraphicsDeviceManager m_graphics;
     private SpriteFont m_font;
 
-    public Renderer(Systems.Camera camera, GraphicsDeviceManager graphics, SpriteFont font) :
+    public WormRenderer(Systems.Camera camera, GraphicsDeviceManager graphics, SpriteFont font) :
         base(
-            typeof(Client.Components.Sprite),
-            typeof(Shared.Components.Position),
-            typeof(Shared.Components.Size)
+           typeof(Worm)
         )
     {
         m_camera = camera;

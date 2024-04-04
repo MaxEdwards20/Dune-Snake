@@ -18,6 +18,7 @@ public class WormHead
         entity.add(new SpicePower(0));
         entity.add(new Head());
         entity.add(new Name(name));
+        entity.add(new Worm());
             
         List<Input.Type> inputs = new List<Input.Type>();
         inputs.Add(Input.Type.SnakeUp);

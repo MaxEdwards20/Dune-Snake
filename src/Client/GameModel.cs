@@ -21,7 +21,7 @@ public class GameModel
     private Systems.KeyboardInput m_systemKeyboardInput;
     private Systems.MouseInput m_systemMouseInput;
     private Systems.Interpolation m_systemInterpolation;
-    private Systems.Renderer m_systemRenderer;
+    private Systems.WormRenderer _mSystemWormRenderer;
     private Controls m_controls;
     private GraphicsDeviceManager m_graphics;
     private SpriteFont m_font;
@@ -44,7 +44,7 @@ public class GameModel
 
     public void render(TimeSpan elapsedTime, SpriteBatch spriteBatch)
     {
-        m_systemRenderer.render(elapsedTime, spriteBatch);
+        _mSystemWormRenderer.render(elapsedTime, spriteBatch);
     }
 
     /// <summary>
@@ -59,7 +59,7 @@ public class GameModel
         m_entities = new Dictionary<uint, Entity>();
         m_systemInterpolation = new Systems.Interpolation();
         m_systemCamera = new Systems.Camera(new Vector2(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight));
-        m_systemRenderer = new Systems.Renderer(m_systemCamera, graphics, m_font);
+        _mSystemWormRenderer = new Systems.WormRenderer(m_systemCamera, graphics, m_font);
         m_systemNetwork = new Systems.Network();
 
         m_systemNetwork.registerNewEntityHandler(handleNewEntity);
@@ -137,6 +137,11 @@ public class GameModel
         {
             entity.add(new ChildId(message.childId));
         }
+        
+        if (message.hasWorm)
+        {
+            entity.add(new Worm());
+        }
 
         if (message.hasName)
         {
@@ -161,7 +166,7 @@ public class GameModel
         m_entities[entity.id] = entity;
         m_systemKeyboardInput.add(entity);
         m_systemMouseInput.add(entity);
-        m_systemRenderer.add(entity);
+        _mSystemWormRenderer.add(entity);
         m_systemNetwork.add(entity);
         m_systemInterpolation.add(entity);
         m_systemCamera.add(entity);
@@ -178,7 +183,7 @@ public class GameModel
         m_systemKeyboardInput.remove(id);
         m_systemMouseInput.remove(id);
         m_systemNetwork.remove(id);
-        m_systemRenderer.remove(id);
+        _mSystemWormRenderer.remove(id);
         m_systemInterpolation.remove(id);
         m_systemCamera.remove(id);
     }

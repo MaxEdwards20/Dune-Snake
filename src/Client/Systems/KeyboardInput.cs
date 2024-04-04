@@ -13,7 +13,7 @@ namespace Client.Systems
         private KeyboardState m_statePrevious = Keyboard.GetState();
         private Controls m_controls;
 
-        public KeyboardInput(List<Tuple<Shared.Components.Input.Type, Keys>> mapping, Controls controls) : base(typeof(Shared.Components.Input))
+        public KeyboardInput(List<Tuple<Shared.Components.Input.Type, Keys>> mapping, Controls controls) : base(typeof(Shared.Components.Worm))
         {
             m_controls = controls;
         }
@@ -35,6 +35,10 @@ namespace Client.Systems
             // We have a dictionary of entities, so we need to iterate through them
             foreach (var entity in m_entities)
             {
+                if (!entity.Value.contains<Input>())
+                {
+                    continue;
+                }
                 var inputs = new List<Input.Type>();
                 if (keyPressed(m_controls.SnakeLeft.key))
                 {
