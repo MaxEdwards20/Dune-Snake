@@ -12,7 +12,7 @@ namespace Client.Systems
         private MouseState previousMouseState = Mouse.GetState();
         private Controls m_controls;
 
-        public MouseInput(Controls controls) : base(typeof(Shared.Components.Head), typeof(Tail), typeof(ParentId))
+        public MouseInput(Controls controls) : base(typeof(Shared.Components.Worm))
         {
             m_controls = controls; 
         }

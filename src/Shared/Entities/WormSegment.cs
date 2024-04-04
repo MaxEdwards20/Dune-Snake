@@ -16,6 +16,7 @@ namespace Shared.Entities
             entity.add(new Movement(moveRate, rotateRate));
             entity.add(new ParentId(parent));
             entity.add(new Collision());
+            entity.add(new Worm());
             return entity;
         }
     }

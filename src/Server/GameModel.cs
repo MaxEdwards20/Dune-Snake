@@ -133,7 +133,7 @@ namespace Server
 
         private void createNewWorm(int clientId, string name)
         {
-            var startLocation = new Vector2(200, 200);
+            var startLocation = getLeastDenseStartLocation();
             var rotationRate = (float) Math.PI / 1000;
             var moveRate = 0.1f;
             var headSize = 100;
@@ -175,6 +175,15 @@ namespace Server
                 }
             }
             
+        }
+
+        private Vector2 getLeastDenseStartLocation()
+        {
+            // We want to start the player in the least dense area of the screen
+            // For now, we'll just start them randomly generated location
+
+            Random random = new Random();
+            return new Vector2(random.Next(0, 800), random.Next(0, 600));
         }
     }
 }

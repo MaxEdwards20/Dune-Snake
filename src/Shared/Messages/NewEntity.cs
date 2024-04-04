@@ -80,6 +80,11 @@ namespace Shared.Messages
                 this.hasCollision = true;
             }
             
+            if (entity.contains<Worm>())
+            {
+                this.hasWorm = true;
+            }
+            
             if (entity.contains<Name>())
             {
                 this.hasName = true;
@@ -106,6 +111,7 @@ namespace Shared.Messages
         public uint parentId { get; private set; }
         public bool hasChild { get; private set; } = false;
         public uint childId { get; private set; }
+        public bool hasWorm { get; private set; } = false;
         public bool hasName { get; private set; } = false;
         public string name { get; private set; }
 
@@ -147,7 +153,9 @@ namespace Shared.Messages
             data.AddRange(BitConverter.GetBytes(hasTail));
             serializeParentId(data);
             serializeChild(data);
+            data.AddRange(BitConverter.GetBytes(hasWorm));
             serializeName(data); // Make sure this is the last item to serialize
+            
             
             return data.ToArray();
         }
@@ -174,7 +182,15 @@ namespace Shared.Messages
             offset = parseTail(data, offset);
             offset = parseParent(data, offset);
             offset = parseChild(data, offset);
+            offset = parseWorm(data, offset);
             offset = parseName(data, offset); // Make sure this is the last item to parse
+            return offset;
+        }
+
+        private int parseWorm(byte[] data, int offset)
+        {
+            this.hasWorm = BitConverter.ToBoolean(data, offset);
+            offset += sizeof(bool);
             return offset;
         }
 

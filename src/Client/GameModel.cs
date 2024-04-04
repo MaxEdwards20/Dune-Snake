@@ -137,6 +137,11 @@ public class GameModel
         {
             entity.add(new ChildId(message.childId));
         }
+        
+        if (message.hasWorm)
+        {
+            entity.add(new Worm());
+        }
 
         if (message.hasName)
         {

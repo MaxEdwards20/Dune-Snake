@@ -17,6 +17,7 @@ public class WormTail
         entity.add(new Movement(moveRate, rotateRate));
         entity.add(new Collision());
         entity.add(new Tail());
+        entity.add(new Worm());
         return entity;
     }
 }

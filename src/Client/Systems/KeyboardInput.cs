@@ -13,7 +13,7 @@ namespace Client.Systems
         private KeyboardState m_statePrevious = Keyboard.GetState();
         private Controls m_controls;
 
-        public KeyboardInput(List<Tuple<Shared.Components.Input.Type, Keys>> mapping, Controls controls) : base(typeof(Shared.Components.Head), typeof(Tail), typeof(ParentId))
+        public KeyboardInput(List<Tuple<Shared.Components.Input.Type, Keys>> mapping, Controls controls) : base(typeof(Shared.Components.Worm))
         {
             m_controls = controls;
         }

@@ -96,7 +96,7 @@ namespace Client.Menu
 
         private bool connectToServer()
         {
-            return MessageQueueClient.instance.initialize("localhost", 3050);
+            return MessageQueueClient.instance.initialize("localhost", 4010);
         }
 
         private void escape(GameTime gameTime, float scale)

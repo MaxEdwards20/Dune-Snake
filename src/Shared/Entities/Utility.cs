@@ -117,7 +117,7 @@ public class Utility
     }
 
     
-    // We don't need to update the entire snake with these because it will be updated in the next frame when thrust is applied
+    // We don't need to update the entire worm with these because it will be updated in the next frame when thrust is applied
     private static void applyLeftRotation(Entity head, TimeSpan elapsedTime)
     {
         var position = head.get<Position>();
