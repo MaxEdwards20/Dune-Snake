@@ -166,12 +166,16 @@ namespace Server
             // Step 4: Let all other clients know about this new player entity
             // Remove components not needed for "other" players
             player.remove<Shared.Components.Input>();
-            Message message = new NewEntity(player);
+            Message playerMessage = new NewEntity(player);
+            Message segmentMessage = new NewEntity(segment);
+            Message tailMessage = new NewEntity(tail);
             foreach (int otherId in m_clients)
             {
                 if (otherId != clientId)
                 {
-                    MessageQueueServer.instance.sendMessage(otherId, message);
+                    MessageQueueServer.instance.sendMessage(otherId, playerMessage);
+                    MessageQueueServer.instance.sendMessage(otherId, segmentMessage);
+                    MessageQueueServer.instance.sendMessage(otherId, tailMessage);
                 }
             }
             

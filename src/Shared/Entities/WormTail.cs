@@ -11,8 +11,8 @@ public class WormTail
     {
         Entity entity = new Entity();
         entity.add(new Position(position));
+        entity.add(new Appearance("Textures/tail"));
         entity.add(new Size(new Vector2(size, size)));
-        entity.add(new Appearance("Textures/tail")); 
         entity.add(new ParentId(parent));
         entity.add(new Movement(moveRate, rotateRate));
         entity.add(new Collision());
