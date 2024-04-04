@@ -104,8 +104,11 @@ namespace Server.Systems
                 switch (input)
                 {
                     case Shared.Components.Input.Type.SnakeUp:
-                        Shared.Entities.Utility.thrust(entity, message.elapsedTime, m_entities);
-                        m_reportThese.Add(message.entityId);
+                        var snake = Shared.Entities.Utility.thrust(entity, message.elapsedTime, m_entities);
+                        foreach (var part in snake)
+                        {
+                            m_reportThese.Add(part.id);
+                        }
                         break;
                     case Shared.Components.Input.Type.RotateLeft:
                         Shared.Entities.Utility.rotateLeft(entity, message.elapsedTime, m_entities);
