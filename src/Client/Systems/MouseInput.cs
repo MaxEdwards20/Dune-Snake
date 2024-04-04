@@ -12,7 +12,7 @@ namespace Client.Systems
         private MouseState previousMouseState = Mouse.GetState();
         private Controls m_controls;
 
-        public MouseInput(Controls controls) : base(typeof(Shared.Components.Input))
+        public MouseInput(Controls controls) : base(typeof(Shared.Components.Head), typeof(Tail), typeof(ParentId))
         {
             m_controls = controls; 
         }
@@ -30,6 +30,10 @@ namespace Client.Systems
             foreach (var entityPair in m_entities)
             {
                 var entity = entityPair.Value;
+                if (!entity.contains<Input>())
+                {
+                    continue;
+                }
                 // Try to get the Position component safely
                 try
                 {

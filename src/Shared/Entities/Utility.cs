@@ -7,7 +7,7 @@ namespace Shared.Entities;
 // NOTE: We will probably move this over to the wormMovement system where behavior lives
 public class Utility
 {
-    // Everything that hits these endpoints SHOULD be a WormHead (start of a LinkedList of worm parts)
+    // The entity that hits these endpoints should be the head of the worm, with the rest of the worm in the entities
     public static void thrust(Entity entity, TimeSpan elapsedTime, Dictionary<uint, Entity> entities)
     {
         var head = getHead(entity, entities);
