@@ -15,8 +15,8 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 
 ## Items to Develop
 
-- [ ] Menu Screen to let player name themselves (probably similar to how control selection screen will work)
-- [ ] 3 different animated sprites for the spice - Satchel
+- [ ] Menu Screen to let player name themselves (probably similar to how control selection screen will work) - Satchel
+- [ ] 3 different animated sprites for the spice 
 - [ ] Mouse input support on Menu Screens
 - [ ] Sound effects on death of worm and when food is eaten - Satchel
 - [ ] Collision detection. Know whether we hit spice or another sandworm
