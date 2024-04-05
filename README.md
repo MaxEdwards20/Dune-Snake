@@ -25,6 +25,8 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 - [ ] Record players score, kills and highest position. Probably can be added to the `GameScores` object.
 - [ ] Game over screen with score, kills, and highest position achieved
 - [ ] Particle system for the death of a sandworm
+- [ ] Game continues to show/play even after the player dies
+- [ ] The new player should join in a location that has the least density of other snakes; a safe location
 
 ## Done
 
