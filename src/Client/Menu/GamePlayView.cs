@@ -113,7 +113,7 @@ namespace Client.Menu
             try
             {
                 MessageQueueClient.instance.sendMessage(new Shared.Messages.Disconnect());
-                MessageQueueClient.instance.shutdown();
+                MessageQueueClient.shutdown();
             }
             catch (SocketException e)
             {
