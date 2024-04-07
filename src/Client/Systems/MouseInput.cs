@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Input;
 using Shared.Entities;
 using System;
 using System.Collections.Generic;
+using Client.Components;
 using Shared.Components;
 
 namespace Client.Systems

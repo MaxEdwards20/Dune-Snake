@@ -9,6 +9,8 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
 using System.Collections.Generic;
+using Client.Components;
+using Client.Systems;
 using Shared.Components;
 using Shared.Systems;
 
