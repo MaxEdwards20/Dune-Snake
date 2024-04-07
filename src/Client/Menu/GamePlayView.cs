@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Client.IO;
 using System.Runtime.Serialization;
+using Client.Components;
 using Microsoft.Xna.Framework.Input;
 using Shared.Components;
 

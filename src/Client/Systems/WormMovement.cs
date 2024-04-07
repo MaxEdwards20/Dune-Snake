@@ -2,9 +2,12 @@ using System;
 
 namespace Client.Systems;
 
-public class WormMovement : Shared.Systems.System
+public class WormMovement : Shared.Systems.System 
 {
-    public override void update(TimeSpan elapsedTime)
+    public WormMovement() : base() 
+    {
+    }
+    public override void update(TimeSpan elapsedTime) 
     {
     }
 }
