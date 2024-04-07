@@ -7,8 +7,9 @@ using System.IO;
 using System.IO.IsolatedStorage;
 using System.Runtime.Serialization.Json;
 using System.Threading.Tasks;
+using Shared.Components;
 
-namespace Shared.Components
+namespace Client.Components
 {
     [DataContract(Name = "Controls")]
     public class Controls : Component

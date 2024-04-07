@@ -1,12 +1,16 @@
+using System;
+using System.IO;
 using Microsoft.Xna.Framework.Input;
 using Shared.Components;
 using System.IO.IsolatedStorage;
 using System.Runtime.Serialization.Json;
+using System.Threading.Tasks;
+using Client.Components;
 
 
-namespace Shared.Systems;
+namespace Client.Systems;
 
-public class ControlsPersistence: System
+public class ControlsPersistence: Shared.Systems.System
 {
     // Now we want to make all of these control settings persist across game sessions. We will use the same serialization technique we used for the high scores.
     private bool saving = false;
