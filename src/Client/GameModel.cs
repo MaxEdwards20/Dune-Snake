@@ -21,7 +21,7 @@ public class GameModel
     private Systems.Camera m_systemCamera;
     private Systems.KeyboardInput m_systemKeyboardInput;
     private Systems.Interpolation m_systemInterpolation;
-    private Systems.WormRenderer m_systemWormRenderer;
+    private Systems.Renderer m_renderer;
     private Shared.Systems.WormMovement m_systemWormMovement;
     private Controls m_controls;
     private GraphicsDeviceManager m_graphics;
@@ -45,7 +45,7 @@ public class GameModel
 
     public void render(TimeSpan elapsedTime, SpriteBatch spriteBatch)
     {
-        m_systemWormRenderer.render(elapsedTime, spriteBatch);
+        m_renderer.render(elapsedTime, spriteBatch);
     }
 
     /// <summary>
@@ -60,7 +60,7 @@ public class GameModel
         m_entities = new Dictionary<uint, Entity>();
         m_systemInterpolation = new Systems.Interpolation();
         m_systemCamera = new Systems.Camera(new Vector2(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight));
-        m_systemWormRenderer = new Systems.WormRenderer(m_systemCamera, graphics, m_font);
+        m_renderer = new Systems.Renderer(m_systemCamera, graphics, m_font);
         m_systemWormMovement = new Shared.Systems.WormMovement();
         m_systemNetwork = new Systems.Network();
 
@@ -167,7 +167,7 @@ public class GameModel
         m_entities[entity.id] = entity;
         m_systemKeyboardInput.add(entity);
         m_systemWormMovement.add(entity);
-        m_systemWormRenderer.add(entity);
+        m_renderer.add(entity);
         m_systemNetwork.add(entity);
         m_systemInterpolation.add(entity);
         m_systemCamera.add(entity);
@@ -184,7 +184,7 @@ public class GameModel
         m_systemKeyboardInput.remove(id);
         m_systemWormMovement.remove(id);
         m_systemNetwork.remove(id);
-        m_systemWormRenderer.remove(id);
+        m_renderer.remove(id);
         m_systemInterpolation.remove(id);
         m_systemCamera.remove(id);
     }
