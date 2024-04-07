@@ -16,15 +16,13 @@ public class Utility
         return snake;
     }
 
-    public static void rotateLeft(Entity entity, TimeSpan elapsedTime, Dictionary<uint, Entity> entities)
+    public static void rotateLeft(Entity head, TimeSpan elapsedTime)
     {
-        var head = getHead(entity, entities);
         applyLeftRotation(head, elapsedTime);
     }
 
-    public static void rotateRight(Entity entity, TimeSpan elapsedTime, Dictionary<uint, Entity> entities)
+    public static void rotateRight(Entity head, TimeSpan elapsedTime)
     {
-        var head = getHead(entity, entities);
         applyRightRotation(head, elapsedTime);
     }
     

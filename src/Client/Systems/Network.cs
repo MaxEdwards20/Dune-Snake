@@ -21,6 +21,7 @@ namespace Client.Systems
         private NewEntityHandler m_newEntityHandler;
         private uint m_lastMessageId = 0;
         private HashSet<uint> m_updatedEntities = new HashSet<uint>();
+        
 
         /// <summary>
         /// Primary activity in the constructor is to setup the command map
@@ -96,14 +97,11 @@ namespace Client.Systems
                         {
                             switch (input)
                             {
-                                case Shared.Components.Input.Type.SnakeUp:
-                                    Shared.Entities.Utility.thrust(entity, message.elapsedTime, m_entities);
-                                    break;
                                 case Shared.Components.Input.Type.RotateLeft:
-                                    Shared.Entities.Utility.rotateLeft(entity, message.elapsedTime, m_entities);
+                                    Shared.Systems.WormMovement.ninetyLeft(entity, message.elapsedTime);
                                     break;
                                 case Shared.Components.Input.Type.RotateRight:
-                                    Shared.Entities.Utility.rotateRight(entity, message.elapsedTime, m_entities);
+                                    Shared.Systems.WormMovement.ninetyRight(entity, message.elapsedTime);
                                     break;
                             }
                         }
