@@ -91,6 +91,8 @@ public class WormMovement : Shared.Systems.System
     }
 
 
+    // TODO: Add a periodic 2/second or maybe 10/second updates of the position to the server
+    // TODO: Transition to using the queue of positions each entity should move towards
     private void applyThrust(Entity wormHead, TimeSpan elapsedTime)
     {
         // Get the movement component of the head to determine the direction and speed
@@ -113,14 +115,14 @@ public class WormMovement : Shared.Systems.System
         while (true)
         {
             // Assuming each segment has a ParentId component that points to its preceding segment
-            if (!currentSegment.contains<ParentId>())
+            if (!currentSegment.contains<ChildId>())
             {
                 break; // No more segments in the chain
             }
             
             // Get the next segment in the chain
-            uint parentId = currentSegment.get<ParentId>().id;
-            var nextSegment = m_entities[parentId];
+            uint childId = currentSegment.get<ChildId>().id;
+            var nextSegment = m_entities[childId];
 
             // Temporarily store the current segment's position to use for the next segment
             Vector2 tempPosition = nextSegment.get<Position>().position;
