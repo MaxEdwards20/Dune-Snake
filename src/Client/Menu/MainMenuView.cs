@@ -96,7 +96,7 @@ namespace Client.Menu
         {
             if (m_currentSelection == MenuState.NewGame)
             {
-                newState = MenuStateEnum.GamePlay;
+                newState = MenuStateEnum.ChooseName;
             }
             if (m_currentSelection == MenuState.HighScores)
             {
