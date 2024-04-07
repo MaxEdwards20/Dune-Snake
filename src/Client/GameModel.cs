@@ -26,6 +26,7 @@ public class GameModel
     private Controls m_controls;
     private GraphicsDeviceManager m_graphics;
     private SpriteFont m_font;
+    private Texture2D m_sand;
 
     /// <summary>
     /// This is where everything performs its update.
@@ -56,11 +57,13 @@ public class GameModel
     public bool initialize(ContentManager contentManager, Controls controls, GraphicsDeviceManager graphics)
     {
         m_font = contentManager.Load<SpriteFont>("Fonts/menu");
+        m_sand = contentManager.Load<Texture2D>("Textures/SandTile");
+
         m_contentManager = contentManager;
         m_entities = new Dictionary<uint, Entity>();
         m_systemInterpolation = new Systems.Interpolation();
         m_systemCamera = new Systems.Camera(new Vector2(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight));
-        m_renderer = new Systems.Renderer(m_systemCamera, graphics, m_font);
+        m_renderer = new Systems.Renderer(m_systemCamera, graphics, m_font, m_sand);
         m_systemWormMovement = new Shared.Systems.WormMovement();
         m_systemNetwork = new Systems.Network();
 
@@ -111,19 +114,19 @@ public class GameModel
         {
             entity.add(new Shared.Components.Input(message.inputs));
         }
-        
+
         if (message.hasCollision)
         {
             entity.add(new Collision());
         }
-        
+
         // Worm parts
-        
+
         if (message.hasHead)
         {
             entity.add(new Head());
         }
-        
+
         if (message.hasTail)
         {
             entity.add(new Tail());
@@ -138,7 +141,7 @@ public class GameModel
         {
             entity.add(new ChildId(message.childId));
         }
-        
+
         if (message.hasWorm)
         {
             entity.add(new Worm());
