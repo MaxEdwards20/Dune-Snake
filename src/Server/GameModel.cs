@@ -139,7 +139,7 @@ namespace Server
         {
             var startLocation = getLeastDenseStartLocation();
             var rotationRate = (float) Math.PI / 1000;
-            var moveRate = 10.0f;
+            var moveRate = 0.1f;
             var headSize = 100;
             var bodySize = 80;
             
