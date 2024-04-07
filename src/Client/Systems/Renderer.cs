@@ -48,7 +48,7 @@ public class Renderer : Shared.Systems.System
         //spriteBatch.Begin();
         spriteBatch.Begin(transformMatrix: matrix);
 
-        Rectangle rect = new(0, 0, 100, 100);
+        Rectangle rect = new(0, 0, 500, 500);
         spriteBatch.Draw(
             m_sand,
             rect,

@@ -28,6 +28,8 @@ public class WormMovement : Shared.Systems.System
         foreach (var head in heads)
         {
             applyThrust(head, elapsedTime);
+            applyThrust(head, elapsedTime);
+            applyThrust(head, elapsedTime);
         }
     }
     
