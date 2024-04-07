@@ -7,23 +7,22 @@ namespace Shared.Entities;
 // NOTE: We will probably move this over to the wormMovement system where behavior lives
 public class Utility
 {
-    // Everything that hits these endpoints SHOULD be a WormHead (start of a LinkedList of worm parts)
-    public static void thrust(Entity entity, TimeSpan elapsedTime, Dictionary<uint, Entity> entities)
+    // The entity that hits these endpoints should be the head of the worm, with the rest of the worm in the entities
+    public static List<Entity> thrust(Entity entity, TimeSpan elapsedTime, Dictionary<uint, Entity> entities)
     {
         var head = getHead(entity, entities);
         var snake = getSnakeFromHead(head, entities);
         applyThrust(snake, elapsedTime);
+        return snake;
     }
 
-    public static void rotateLeft(Entity entity, TimeSpan elapsedTime, Dictionary<uint, Entity> entities)
+    public static void rotateLeft(Entity head, TimeSpan elapsedTime)
     {
-        var head = getHead(entity, entities);
         applyLeftRotation(head, elapsedTime);
     }
 
-    public static void rotateRight(Entity entity, TimeSpan elapsedTime, Dictionary<uint, Entity> entities)
+    public static void rotateRight(Entity head, TimeSpan elapsedTime)
     {
-        var head = getHead(entity, entities);
         applyRightRotation(head, elapsedTime);
     }
     
@@ -117,7 +116,7 @@ public class Utility
     }
 
     
-    // We don't need to update the entire snake with these because it will be updated in the next frame when thrust is applied
+    // We don't need to update the entire worm with these because it will be updated in the next frame when thrust is applied
     private static void applyLeftRotation(Entity head, TimeSpan elapsedTime)
     {
         var position = head.get<Position>();

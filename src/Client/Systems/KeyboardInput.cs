@@ -4,6 +4,7 @@ using Shared.Entities;
 using System;
 using System.Collections.Generic;
 using Shared.Components;
+using Client.Components;
 
 namespace Client.Systems
 {
@@ -35,23 +36,22 @@ namespace Client.Systems
             // We have a dictionary of entities, so we need to iterate through them
             foreach (var entity in m_entities)
             {
+                if (!entity.Value.contains<Input>())
+                {
+                    continue;
+                }
                 var inputs = new List<Input.Type>();
-                if (keyPressed(m_controls.SnakeLeft.key))
+                if (keyNewlyPressed(m_controls.SnakeLeft.key))
                 {
                     inputs.Add(Input.Type.RotateLeft);
-                    Utility.rotateLeft(entity.Value, elapsedTime, m_entities);
+                    Shared.Systems.WormMovement.ninetyLeft(entity.Value, elapsedTime);
 
                 }
-                if (keyPressed(m_controls.SnakeRight.key))
+                if (keyNewlyPressed(m_controls.SnakeRight.key))
                 {
                     inputs.Add(Input.Type.RotateRight);
-                    Utility.rotateRight(entity.Value, elapsedTime, m_entities);
-
+                    Shared.Systems.WormMovement.ninetyRight(entity.Value, elapsedTime);
                 }
-                // Always add thrust
-                inputs.Add(Input.Type.SnakeUp);
-                Utility.thrust(entity.Value, elapsedTime, m_entities);
-
                 if (inputs.Count > 0)
                 {
                     // Assuming you have a messaging system to handle input

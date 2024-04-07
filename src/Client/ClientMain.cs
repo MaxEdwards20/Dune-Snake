@@ -9,6 +9,8 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
 using System.Collections.Generic;
+using Client.Components;
+using Client.Systems;
 using Shared.Components;
 using Shared.Systems;
 
@@ -43,8 +45,10 @@ namespace Client
         protected override void Initialize()
         {
             // For Graders: You can change the resolution here
-            m_graphics.PreferredBackBufferWidth = 1920;
-            m_graphics.PreferredBackBufferHeight = 1080;
+            // m_graphics.PreferredBackBufferWidth = 1920;
+            // m_graphics.PreferredBackBufferHeight = 1080;
+            m_graphics.PreferredBackBufferWidth = 1000;
+            m_graphics.PreferredBackBufferHeight = 750;
             m_graphics.ApplyChanges();
             
             // Load the controls

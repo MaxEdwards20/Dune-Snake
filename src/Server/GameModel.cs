@@ -4,6 +4,7 @@ using Shared.Components;
 using Shared.Components.Appearance;
 using Shared.Entities;
 using Shared.Messages;
+using Shared.Systems;
 
 namespace Server
 {
@@ -12,7 +13,7 @@ namespace Server
         private HashSet<int> m_clients = new HashSet<int>();
         private Dictionary<uint, Entity> m_entities = new Dictionary<uint, Entity>();
         private Dictionary<int, uint> m_clientToEntityId = new Dictionary<int, uint>();
-
+        private WormMovement m_systemWormMovement = new WormMovement();
         Systems.Network m_systemNetwork = new Server.Systems.Network();
 
         /// <summary>
@@ -23,6 +24,7 @@ namespace Server
         public void update(TimeSpan elapsedTime)
         {
             m_systemNetwork.update(elapsedTime, MessageQueueServer.instance.getMessages());
+            m_systemWormMovement.update(elapsedTime);
         }
 
         /// <summary>
@@ -89,6 +91,7 @@ namespace Server
 
             m_entities[entity.id] = entity;
             m_systemNetwork.add(entity);
+            m_systemWormMovement.add(entity);
         }
 
         /// <summary>
@@ -99,6 +102,7 @@ namespace Server
         {
             m_entities.Remove(id);
             m_systemNetwork.remove(id);
+            m_systemWormMovement.remove(id);
         }
 
         /// <summary>
@@ -133,7 +137,7 @@ namespace Server
 
         private void createNewWorm(int clientId, string name)
         {
-            var startLocation = new Vector2(200, 200);
+            var startLocation = getLeastDenseStartLocation();
             var rotationRate = (float) Math.PI / 1000;
             var moveRate = 0.1f;
             var headSize = 100;
@@ -166,15 +170,30 @@ namespace Server
             // Step 4: Let all other clients know about this new player entity
             // Remove components not needed for "other" players
             player.remove<Shared.Components.Input>();
-            Message message = new NewEntity(player);
+            
+            // Now send the new entities to all other clients
+            Message playerMessage = new NewEntity(player);
+            Message segmentMessage = new NewEntity(segment);
+            Message tailMessage = new NewEntity(tail);
             foreach (int otherId in m_clients)
             {
                 if (otherId != clientId)
                 {
-                    MessageQueueServer.instance.sendMessage(otherId, message);
+                    MessageQueueServer.instance.sendMessage(otherId, playerMessage);
+                    MessageQueueServer.instance.sendMessage(otherId, segmentMessage);
+                    MessageQueueServer.instance.sendMessage(otherId, tailMessage);
                 }
             }
             
+        }
+
+        private Vector2 getLeastDenseStartLocation()
+        {
+            // We want to start the player in the least dense area of the screen
+            // For now, we'll just start them randomly generated location
+
+            Random random = new Random();
+            return new Vector2(random.Next(0, 800), random.Next(0, 600));
         }
     }
 }

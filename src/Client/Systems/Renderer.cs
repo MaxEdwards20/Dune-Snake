@@ -8,6 +8,7 @@ using Shared.Components.Appearance;
 
 using System;
 using System.Collections.Generic;
+using Client.Components;
 using Client.Menu;
 
 namespace Client.Systems;
@@ -20,9 +21,7 @@ public class Renderer : Shared.Systems.System
 
     public Renderer(Systems.Camera camera, GraphicsDeviceManager graphics, SpriteFont font) :
         base(
-            typeof(Client.Components.Sprite),
-            typeof(Shared.Components.Position),
-            typeof(Shared.Components.Size)
+           typeof(Position), typeof(Sprite)
         )
     {
         m_camera = camera;
@@ -44,8 +43,8 @@ public class Renderer : Shared.Systems.System
         matrix *= Matrix.CreateTranslation(new Vector3(offset, 0));
         matrix *= Matrix.CreateScale(scaleX, scaleY, 1);
 
-        spriteBatch.Begin(transformMatrix: matrix);
-        // TODO: Adjust this to render all of the tails first, then body segments, then heads
+        // spriteBatch.Begin(transformMatrix: matrix);
+        spriteBatch.Begin();
         var heads = new List<Entity>();
         var bodies = new List<Entity>();
         var tails = new List<Entity>();
@@ -57,7 +56,7 @@ public class Renderer : Shared.Systems.System
                 heads.Add(entity);
             else if (entity.contains<Tail>())
                 tails.Add(entity);
-            else if (entity.contains<ParentId>()) // The body has these
+            else if (entity.contains<Worm>())
                 bodies.Add(entity);
             else
                 others.Add(entity);
@@ -110,7 +109,7 @@ public class Renderer : Shared.Systems.System
 
         if (entity.contains<Name>())
         {
-            // We want the name position to be above the entity
+            // We want the name position to be above the head
             Vector2 namePosition = new Vector2(position.X - size.X + 10, position.Y - size.Y - 10);
             Drawing.DrawPlayerName(m_font, entity.get<Name>().name, namePosition, Color.White, spriteBatch);
         }
