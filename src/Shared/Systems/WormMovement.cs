@@ -34,12 +34,12 @@ public class WormMovement : Shared.Systems.System
 
     public static void ninetyLeft(Entity head, TimeSpan elapsedTime)
     {
-        applyLeftRotation(head, -90);
+        applyLeftRotation(head, -MathHelper.PiOver2);
     }
 
     public static void ninetyRight(Entity head, TimeSpan elapsedTime)
     {
-        applyRightRotation(head, 90);
+        applyRightRotation(head, MathHelper.PiOver2);
     }
     
     private static Entity getHead(Entity entity, Dictionary<uint, Entity> entities)
@@ -139,20 +139,18 @@ public class WormMovement : Shared.Systems.System
 
 
     // We don't need to update the entire worm with these because it will be updated in the next frame when thrust is applied
-    private static void applyLeftRotation(Entity head, int degrees)
+    private static void applyLeftRotation(Entity head, float radians)
     {
         var position = head.get<Position>();
         var movement = head.get<Movement>();
-        // Rotate left 90 degrees
-        position.orientation += degrees;
+        position.orientation += radians;
     }
 
-    private static void applyRightRotation(Entity head, int degrees)
+    private static void applyRightRotation(Entity head, float radians)
     {
         var position = head.get<Position>();
         var movement = head.get<Movement>();
-        // Rotate right 90 degrees
-        position.orientation += degrees;
+        position.orientation += radians;
     }
     
 }
