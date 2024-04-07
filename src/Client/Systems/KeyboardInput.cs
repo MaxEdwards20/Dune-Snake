@@ -4,6 +4,7 @@ using Shared.Entities;
 using System;
 using System.Collections.Generic;
 using Shared.Components;
+using Client.Components;
 
 namespace Client.Systems
 {
