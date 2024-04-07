@@ -59,7 +59,8 @@ namespace Client
                 { MenuStateEnum.HighScores, new HighScoresView() },
                 { MenuStateEnum.Controls, new ControlSettingsView(m_controls) },
                 { MenuStateEnum.Help, new HelpView() },
-                { MenuStateEnum.Credits, new AboutView() }
+                { MenuStateEnum.Credits, new AboutView() },
+                { MenuStateEnum.ChooseName, new ChooseNameView() }
             };
 
             // Give all game states a chance to initialize, other than constructor

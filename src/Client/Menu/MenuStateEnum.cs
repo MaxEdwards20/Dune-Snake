@@ -4,6 +4,7 @@
     {
         MainMenu,
         GamePlay,
+        ChooseName,
         HighScores,
         Controls,
         Help,
