@@ -47,12 +47,12 @@ namespace Client.Menu
                     }
                     else if (key == Keys.Enter && playerName.Length > 0) // Confirm with Enter key
                     {
-                        
+
 
                         // TODO SET PLAYER NAME
 
                         // Transition to the next state (e.g., HowToPlay)
-                        return MenuStateEnum.GamePlay;
+                        return MenuStateEnum.HowToPlay;
                     }
                     else
                     {
