@@ -111,11 +111,11 @@ namespace Server.Systems
                         // }
                         // break;
                     case Shared.Components.Input.Type.RotateLeft:
-                        Shared.Entities.Utility.rotateLeft(entity, message.elapsedTime);
+                        Shared.Systems.WormMovement.ninetyLeft(entity, message.elapsedTime);
                         m_reportThese.Add(message.entityId);
                         break;
                     case Shared.Components.Input.Type.RotateRight:
-                        Shared.Entities.Utility.rotateRight(entity, message.elapsedTime);
+                        Shared.Systems.WormMovement.ninetyRight(entity, message.elapsedTime);
                         m_reportThese.Add(message.entityId);
                         break;
                 }

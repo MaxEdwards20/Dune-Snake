@@ -39,15 +39,13 @@ public class WormMovement : Shared.Systems.System
         return snake;
     }
 
-    public static void ninetyLeft(Entity entity, TimeSpan elapsedTime, Dictionary<uint, Entity> entities)
+    public static void ninetyLeft(Entity head, TimeSpan elapsedTime)
     {
-        var head = getHead(entity, entities);
         applyLeftRotation(head, -90);
     }
 
-    public static void ninetyRight(Entity entity, TimeSpan elapsedTime, Dictionary<uint, Entity> entities)
+    public static void ninetyRight(Entity head, TimeSpan elapsedTime)
     {
-        var head = getHead(entity, entities);
         applyRightRotation(head, 90);
     }
     

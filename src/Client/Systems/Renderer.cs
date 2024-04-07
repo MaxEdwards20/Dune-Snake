@@ -12,13 +12,13 @@ using Client.Menu;
 
 namespace Client.Systems;
 
-public class WormRenderer : Shared.Systems.System
+public class Renderer : Shared.Systems.System
 {
     private Systems.Camera m_camera;
     private GraphicsDeviceManager m_graphics;
     private SpriteFont m_font;
 
-    public WormRenderer(Systems.Camera camera, GraphicsDeviceManager graphics, SpriteFont font) :
+    public Renderer(Systems.Camera camera, GraphicsDeviceManager graphics, SpriteFont font) :
         base(
            typeof(Worm)
         )
@@ -43,7 +43,6 @@ public class WormRenderer : Shared.Systems.System
         matrix *= Matrix.CreateScale(scaleX, scaleY, 1);
 
         spriteBatch.Begin(transformMatrix: matrix);
-        // TODO: Adjust this to render all of the tails first, then body segments, then heads
         var heads = new List<Entity>();
         var bodies = new List<Entity>();
         var tails = new List<Entity>();

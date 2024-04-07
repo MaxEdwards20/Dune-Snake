@@ -44,13 +44,13 @@ namespace Client.Systems
                 if (keyNewlyPressed(m_controls.SnakeLeft.key))
                 {
                     inputs.Add(Input.Type.RotateLeft);
-                    Utility.rotateLeft(entity.Value, elapsedTime);
+                    Shared.Systems.WormMovement.ninetyLeft(entity.Value, elapsedTime);
 
                 }
                 if (keyNewlyPressed(m_controls.SnakeRight.key))
                 {
                     inputs.Add(Input.Type.RotateRight);
-                    Utility.rotateRight(entity.Value, elapsedTime);
+                    Shared.Systems.WormMovement.ninetyRight(entity.Value, elapsedTime);
                 }
                 if (inputs.Count > 0)
                 {
