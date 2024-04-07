@@ -41,7 +41,7 @@ namespace Client.IO
 
 
 
-        public void registerCommand(Control control, bool keyPressOnly, IInputDevice.CommandDelegate callback)
+        public void registerCommand(Client.Components.Control control, bool keyPressOnly, IInputDevice.CommandDelegate callback)
         {
             // If already registered, remove it!
             if (m_commandEntries.ContainsKey(control))

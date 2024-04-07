@@ -1,29 +1,54 @@
+using System;
 using Microsoft.Xna.Framework;
 using Shared.Components;
+using Shared.Entities;
 
-namespace Shared.Entities;
+namespace Shared.Systems;
 
-
-// NOTE: We will probably move this over to the wormMovement system where behavior lives
-public class Utility
+public class WormMovement : Shared.Systems.System 
 {
-    // The entity that hits these endpoints should be the head of the worm, with the rest of the worm in the entities
-    public static List<Entity> thrust(Entity entity, TimeSpan elapsedTime, Dictionary<uint, Entity> entities)
+    public WormMovement() : base(typeof(Shared.Components.Worm))
     {
-        var head = getHead(entity, entities);
+    }
+    
+    public override void update(TimeSpan elapsedTime) 
+    {
+        // Get all of the heads of the worms
+        var heads = new List<Entity>();
+        foreach (var entityPair in m_entities)
+        {
+            var entity = entityPair.Value;
+            if (entity.contains<Head>())
+            {
+                heads.Add(entity);;
+            }
+        }
+        
+        // Apply thrust to all of the worms
+        foreach (var head in heads)
+        {
+            thrust(head, elapsedTime, m_entities);
+        }
+    }
+    
+        // The entity that hits these endpoints should be the head of the worm, with the rest of the worm in the entities
+    private List<Entity> thrust(Entity head, TimeSpan elapsedTime, Dictionary<uint, Entity> entities)
+    {
         var snake = getSnakeFromHead(head, entities);
         applyThrust(snake, elapsedTime);
         return snake;
     }
 
-    public static void rotateLeft(Entity head, TimeSpan elapsedTime)
+    public static void ninetyLeft(Entity entity, TimeSpan elapsedTime, Dictionary<uint, Entity> entities)
     {
-        applyLeftRotation(head, elapsedTime);
+        var head = getHead(entity, entities);
+        applyLeftRotation(head, -90);
     }
 
-    public static void rotateRight(Entity head, TimeSpan elapsedTime)
+    public static void ninetyRight(Entity entity, TimeSpan elapsedTime, Dictionary<uint, Entity> entities)
     {
-        applyRightRotation(head, elapsedTime);
+        var head = getHead(entity, entities);
+        applyRightRotation(head, 90);
     }
     
     private static Entity getHead(Entity entity, Dictionary<uint, Entity> entities)
@@ -117,17 +142,20 @@ public class Utility
 
     
     // We don't need to update the entire worm with these because it will be updated in the next frame when thrust is applied
-    private static void applyLeftRotation(Entity head, TimeSpan elapsedTime)
+    private static void applyLeftRotation(Entity head, int degrees)
     {
         var position = head.get<Position>();
         var movement = head.get<Movement>();
-        position.orientation -= movement.rotateRate * elapsedTime.Milliseconds;
+        // Rotate left 90 degrees
+        position.orientation += degrees;
     }
 
-    private static void applyRightRotation(Entity head, TimeSpan elapsedTime)
+    private static void applyRightRotation(Entity head, int degrees)
     {
         var position = head.get<Position>();
         var movement = head.get<Movement>();
-        position.orientation += movement.rotateRate * elapsedTime.Milliseconds;
+        // Rotate right 90 degrees
+        position.orientation += degrees;
     }
+    
 }
