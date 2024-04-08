@@ -10,7 +10,7 @@ public class Camera : Shared.Systems.System
 {
     private Rectangle m_viewport = new();
     public Rectangle Viewport { get { return m_viewport; } }
-    private float m_zoom = 1.0f;
+    private float m_zoom = 0.6f;
     public float Zoom { get { return m_zoom; } }
 
     public Camera(Vector2 viewportSize) :

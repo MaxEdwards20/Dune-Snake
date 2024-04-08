@@ -34,7 +34,7 @@ namespace Shared.Messages
                 data.AddRange(BitConverter.GetBytes((UInt16)input));
             }
 
-            data.AddRange(BitConverter.GetBytes(elapsedTime.Milliseconds));
+            data.AddRange(BitConverter.GetBytes((float)elapsedTime.TotalMilliseconds));
 
             return data.ToArray();
         }

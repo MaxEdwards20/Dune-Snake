@@ -50,7 +50,9 @@ namespace Client.Systems
                 if (goal.updateWindow > TimeSpan.Zero && goal.updatedTime < goal.updateWindow)
                 {
                     goal.updatedTime += elapsedTime;
-                    var updateFraction = (float)elapsedTime.Milliseconds / goal.updateWindow.Milliseconds;
+                    var updateFraction = (float)(elapsedTime.TotalMilliseconds / goal.updateWindow.TotalMilliseconds);
+                    updateFraction = 1; // Use 1 for now, see below
+                                        // TODO: Something weird happening with interpolation, look more into this
 
                     // Turn first
                     position.orientation = position.orientation - (goal.startOrientation - goal.goalOrientation) * updateFraction;
