@@ -146,6 +146,7 @@ public class GameModel
         if (message.hasWorm)
         {
             entity.add(new Worm());
+            entity.add(new AnchorQueue()); // We implicitly need this because every worm part has it
         }
 
         if (message.hasName)

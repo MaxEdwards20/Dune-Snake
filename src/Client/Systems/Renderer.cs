@@ -19,10 +19,7 @@ public class Renderer : Shared.Systems.System
     private GraphicsDeviceManager m_graphics;
     private SpriteFont m_font;
     private Texture2D m_sand;
-
-
-
-
+    
     public Renderer(Systems.Camera camera, GraphicsDeviceManager graphics, SpriteFont font, Texture2D sand) :
         base(
            typeof(Position), typeof(Sprite)

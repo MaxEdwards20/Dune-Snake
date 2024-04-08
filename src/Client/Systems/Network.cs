@@ -4,8 +4,10 @@ using Shared.Components;
 using Shared.Messages;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Mail;
 using System.Runtime.InteropServices;
+using Shared.Systems;
 using Input = Shared.Components.Input;
 
 namespace Client.Systems
@@ -91,6 +93,8 @@ namespace Client.Systems
                 if (message.type == Shared.Messages.Type.Input)
                 {
                     var entity = m_entities[message.entityId];
+                    Debug.Assert(entity.contains<Head>());
+                    var worm = WormMovement.getWormFromHead(entity, m_entities);
                     if (m_updatedEntities.Contains(entity.id))
                     {
                         foreach (var input in message.inputs)
@@ -98,10 +102,10 @@ namespace Client.Systems
                             switch (input)
                             {
                                 case Shared.Components.Input.Type.RotateLeft:
-                                    Shared.Systems.WormMovement.ninetyLeft(entity, message.elapsedTime);
+                                    Shared.Systems.WormMovement.ninetyLeft(worm, message.elapsedTime);
                                     break;
                                 case Shared.Components.Input.Type.RotateRight:
-                                    Shared.Systems.WormMovement.ninetyRight(entity, message.elapsedTime);
+                                    Shared.Systems.WormMovement.ninetyRight(worm, message.elapsedTime);
                                     break;
                             }
                         }
