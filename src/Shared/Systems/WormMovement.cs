@@ -73,9 +73,10 @@ public class WormMovement : Shared.Systems.System
             {
                 if (queueComponent.m_anchorPositions.Count == 0)
                 {
-                    // Add the current parent position to the queue if I don't have one of my own
-                    var parent = snake[i - 1];
-                    queueComponent.m_anchorPositions.Enqueue(parent.get<Position>());
+                    continue;
+                    // // Add the current parent position to the queue if I don't have one of my own
+                    // var parent = snake[i - 1];
+                    // queueComponent.m_anchorPositions.Enqueue(parent.get<Position>());
                 }
                 
                 // Check where we want to move towards
