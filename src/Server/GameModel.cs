@@ -4,6 +4,7 @@ using Shared.Components;
 using Shared.Components.Appearance;
 using Shared.Entities;
 using Shared.Messages;
+using Shared.Systems;
 
 namespace Server
 {
@@ -12,7 +13,7 @@ namespace Server
         private HashSet<int> m_clients = new HashSet<int>();
         private Dictionary<uint, Entity> m_entities = new Dictionary<uint, Entity>();
         private Dictionary<int, uint> m_clientToEntityId = new Dictionary<int, uint>();
-
+        private WormMovement m_systemWormMovement = new WormMovement();
         Systems.Network m_systemNetwork = new Server.Systems.Network();
 
         /// <summary>
@@ -23,6 +24,7 @@ namespace Server
         public void update(TimeSpan elapsedTime)
         {
             m_systemNetwork.update(elapsedTime, MessageQueueServer.instance.getMessages());
+            m_systemWormMovement.update(elapsedTime);
         }
 
         /// <summary>
@@ -89,6 +91,7 @@ namespace Server
 
             m_entities[entity.id] = entity;
             m_systemNetwork.add(entity);
+            m_systemWormMovement.add(entity);
         }
 
         /// <summary>
@@ -99,6 +102,7 @@ namespace Server
         {
             m_entities.Remove(id);
             m_systemNetwork.remove(id);
+            m_systemWormMovement.remove(id);
         }
 
         /// <summary>

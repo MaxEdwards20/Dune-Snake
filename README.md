@@ -11,22 +11,26 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 - [ ] Satchel: Pick head, body, and tail texture for the sandworm
 - [ ] Satchel: Keyboard vs. Mouse input menu screen - Satchel
 - [ ] Caden: Map generation
-- [ ] Max: Spice generation when we spawn
+- [ ] Max: Snake Movement with the queue system
+- [ ] Caden: Spice generation when we spawn
+- [ ] Caden: Periodic spice generation throughout the game
 
 ## Items to Develop
 
 - [ ] Menu Screen to let player name themselves (probably similar to how control selection screen will work) - Satchel
-- [ ] 3 different animated sprites for the spice 
+- [ ] Keyboard support for left, right, up, down, diagonal up left and diagonal up right. Also add these to the wormMovement system.
+- [ ] 3 different animated sprites for the spice
 - [ ] Mouse input support on Menu Screens
 - [ ] Sound effects on death of worm and when food is eaten - Satchel
 - [ ] Collision detection. Know whether we hit spice or another sandworm
-- [ ] Periodic spice generation throughout the game
 - [ ] On collision, sandworm breaks apart and is available as food for other snakes
 - [ ] Record players score, kills and highest position. Probably can be added to the `GameScores` object.
 - [ ] Game over screen with score, kills, and highest position achieved
 - [ ] Particle system for the death of a sandworm
 - [ ] Game continues to show/play even after the player dies
-- [ ] The new player should join in a location that has the least density of other snakes; a safe location
+- [ ] Leaderboard to display top 5 players and client's score
+- [ ] The new player should join as an invincible entity. Add this functionality and a system to update it after 3 seconds to be removed from the entity.
+- [ ] Add a player status in leaderboard to show whether the player is currently invincible.
 
 ## Done
 

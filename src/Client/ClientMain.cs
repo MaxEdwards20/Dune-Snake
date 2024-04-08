@@ -45,8 +45,10 @@ namespace Client
         protected override void Initialize()
         {
             // For Graders: You can change the resolution here
-            m_graphics.PreferredBackBufferWidth = 1920;
-            m_graphics.PreferredBackBufferHeight = 1080;
+            // m_graphics.PreferredBackBufferWidth = 1920;
+            // m_graphics.PreferredBackBufferHeight = 1080;
+            m_graphics.PreferredBackBufferWidth = 1000;
+            m_graphics.PreferredBackBufferHeight = 750;
             m_graphics.ApplyChanges();
             
             // Load the controls
@@ -61,7 +63,9 @@ namespace Client
                 { MenuStateEnum.HighScores, new HighScoresView() },
                 { MenuStateEnum.Controls, new ControlSettingsView(m_controls) },
                 { MenuStateEnum.Help, new HelpView() },
-                { MenuStateEnum.Credits, new AboutView() }
+                { MenuStateEnum.Credits, new AboutView() },
+                { MenuStateEnum.ChooseName, new ChooseNameView() },
+                { MenuStateEnum.HowToPlay, new HowToPlayView() }
             };
 
             // Give all game states a chance to initialize, other than constructor

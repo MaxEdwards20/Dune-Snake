@@ -103,19 +103,19 @@ namespace Server.Systems
             {
                 switch (input)
                 {
-                    case Shared.Components.Input.Type.SnakeUp:
-                        var snake = Shared.Entities.Utility.thrust(entity, message.elapsedTime, m_entities);
-                        foreach (var part in snake)
-                        {
-                            m_reportThese.Add(part.id);
-                        }
-                        break;
+                    // case Shared.Components.Input.Type.SnakeUp:
+                        // var snake = Shared.Entities.Utility.thrust(entity, message.elapsedTime, m_entities);
+                        // foreach (var part in snake)
+                        // {
+                        //     m_reportThese.Add(part.id);
+                        // }
+                        // break;
                     case Shared.Components.Input.Type.RotateLeft:
-                        Shared.Entities.Utility.rotateLeft(entity, message.elapsedTime, m_entities);
+                        Shared.Systems.WormMovement.ninetyLeft(entity, message.elapsedTime);
                         m_reportThese.Add(message.entityId);
                         break;
                     case Shared.Components.Input.Type.RotateRight:
-                        Shared.Entities.Utility.rotateRight(entity, message.elapsedTime, m_entities);
+                        Shared.Systems.WormMovement.ninetyRight(entity, message.elapsedTime);
                         m_reportThese.Add(message.entityId);
                         break;
                 }

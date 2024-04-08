@@ -14,7 +14,7 @@ namespace Client.Systems
         private KeyboardState m_statePrevious = Keyboard.GetState();
         private Controls m_controls;
 
-        public KeyboardInput(List<Tuple<Shared.Components.Input.Type, Keys>> mapping, Controls controls) : base(typeof(Shared.Components.Worm))
+        public KeyboardInput(List<Tuple<Shared.Components.Input.Type, Keys>> mapping, Controls controls) : base(typeof(Shared.Components.Input))
         {
             m_controls = controls;
         }
@@ -41,22 +41,17 @@ namespace Client.Systems
                     continue;
                 }
                 var inputs = new List<Input.Type>();
-                if (keyPressed(m_controls.SnakeLeft.key))
+                if (keyNewlyPressed(m_controls.SnakeLeft.key))
                 {
                     inputs.Add(Input.Type.RotateLeft);
-                    Utility.rotateLeft(entity.Value, elapsedTime, m_entities);
+                    Shared.Systems.WormMovement.ninetyLeft(entity.Value, elapsedTime);
 
                 }
-                if (keyPressed(m_controls.SnakeRight.key))
+                if (keyNewlyPressed(m_controls.SnakeRight.key))
                 {
                     inputs.Add(Input.Type.RotateRight);
-                    Utility.rotateRight(entity.Value, elapsedTime, m_entities);
-
+                    Shared.Systems.WormMovement.ninetyRight(entity.Value, elapsedTime);
                 }
-                // Always add thrust
-                inputs.Add(Input.Type.SnakeUp);
-                Utility.thrust(entity.Value, elapsedTime, m_entities);
-
                 if (inputs.Count > 0)
                 {
                     // Assuming you have a messaging system to handle input
