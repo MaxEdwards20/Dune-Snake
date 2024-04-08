@@ -56,7 +56,7 @@ public class WormMovement : Shared.Systems.System
         var headPosition = head.get<Position>();
         var frameTotalMovement = movement.moveRate * (float)elapsedTime.TotalMilliseconds;
         var orientation = headPosition.orientation;
-        var threshold = 10f;
+        var threshold = 2f;
         
         // Move the head
         var direction = new Vector2((float)Math.Cos(orientation), (float)Math.Sin(orientation));
@@ -73,10 +73,9 @@ public class WormMovement : Shared.Systems.System
             {
                 if (queueComponent.m_anchorPositions.Count == 0)
                 {
-                     continue;
-                    // // Add the current parent position to the queue if I don't have one of my own
-                    // var parent = snake[i - 1];
-                    // queueComponent.m_anchorPositions.Enqueue(parent.get<Position>());
+                    var parent = snake[i - 1];
+                    var parentPosition = parent.get<Position>();
+                    queueComponent.m_anchorPositions.Enqueue(new Position(parentPosition.position, parentPosition.orientation));
                 }
                 
                 // Check where we want to move towards
@@ -86,6 +85,9 @@ public class WormMovement : Shared.Systems.System
                 var directionToTarget = target.position - positionComponent.position;
                 directionToTarget.Normalize();
                 positionComponent.position += directionToTarget * frameTotalMovement;
+
+                // Update the orientation to match the direction we're moving
+                positionComponent.orientation = (float)Math.Atan2(directionToTarget.Y, directionToTarget.X);
 
                 // Check if we have hit the target
                 if (Vector2.Distance(positionComponent.position, target.position) <= threshold)
