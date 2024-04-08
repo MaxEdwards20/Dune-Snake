@@ -121,13 +121,13 @@ public class Utility
     {
         var position = head.get<Position>();
         var movement = head.get<Movement>();
-        position.orientation -= movement.rotateRate * elapsedTime.Milliseconds;
+        position.orientation -= movement.rotateRate * (float)elapsedTime.TotalMilliseconds;
     }
 
     private static void applyRightRotation(Entity head, TimeSpan elapsedTime)
     {
         var position = head.get<Position>();
         var movement = head.get<Movement>();
-        position.orientation += movement.rotateRate * elapsedTime.Milliseconds;
+        position.orientation += movement.rotateRate * (float)elapsedTime.TotalMilliseconds;
     }
 }
