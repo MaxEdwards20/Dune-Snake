@@ -76,16 +76,23 @@ public class WormMovement : Shared.Systems.System
                 // Check where we want to move towards
                 var target = queueComponent.m_anchorPositions.Peek();
                 
-                // Move towards that position
-                orientation = positionComponent.orientation;
-                var targetOrientation = target.orientation;
-                var directionToTarget = new Vector2((float)Math.Cos(targetOrientation), (float)Math.Sin(targetOrientation));
-                var moveVector = directionToTarget * thrust;
-                positionComponent.position += moveVector;
+                // Move towards that target
+                var distance = Vector2.Distance(positionComponent.position, target.position);
+                var moveDistance = movement.moveRate * (float)elapsedTime.TotalMilliseconds;
+                if (moveDistance > distance)
+                {
+                    positionComponent.position = target.position;
+                }
+                else
+                {
+                    var directionToTarget = target.position - positionComponent.position;
+                    directionToTarget.Normalize();
+                    positionComponent.position += directionToTarget * moveDistance;
+                }
                 
 
                 // Check if we have hit the target
-                if (Vector2.Distance(positionComponent.position, target.position) < 0.2f && queueComponent.m_anchorPositions.Count > 0)
+                if (Vector2.Distance(positionComponent.position, target.position) < 0.2f)
                 {
                     // Remove the target from the queue
                     queueComponent.m_anchorPositions.Dequeue();

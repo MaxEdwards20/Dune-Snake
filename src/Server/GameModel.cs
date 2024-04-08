@@ -146,7 +146,6 @@ namespace Server
             
             // Create the head
             Entity segment = WormHead.create(headStartLocation, headSize, moveRate, rotationRate, name);
-            Entity head = segment;
             // Create X number of body segments
             var parent = segment;
             var numToCreate = 5;
@@ -161,7 +160,7 @@ namespace Server
                 addEntity(parent);
                 m_clientToEntityId[clientId] = parent.id;
                 MessageQueueServer.instance.sendMessage(clientId, new NewEntity(parent));
-                segmentStartLocation = new Vector2(segmentStartLocation.X + 75, segmentStartLocation.Y);
+                segmentStartLocation = new Vector2(segmentStartLocation.X + 50, segmentStartLocation.Y);
                 parent = segment;
             }
             addEntity(segment);
@@ -201,7 +200,6 @@ namespace Server
         {
             // We want to start the player in the least dense area of the screen
             // For now, we'll just start them randomly generated location
-
             Random random = new Random();
             return new Vector2(random.Next(0, 800), random.Next(0, 600));
         }
