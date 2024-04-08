@@ -1,5 +1,6 @@
 ﻿using Shared.Entities;
 using Shared.Messages;
+using Shared.Systems;
 
 namespace Server.Systems
 {
@@ -99,23 +100,17 @@ namespace Server.Systems
         private void handleInput(Shared.Messages.Input message)
         {
             var entity = m_entities[message.entityId];
+            var worm = WormMovement.getWormFromHead(entity, m_entities);
             foreach (var input in message.inputs)
             {
                 switch (input)
                 {
-                    // case Shared.Components.Input.Type.SnakeUp:
-                        // var snake = Shared.Entities.Utility.thrust(entity, message.elapsedTime, m_entities);
-                        // foreach (var part in snake)
-                        // {
-                        //     m_reportThese.Add(part.id);
-                        // }
-                        // break;
                     case Shared.Components.Input.Type.RotateLeft:
-                        Shared.Systems.WormMovement.ninetyLeft(entity, message.elapsedTime);
+                        Shared.Systems.WormMovement.ninetyLeft(worm, message.elapsedTime);
                         m_reportThese.Add(message.entityId);
                         break;
                     case Shared.Components.Input.Type.RotateRight:
-                        Shared.Systems.WormMovement.ninetyRight(entity, message.elapsedTime);
+                        Shared.Systems.WormMovement.ninetyRight(worm, message.elapsedTime);
                         m_reportThese.Add(message.entityId);
                         break;
                 }
