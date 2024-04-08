@@ -75,14 +75,14 @@ namespace Client.Menu
             m_spriteBatch.Begin();
 
             // Calculate the center position for "Enter Your Name" text
-            string enterNameText = $"Enter Your Name: {playerName}";
+            string enterNameText = $"Enter Your Name: [ Using Keyboard ] \n {playerName}";
             Vector2 textSize = font.MeasureString(enterNameText);
             Vector2 textPosition = new Vector2(
                 (m_graphics.PreferredBackBufferWidth - textSize.X) / 2,
                 (m_graphics.PreferredBackBufferHeight - textSize.Y) / 2);
 
             // Draw "Enter Your Name" text
-            m_spriteBatch.DrawString(font, enterNameText, textPosition, Color.White);
+            m_spriteBatch.DrawString(font, enterNameText, textPosition, Color.PaleGoldenrod);
 
             // Draw "Press Enter to proceed" below the name text if a name has been entered
             if (playerName.Length > 0)
@@ -93,7 +93,7 @@ namespace Client.Menu
                     (m_graphics.PreferredBackBufferWidth - proceedTextSize.X) / 2,
                     textPosition.Y + textSize.Y + 20); // 20 pixels below the name text
 
-                m_spriteBatch.DrawString(font, proceedText, proceedTextPosition, Color.White);
+                m_spriteBatch.DrawString(font, proceedText, proceedTextPosition, Color.PaleGoldenrod);
             }
 
             m_spriteBatch.End();
