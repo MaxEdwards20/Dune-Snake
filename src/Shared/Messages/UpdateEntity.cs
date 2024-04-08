@@ -50,7 +50,7 @@ namespace Shared.Messages
                 data.AddRange(BitConverter.GetBytes(orientation));
             }
 
-            data.AddRange(BitConverter.GetBytes(updateWindow.Milliseconds));
+            data.AddRange(BitConverter.GetBytes((float)updateWindow.TotalMilliseconds));
 
             return data.ToArray();
         }
@@ -75,8 +75,8 @@ namespace Shared.Messages
                 offset += sizeof(Single);
             }
 
-            this.updateWindow = new TimeSpan(0, 0, 0, 0, BitConverter.ToInt32(data, offset));
-            offset += sizeof(Int32);
+            this.updateWindow = TimeSpan.FromMilliseconds(BitConverter.ToSingle(data, offset));
+            offset += sizeof(Single);
 
             return offset;
         }
