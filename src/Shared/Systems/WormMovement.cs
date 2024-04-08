@@ -103,7 +103,7 @@ public class WormMovement : Shared.Systems.System
         Vector2 direction = new Vector2((float) Math.Cos(positionComponent.orientation),
             (float) Math.Sin(positionComponent.orientation));
         direction.Normalize(); // Ensure the direction vector is normalized
-        Vector2 newPosition = positionComponent.position - direction * movementComponent.moveRate * elapsedTime.Milliseconds;
+        Vector2 newPosition = positionComponent.position - direction * movementComponent.moveRate * (float)elapsedTime.TotalMilliseconds;
 
         // Update the head's position
         positionComponent.position = newPosition;
