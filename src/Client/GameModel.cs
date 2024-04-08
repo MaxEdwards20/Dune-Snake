@@ -63,6 +63,7 @@ public class GameModel
         m_entities = new Dictionary<uint, Entity>();
         m_systemInterpolation = new Systems.Interpolation();
         m_systemCamera = new Systems.Camera(new Vector2(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight));
+
         m_renderer = new Systems.Renderer(m_systemCamera, graphics, m_font, m_sand);
         m_systemWormMovement = new Shared.Systems.WormMovement();
         m_systemNetwork = new Systems.Network();
@@ -145,6 +146,7 @@ public class GameModel
         if (message.hasWorm)
         {
             entity.add(new Worm());
+            entity.add(new AnchorQueue()); // We implicitly need this because every worm part has it
         }
 
         if (message.hasName)

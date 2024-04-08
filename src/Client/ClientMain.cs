@@ -28,7 +28,7 @@ namespace Client
         private Texture2D m_background;
         private GameModel m_gameModel;
         private Controls m_controls;
-        private ControlsPersistence _mControlsPersistence;
+        private ControlsPersistence m_ControlsPersistence;
 
         public ClientMain()
         {
@@ -38,22 +38,21 @@ namespace Client
             IsMouseVisible = true;
             m_gameModel = new GameModel();
             m_controls = new Controls();
-            _mControlsPersistence = new ControlsPersistence();
-            
+            m_ControlsPersistence = new ControlsPersistence();
         }
 
         protected override void Initialize()
         {
             // For Graders: You can change the resolution here
-            // m_graphics.PreferredBackBufferWidth = 1920;
-            // m_graphics.PreferredBackBufferHeight = 1080;
-            m_graphics.PreferredBackBufferWidth = 1000;
-            m_graphics.PreferredBackBufferHeight = 750;
+            m_graphics.PreferredBackBufferWidth = 1920;
+            m_graphics.PreferredBackBufferHeight = 1080;
+            // m_graphics.PreferredBackBufferWidth = 1000;
+            // m_graphics.PreferredBackBufferHeight = 750;
             m_graphics.ApplyChanges();
             
             // Load the controls
             // We pass in our own controls so we always have them as a default if they were not saved
-            _mControlsPersistence.LoadControls(m_controls); 
+            m_ControlsPersistence.LoadControls(m_controls); 
 
             // Create all the game states here
             m_states = new Dictionary<MenuStateEnum, IGameState>
