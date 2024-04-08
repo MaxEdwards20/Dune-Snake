@@ -46,20 +46,24 @@ public class WormMovement : Shared.Systems.System
         applyRightRotation(snake, MathHelper.PiOver2);
     }
     
-
-    // TODO: Transition to using the queue of positions each entity should move towards
+    // TODO: Adjust this to get the parent's virtual position, not their screen position
     private void applyThrust(Entity wormHead, TimeSpan elapsedTime)
     {
+        // Setup variables
         var snake = getWormFromHead(wormHead, m_entities);
         var head = snake[0];
         var movement = head.get<Movement>();
         var headPosition = head.get<Position>();
-        var thrust = movement.moveRate * (float)elapsedTime.TotalMilliseconds;
+        var frameTotalMovement = movement.moveRate * (float)elapsedTime.TotalMilliseconds;
         var orientation = headPosition.orientation;
-        var direction = new Vector2((float)Math.Cos(orientation), (float)Math.Sin(orientation));
-        var thrustVector = direction * thrust;
-        headPosition.position -= thrustVector;
+        var threshold = 10f;
         
+        // Move the head
+        var direction = new Vector2((float)Math.Cos(orientation), (float)Math.Sin(orientation));
+        direction.Normalize();
+        headPosition.position += direction * frameTotalMovement;
+        
+        // Move the rest of the worm
         for (int i = 1; i < snake.Count; i++)
         {
             var entity = snake[i];
@@ -69,30 +73,21 @@ public class WormMovement : Shared.Systems.System
             {
                 if (queueComponent.m_anchorPositions.Count == 0)
                 {
-                    // Add the current position to the queue
-                    queueComponent.m_anchorPositions.Enqueue(headPosition);
+                    // Add the current parent position to the queue if I don't have one of my own
+                    var parent = snake[i - 1];
+                    queueComponent.m_anchorPositions.Enqueue(parent.get<Position>());
                 }
                 
                 // Check where we want to move towards
                 var target = queueComponent.m_anchorPositions.Peek();
                 
                 // Move towards that target
-                var distance = Vector2.Distance(positionComponent.position, target.position);
-                var moveDistance = movement.moveRate * (float)elapsedTime.TotalMilliseconds;
-                if (moveDistance > distance)
-                {
-                    positionComponent.position = target.position;
-                }
-                else
-                {
-                    var directionToTarget = target.position - positionComponent.position;
-                    directionToTarget.Normalize();
-                    positionComponent.position += directionToTarget * moveDistance;
-                }
-                
+                var directionToTarget = target.position - positionComponent.position;
+                directionToTarget.Normalize();
+                positionComponent.position += directionToTarget * frameTotalMovement;
 
                 // Check if we have hit the target
-                if (Vector2.Distance(positionComponent.position, target.position) < 0.2f)
+                if (Vector2.Distance(positionComponent.position, target.position) <= threshold)
                 {
                     // Remove the target from the queue
                     queueComponent.m_anchorPositions.Dequeue();
