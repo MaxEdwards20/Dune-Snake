@@ -81,7 +81,6 @@ class ServerMain
 
                 // Now, after having slept for a bit, now compute the elapsed time and perform
                 // the game model update.
-                elapsedTime += (sleepTime > TimeSpan.Zero ? sleepTime : TimeSpan.Zero);
                 model.update(elapsedTime);
             }
 
