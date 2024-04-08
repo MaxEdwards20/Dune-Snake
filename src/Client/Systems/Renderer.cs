@@ -19,7 +19,7 @@ public class Renderer : Shared.Systems.System
     private GraphicsDeviceManager m_graphics;
     private SpriteFont m_font;
     private Texture2D m_sand;
-
+    
     public Renderer(Systems.Camera camera, GraphicsDeviceManager graphics, SpriteFont font, Texture2D sand) :
         base(
            typeof(Position), typeof(Sprite)
@@ -45,6 +45,7 @@ public class Renderer : Shared.Systems.System
         matrix *= Matrix.CreateTranslation(new Vector3(offset, 0));
         matrix *= Matrix.CreateScale(scaleX, scaleY, 1);
 
+        
         //spriteBatch.Begin();
         spriteBatch.Begin(transformMatrix: matrix);
 
@@ -59,7 +60,7 @@ public class Renderer : Shared.Systems.System
             SpriteEffects.None,
             0
         );
-
+        
         var heads = new List<Entity>();
         var bodies = new List<Entity>();
         var tails = new List<Entity>();

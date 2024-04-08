@@ -12,6 +12,7 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 - [ ] Satchel: Keyboard vs. Mouse input menu screen - Satchel
 - [ ] Caden: Map generation
 - [ ] Max: Snake Movement with the queue system
+
 - [ ] Caden: Spice generation when we spawn
 - [ ] Caden: Periodic spice generation throughout the game
 

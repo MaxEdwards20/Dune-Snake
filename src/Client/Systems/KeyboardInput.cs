@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using Shared.Components;
 using Client.Components;
+using Shared.Systems;
 
 namespace Client.Systems
 {
@@ -14,7 +15,7 @@ namespace Client.Systems
         private KeyboardState m_statePrevious = Keyboard.GetState();
         private Controls m_controls;
 
-        public KeyboardInput(List<Tuple<Shared.Components.Input.Type, Keys>> mapping, Controls controls) : base(typeof(Shared.Components.Input))
+        public KeyboardInput(List<Tuple<Shared.Components.Input.Type, Keys>> mapping, Controls controls) : base(typeof(Shared.Components.Worm))
         {
             m_controls = controls;
         }
@@ -41,16 +42,16 @@ namespace Client.Systems
                     continue;
                 }
                 var inputs = new List<Input.Type>();
+                var worm = WormMovement.getWormFromHead(entity.Value, m_entities);
                 if (keyNewlyPressed(m_controls.SnakeLeft.key))
                 {
                     inputs.Add(Input.Type.RotateLeft);
-                    Shared.Systems.WormMovement.ninetyLeft(entity.Value, elapsedTime);
-
+                    Shared.Systems.WormMovement.ninetyLeft(worm, elapsedTime);
                 }
                 if (keyNewlyPressed(m_controls.SnakeRight.key))
                 {
                     inputs.Add(Input.Type.RotateRight);
-                    Shared.Systems.WormMovement.ninetyRight(entity.Value, elapsedTime);
+                    Shared.Systems.WormMovement.ninetyRight(worm, elapsedTime);
                 }
                 if (inputs.Count > 0)
                 {

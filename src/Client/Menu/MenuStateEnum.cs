@@ -6,6 +6,7 @@
         GamePlay,
         ChooseName,
         HowToPlay,
+        Connecting,
         HighScores,
         Controls,
         Help,
