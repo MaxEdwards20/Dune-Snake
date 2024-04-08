@@ -79,10 +79,10 @@ class ServerMain
                 System.Threading.Thread.Sleep(sleepTime);
             }
 
-                // Now, after having slept for a bit, now compute the elapsed time and perform
-                // the game model update.
-                model.update(elapsedTime);
-            }
+            // Now, after having slept for a bit, now compute the elapsed time and perform
+            // the game model update.
+            model.update(elapsedTime);
+        }
 
         model.shutdown();
     }
