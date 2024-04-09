@@ -32,7 +32,7 @@ namespace Client.Menu
             KeyboardState newState = Keyboard.GetState(); // Get the new state
             
             // Simple example for input handling
-            foreach (var key in MenuKeyboardInput.GetPressedKeys())
+            foreach (var key in newState.GetPressedKeys())
             {
                 // Check for Escape key press to return to MainMenu
                 if (newState.IsKeyDown(Keys.Escape))
