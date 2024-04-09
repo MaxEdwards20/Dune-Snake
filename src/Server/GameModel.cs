@@ -18,7 +18,7 @@ namespace Server
         private CollisionDetection m_systemCollisionDetection = new CollisionDetection();
         private CollisionHandler m_systemCollisionHandler = new CollisionHandler();
         Systems.Network m_systemNetwork = new Server.Systems.Network();
-        private int mapSize = 5000;
+        private int mapSize = 3000;
 
         /// <summary>
         /// This is where the server-side simulation takes place.  Messages
@@ -178,7 +178,7 @@ namespace Server
             var headStartLocation = getLeastDenseStartLocation();
             var segmentStartLocation = new Vector2(headStartLocation.X - 75, headStartLocation.Y);
             var rotationRate = (float) Math.PI / 1000;
-            var moveRate = 0.1f;
+            var moveRate = 0.3f;
             var headSize = 100;
             var bodySize = 80;
             
