@@ -13,7 +13,7 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 - [ ] Caden: Spice generation when we spawn
 - [ ] Caden: Periodic spice generation throughout the game
 - [ ] Menu Screen to let player name themselves (probably similar to how control selection screen will work) - Satchel
-- [ ] Max: Collision detection. Know whether we hit spice or another sandworm
+- [ ] Max: Grow the worm on eating food.
 
 ## Items to Develop
 
@@ -30,6 +30,7 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 
 ## Done
 
+- [x] Max: Collision Detection system.
 - [x] Max: Keyboard support for left, right, up, down, diagonal up left and diagonal up right. Also add these to the wormMovement system.
 - [x] Max: Snake Movement with the queue system
 - [x] Max: Upgrade our movement system to reduce the lag in rotation
