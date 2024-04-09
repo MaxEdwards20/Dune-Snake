@@ -82,7 +82,7 @@ namespace Client.Menu
                 (m_graphics.PreferredBackBufferHeight - textSize.Y) / 2);
 
             // Draw "Enter Your Name" text
-            m_spriteBatch.DrawString(font, enterNameText, textPosition, Color.PaleGoldenrod);
+            m_spriteBatch.DrawString(font, enterNameText, textPosition, Colors.displayColor);
 
             // Draw "Press Enter to proceed" below the name text if a name has been entered
             if (playerName.Length > 0)
@@ -93,7 +93,7 @@ namespace Client.Menu
                     (m_graphics.PreferredBackBufferWidth - proceedTextSize.X) / 2,
                     textPosition.Y + textSize.Y + 20); // 20 pixels below the name text
 
-                m_spriteBatch.DrawString(font, proceedText, proceedTextPosition, Color.PaleGoldenrod);
+                m_spriteBatch.DrawString(font, proceedText, proceedTextPosition, Colors.displayColor);
             }
 
             m_spriteBatch.End();
