@@ -13,7 +13,7 @@ namespace Client.Systems
     {
         private HashSet<Keys> m_keysPressed = new HashSet<Keys>();
         private KeyboardState m_statePrevious = Keyboard.GetState();
-        private Controls m_controls;
+        private Controls m_controls = new Controls(); // Default value that is overwritten in the constructor
 
         public KeyboardInput(List<Tuple<Shared.Components.Input.Type, Keys>> mapping, Controls controls) : base(typeof(Shared.Components.Worm))
         {
@@ -43,16 +43,42 @@ namespace Client.Systems
                 }
                 var inputs = new List<Input.Type>();
                 var worm = WormMovement.getWormFromHead(entity.Value, m_entities);
-                if (keyNewlyPressed(m_controls.SnakeLeft.key))
+                // Start with the combinations
+                if (keyPressed(m_controls.SnakeLeft.key) && keyPressed(m_controls.SnakeUp.key))
                 {
-                    inputs.Add(Input.Type.RotateLeft);
-                    Shared.Systems.WormMovement.ninetyLeft(worm, elapsedTime);
-                }
-                if (keyNewlyPressed(m_controls.SnakeRight.key))
+                   inputs.Add(Input.Type.PointUpLeft);
+                    Shared.Systems.WormMovement.upLeft(worm);
+                } else if (keyPressed(m_controls.SnakeRight.key) && keyPressed(m_controls.SnakeUp.key))
                 {
-                    inputs.Add(Input.Type.RotateRight);
-                    Shared.Systems.WormMovement.ninetyRight(worm, elapsedTime);
+                    inputs.Add(Input.Type.PointUpRight);
+                    Shared.Systems.WormMovement.upRight(worm);
+                } else if (keyPressed(m_controls.SnakeLeft.key) && keyPressed(m_controls.SnakeDown.key))
+                {
+                    inputs.Add(Input.Type.PointDownLeft);
+                    Shared.Systems.WormMovement.downLeft(worm);
+                } else if (keyPressed(m_controls.SnakeRight.key) && keyPressed(m_controls.SnakeDown.key))
+                {
+                    inputs.Add(Input.Type.PointDownRight);
+                    Shared.Systems.WormMovement.downRight(worm);
+                } else if (keyNewlyPressed(m_controls.SnakeLeft.key))
+                {
+                    inputs.Add(Input.Type.PointLeft);
+                    Shared.Systems.WormMovement.left(worm, elapsedTime);
+                }else if (keyNewlyPressed(m_controls.SnakeRight.key))
+                {
+                    inputs.Add(Input.Type.PointRight);
+                    Shared.Systems.WormMovement.right(worm, elapsedTime);
+                }else if (keyNewlyPressed(m_controls.SnakeUp.key))
+                {
+                    inputs.Add(Input.Type.PointUp);
+                    Shared.Systems.WormMovement.up(worm);
+                }else if (keyNewlyPressed(m_controls.SnakeDown.key))
+                {
+                    inputs.Add(Input.Type.PointDown);
+                    Shared.Systems.WormMovement.down(worm);
                 }
+                
+                
                 if (inputs.Count > 0)
                 {
                     // Assuming you have a messaging system to handle input

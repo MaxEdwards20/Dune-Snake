@@ -5,9 +5,14 @@ namespace Shared.Components
     {
         public enum Type : UInt16
         {
-            SnakeUp,
-            RotateLeft,
-            RotateRight,
+            PointLeft,
+            PointRight,
+            PointUp,
+            PointDown,
+            PointUpLeft,
+            PointUpRight,
+            PointDownLeft,
+            PointDownRight,
         }
 
         public Input(List<Type> inputs)

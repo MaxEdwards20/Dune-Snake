@@ -101,11 +101,29 @@ namespace Client.Systems
                         {
                             switch (input)
                             {
-                                case Shared.Components.Input.Type.RotateLeft:
-                                    Shared.Systems.WormMovement.ninetyLeft(worm, message.elapsedTime);
+                                case Shared.Components.Input.Type.PointLeft:
+                                    Shared.Systems.WormMovement.left(worm, message.elapsedTime);
                                     break;
-                                case Shared.Components.Input.Type.RotateRight:
-                                    Shared.Systems.WormMovement.ninetyRight(worm, message.elapsedTime);
+                                case Shared.Components.Input.Type.PointRight:
+                                    Shared.Systems.WormMovement.right(worm, message.elapsedTime);
+                                    break;
+                                case Shared.Components.Input.Type.PointUp:
+                                    Shared.Systems.WormMovement.up(worm);
+                                    break;
+                                case Shared.Components.Input.Type.PointDown:
+                                    Shared.Systems.WormMovement.down(worm);
+                                    break;
+                                case Input.Type.PointUpLeft:
+                                    Shared.Systems.WormMovement.upLeft(worm);
+                                    break;
+                                case Input.Type.PointUpRight:
+                                    Shared.Systems.WormMovement.upRight(worm);
+                                    break;  
+                                case Input.Type.PointDownLeft:
+                                    Shared.Systems.WormMovement.downLeft(worm);
+                                    break;
+                                case Input.Type.PointDownRight:
+                                    Shared.Systems.WormMovement.downRight(worm);
                                     break;
                             }
                         }
