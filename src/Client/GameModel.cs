@@ -123,6 +123,11 @@ public class GameModel
         {
             entity.add(new Collision());
         }
+        
+        if (message.hasWall)
+        {
+            entity.add(new Shared.Components.Wall());
+        }
 
         // Worm parts
 

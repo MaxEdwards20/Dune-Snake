@@ -3,6 +3,7 @@ using Shared.Components;
 using Shared.Entities;
 using System.Text;
 using Shared.Components.Appearance;
+using Wall = Shared.Entities.Wall;
 
 namespace Shared.Messages
 {
@@ -91,6 +92,11 @@ namespace Shared.Messages
                 this.hasName = true;
                 this.name = entity.get<Name>().name;
             }
+            
+            if (entity.contains<Shared.Components.Wall>())
+            {
+                this.hasWall = true;
+            }
         }
         public NewEntity() : base(Type.NewEntity)
         {
@@ -102,8 +108,8 @@ namespace Shared.Messages
         // Appearance
         public bool hasAppearance { get; private set; } = false;
         public string texture { get; private set; }
-        
         public bool hasCollision { get; private set; } = false;
+        public bool hasWall { get; private set; } = false;
 
         // Worm parts
         public bool hasHead { get; private set; } = false;
@@ -148,6 +154,7 @@ namespace Shared.Messages
             serializeMovement(data);
             serializeInput(data);
             data.AddRange(BitConverter.GetBytes(hasCollision));
+            data.AddRange(BitConverter.GetBytes(hasWall));
             
             // Worm entities
             data.AddRange(BitConverter.GetBytes(hasHead));
@@ -160,9 +167,7 @@ namespace Shared.Messages
             
             return data.ToArray();
         }
-
-
-
+        
         public override int parse(byte[] data)
         {
             // NOTE: Add parser for the components on the WormHead, WormSegment, and WormTail entities
@@ -177,6 +182,7 @@ namespace Shared.Messages
             offset = parseMovement(data, offset);
             offset = parseInput(data, offset);
             offset = parseCollision(data, offset);
+            offset = parseWall(data, offset);
             
             // Worm Entities
             offset = parseHead(data, offset);
@@ -191,6 +197,13 @@ namespace Shared.Messages
         private int parseWorm(byte[] data, int offset)
         {
             this.hasWorm = BitConverter.ToBoolean(data, offset);
+            offset += sizeof(bool);
+            return offset;
+        }
+        
+        private int parseWall(byte[] data, int offset)
+        {
+            this.hasWall = BitConverter.ToBoolean(data, offset);
             offset += sizeof(bool);
             return offset;
         }

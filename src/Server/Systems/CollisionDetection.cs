@@ -126,12 +126,12 @@ public class CollisionDetection : Shared.Systems.System
     private void handleWormAteSpice(Entity head, Entity spice, TimeSpan elapsedTime)
     {
         // Remove the spice
-        MessageQueueServer.instance.broadcastMessageWithLastId(new RemoveEntity(spice.id));
+        MessageQueueServer.instance.broadcastMessage(new RemoveEntity(spice.id));
         // Add power to the worm head
         var headPower = head.get<SpicePower>();
         var spicePower = spice.get<SpicePower>();
         headPower.addPower(spicePower.power);
-        MessageQueueServer.instance.broadcastMessageWithLastId(new UpdateEntity(head, elapsedTime));
+        MessageQueueServer.instance.broadcastMessage(new UpdateEntity(head, elapsedTime));
     }
     
     private void handleWormAteWorm(List<Entity> worm, Entity otherHead)
@@ -166,8 +166,7 @@ public class CollisionDetection : Shared.Systems.System
     {
         foreach (var entity in worm)
         {
-            
-            MessageQueueServer.instance.broadcastMessageWithLastId(new RemoveEntity(entity.id));
+            MessageQueueServer.instance.broadcastMessage(new RemoveEntity(entity.id));
             m_removeEntity(entity.id);
         }
         // TODO: Add new entities to the world where the body was

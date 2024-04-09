@@ -18,6 +18,7 @@ namespace Server
         private CollisionDetection m_systemCollisionDetection = new CollisionDetection();
         private CollisionHandler m_systemCollisionHandler = new CollisionHandler();
         Systems.Network m_systemNetwork = new Server.Systems.Network();
+        private int mapSize = 5000;
 
         /// <summary>
         /// This is where the server-side simulation takes place.  Messages
@@ -37,13 +38,15 @@ namespace Server
         /// </summary>
         public bool initialize()
         {
+            generateWalls();
             m_systemNetwork.registerJoinHandler(handleJoin);
             m_systemNetwork.registerDisconnectHandler(handleDisconnect);
             MessageQueueServer.instance.registerConnectHandler(handleConnect);
             m_systemCollisionDetection.registerRemoveEntity(removeEntity);
-
             return true;
         }
+
+
 
         /// <summary>
         /// Give everything a chance to gracefully shutdown.
@@ -73,10 +76,8 @@ namespace Server
         private void handleDisconnect(int clientId)
         {
             m_clients.Remove(clientId);
-
             Message message = new Shared.Messages.RemoveEntity(m_clientToEntityId[clientId]);
             MessageQueueServer.instance.broadcastMessage(message);
-
             removeEntity(m_clientToEntityId[clientId]);
             m_clientToEntityId.Remove(clientId);
             
@@ -143,6 +144,33 @@ namespace Server
             // Step 2: Create a new wormHead for the newly joined player and sent it
             //         to the newly joined client
             createNewWorm(clientId, name);
+        }
+        
+        private void generateWalls()
+        {
+            // We want to create wall entities around the entire map. 5000x5000 is the size of the map
+            // We'll create a wall every 100 units
+            var wallSize = 100;
+            for (int i = 0; i < mapSize/100; i++)
+            {
+                // Top wall
+                Entity wall = Shared.Entities.Wall.create(new Vector2(i * wallSize, 0), wallSize);
+                addEntity(wall);
+                // MessageQueueServer.instance.broadcastMessage(new NewEntity(wall));
+                // Bottom wall
+                wall = Shared.Entities.Wall.create(new Vector2(i * wallSize, mapSize-wallSize), wallSize);
+                addEntity(wall);
+                // MessageQueueServer.instance.broadcastMessage(new NewEntity(wall));
+                // Left wall
+                wall = Shared.Entities.Wall.create(new Vector2(0, i * wallSize), wallSize);
+                addEntity(wall);
+                // MessageQueueServer.instance.broadcastMessage(new NewEntity(wall));
+                // Right wall
+                wall = Shared.Entities.Wall.create(new Vector2(mapSize-wallSize, i * wallSize), wallSize);
+                addEntity(wall);
+                // MessageQueueServer.instance.broadcastMessage(new NewEntity(wall));
+            }
+            
         }
 
         private void createNewWorm(int clientId, string name)
@@ -211,7 +239,9 @@ namespace Server
             // We want to start the player in the least dense area of the screen
             // For now, we'll just start them randomly generated location
             Random random = new Random();
-            return new Vector2(random.Next(0, 800), random.Next(0, 600));
+            var lowerBound = (int)(.1 * mapSize);
+            var upperBound = (int)(.9 * mapSize);
+            return new Vector2(random.Next(lowerBound, upperBound), random.Next(lowerBound, upperBound));
         }
     }
 }

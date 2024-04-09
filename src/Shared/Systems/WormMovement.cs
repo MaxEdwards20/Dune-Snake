@@ -89,7 +89,7 @@ public class WormMovement : Shared.Systems.System
         var frameTotalMovement = movement.moveRate * (float)elapsedTime.TotalMilliseconds;
         var orientation = headPosition.orientation;
         float LOCATION_THRESHOLD = 2f;
-        const float MIN_SEGMENT_SPACING = 20f;
+        const float MIN_SEGMENT_SPACING = 30f;
         const float IDEAL_SEGMENT_SPACING = 40f;
         
         // Check how close the head is to its child
@@ -129,7 +129,7 @@ public class WormMovement : Shared.Systems.System
             // Move towards that target
             var distanceToTarget = Vector2.Distance(currentPosition.position, target.position);
             var distanceToParent = Vector2.Distance(currentPosition.position, parentPosition.position);
-            if (distanceToTarget > MIN_SEGMENT_SPACING || distanceToParent > IDEAL_SEGMENT_SPACING)
+            if (distanceToTarget >= MIN_SEGMENT_SPACING || distanceToParent >= IDEAL_SEGMENT_SPACING)
             {
                 var directionToTarget = target.position - currentPosition.position;
                 directionToTarget.Normalize();
@@ -179,8 +179,6 @@ public class WormMovement : Shared.Systems.System
                 
             }
     }
-
-
     
     private static Entity getHead(Entity entity, Dictionary<uint, Entity> entities)
     {

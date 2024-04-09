@@ -188,7 +188,6 @@ namespace Client.Systems
 
                     m_updatedEntities.Add(entity.id);
                 }
-
                 if (entity.contains<SpicePower>() && message.hasSpicePower)
                 {
                     entity.get<SpicePower>().setPower(message.spicePower);
