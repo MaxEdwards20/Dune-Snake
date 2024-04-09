@@ -140,14 +140,12 @@ namespace Server
         /// Returns the queue of all messages received since the last time
         /// this method was called.
         /// </summary>
-        public Queue<Tuple<int, Message>>? getMessages()
+        public Queue<Tuple<int, Message>> getMessages()
         {
+            Queue<Tuple<int, Message>> empty = new();
             if (m_receivedMessages.Count == 0)
-            {
-                return null;
-            }
+                return empty;
 
-            Queue<Tuple<int, Message>> empty = new Queue<Tuple<int, Message>>();
             Queue<Tuple<int, Message>> previous = m_receivedMessages;
 
             lock (m_mutexReceivedMessages)

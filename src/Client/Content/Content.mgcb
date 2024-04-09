@@ -99,18 +99,6 @@
 /processorParam:TextureFormat=Color
 /build:Textures/circleBody.png
 
-#begin Textures/circleTail.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Textures/circleTail.png
-
 #begin Textures/circleHead.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -122,6 +110,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/circleHead.png
+
+#begin Textures/circleTail.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/circleTail.png
 
 #begin Textures/head.png
 /importer:TextureImporter
@@ -147,6 +147,18 @@
 /processorParam:TextureFormat=Color
 /build:Textures/SandTile.png
 
+#begin Textures/spice.webp
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/spice.webp
+
 #begin Textures/tail.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -159,7 +171,6 @@
 /processorParam:TextureFormat=Color
 /build:Textures/tail.png
 
-
 #begin Textures/wall.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -171,3 +182,4 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/wall.png
+
