@@ -8,6 +8,7 @@ namespace Shared.Messages
 {
     public class NewEntity : Message
     {
+        // TODO: Add a wall component check
         public NewEntity(Entity entity) : base(Type.NewEntity)
         {
             this.id = entity.id;
@@ -75,7 +76,7 @@ namespace Shared.Messages
                 this.childId = entity.get<ChildId>().id;
             }
             
-            if (entity.contains<Collision>())
+            if (entity.contains<Shared.Components.Collision>())
             {
                 this.hasCollision = true;
             }

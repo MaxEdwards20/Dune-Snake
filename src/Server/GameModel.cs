@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.Xna.Framework;
+using Server.Systems;
 using Shared.Components;
 using Shared.Components.Appearance;
 using Shared.Entities;
@@ -14,6 +15,8 @@ namespace Server
         private Dictionary<uint, Entity> m_entities = new Dictionary<uint, Entity>();
         private Dictionary<int, uint> m_clientToEntityId = new Dictionary<int, uint>();
         private WormMovement m_systemWormMovement = new WormMovement();
+        private CollisionDetection m_systemCollisionDetection = new CollisionDetection();
+        private CollisionHandler m_systemCollisionHandler = new CollisionHandler();
         Systems.Network m_systemNetwork = new Server.Systems.Network();
 
         /// <summary>
@@ -24,6 +27,8 @@ namespace Server
         public void update(TimeSpan elapsedTime)
         {
             m_systemNetwork.update(elapsedTime, MessageQueueServer.instance.getMessages());
+            m_systemCollisionDetection.update(elapsedTime);
+            m_systemCollisionHandler.update(elapsedTime);
             m_systemWormMovement.update(elapsedTime);
         }
 
@@ -34,7 +39,6 @@ namespace Server
         {
             m_systemNetwork.registerJoinHandler(handleJoin);
             m_systemNetwork.registerDisconnectHandler(handleDisconnect);
-
             MessageQueueServer.instance.registerConnectHandler(handleConnect);
 
             return true;
@@ -91,6 +95,8 @@ namespace Server
 
             m_entities[entity.id] = entity;
             m_systemNetwork.add(entity);
+            m_systemCollisionDetection.add(entity);
+            m_systemCollisionHandler.add(entity);
             m_systemWormMovement.add(entity);
         }
 
@@ -102,6 +108,8 @@ namespace Server
         {
             m_entities.Remove(id);
             m_systemNetwork.remove(id);
+            m_systemCollisionDetection.remove(id);
+            m_systemCollisionHandler.remove(id);
             m_systemWormMovement.remove(id);
         }
 
