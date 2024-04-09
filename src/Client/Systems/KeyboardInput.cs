@@ -22,18 +22,12 @@ namespace Client.Systems
 
         public override void update(TimeSpan elapsedTime)
         {
-            if (!m_controls.UseKeyboard)
-            {
-                return;
-            }
             var keyboardState = Keyboard.GetState();
             m_keysPressed.Clear();
-
             foreach (var key in keyboardState.GetPressedKeys())
             {
                 m_keysPressed.Add(key);
             }
-
             // We have a dictionary of entities, so we need to iterate through them
             foreach (var entity in m_entities)
             {
