@@ -23,6 +23,7 @@ public class GameModel
     private Systems.Interpolation m_systemInterpolation;
     private Systems.Renderer m_renderer;
     private Shared.Systems.WormMovement m_systemWormMovement;
+    private Shared.Systems.CollisionHandler m_systemCollisionHandler;
     private Controls m_controls;
     private GraphicsDeviceManager m_graphics;
     private SpriteFont m_font;
@@ -35,6 +36,7 @@ public class GameModel
     {
         m_systemNetwork.update(elapsedTime, MessageQueueClient.instance.getMessages());
         m_systemKeyboardInput.update(elapsedTime);
+        m_systemCollisionHandler.update(elapsedTime);
         m_systemWormMovement.update(elapsedTime);
         m_systemInterpolation.update(elapsedTime);
         m_systemCamera.update(elapsedTime);
@@ -63,7 +65,9 @@ public class GameModel
         m_entities = new Dictionary<uint, Entity>();
         m_systemInterpolation = new Systems.Interpolation();
         m_systemCamera = new Systems.Camera(new Vector2(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight));
+
         m_renderer = new Systems.Renderer(m_systemCamera, graphics, m_font, m_sand);
+        m_systemCollisionHandler = new Shared.Systems.CollisionHandler();
         m_systemWormMovement = new Shared.Systems.WormMovement();
         m_systemNetwork = new Systems.Network();
 
@@ -119,6 +123,11 @@ public class GameModel
         {
             entity.add(new Collision());
         }
+        
+        if (message.hasWall)
+        {
+            entity.add(new Shared.Components.Wall());
+        }
 
         // Worm parts
 
@@ -145,6 +154,7 @@ public class GameModel
         if (message.hasWorm)
         {
             entity.add(new Worm());
+            entity.add(new AnchorQueue()); // We implicitly need this because every worm part has it
         }
 
         if (message.hasName)
@@ -169,6 +179,7 @@ public class GameModel
         // NOTE: Update the systems we use here
         m_entities[entity.id] = entity;
         m_systemKeyboardInput.add(entity);
+        m_systemCollisionHandler.add(entity);
         m_systemWormMovement.add(entity);
         m_renderer.add(entity);
         m_systemNetwork.add(entity);
@@ -185,6 +196,7 @@ public class GameModel
         // NOTE: Update the systems we use here
         m_entities.Remove(id);
         m_systemKeyboardInput.remove(id);
+        m_systemCollisionHandler.remove(id);
         m_systemWormMovement.remove(id);
         m_systemNetwork.remove(id);
         m_renderer.remove(id);

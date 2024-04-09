@@ -4,8 +4,10 @@ using Shared.Components;
 using Shared.Messages;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Mail;
 using System.Runtime.InteropServices;
+using Shared.Systems;
 using Input = Shared.Components.Input;
 
 namespace Client.Systems
@@ -50,6 +52,7 @@ namespace Client.Systems
             {
                 m_removeEntityHandler((RemoveEntity)message);
             });
+            
         }
 
         // Have to implement this because it is abstract in the base class
@@ -91,17 +94,37 @@ namespace Client.Systems
                 if (message.type == Shared.Messages.Type.Input)
                 {
                     var entity = m_entities[message.entityId];
+                    Debug.Assert(entity.contains<Head>());
+                    var worm = WormMovement.getWormFromHead(entity, m_entities);
                     if (m_updatedEntities.Contains(entity.id))
                     {
                         foreach (var input in message.inputs)
                         {
                             switch (input)
                             {
-                                case Shared.Components.Input.Type.RotateLeft:
-                                    Shared.Systems.WormMovement.ninetyLeft(entity, message.elapsedTime);
+                                case Shared.Components.Input.Type.PointLeft:
+                                    Shared.Systems.WormMovement.left(worm, message.elapsedTime);
                                     break;
-                                case Shared.Components.Input.Type.RotateRight:
-                                    Shared.Systems.WormMovement.ninetyRight(entity, message.elapsedTime);
+                                case Shared.Components.Input.Type.PointRight:
+                                    Shared.Systems.WormMovement.right(worm, message.elapsedTime);
+                                    break;
+                                case Shared.Components.Input.Type.PointUp:
+                                    Shared.Systems.WormMovement.up(worm);
+                                    break;
+                                case Shared.Components.Input.Type.PointDown:
+                                    Shared.Systems.WormMovement.down(worm);
+                                    break;
+                                case Input.Type.PointUpLeft:
+                                    Shared.Systems.WormMovement.upLeft(worm);
+                                    break;
+                                case Input.Type.PointUpRight:
+                                    Shared.Systems.WormMovement.upRight(worm);
+                                    break;  
+                                case Input.Type.PointDownLeft:
+                                    Shared.Systems.WormMovement.downLeft(worm);
+                                    break;
+                                case Input.Type.PointDownRight:
+                                    Shared.Systems.WormMovement.downRight(worm);
                                     break;
                             }
                         }
@@ -164,6 +187,10 @@ namespace Client.Systems
                     entity.get<Position>().orientation = message.orientation;
 
                     m_updatedEntities.Add(entity.id);
+                }
+                if (entity.contains<SpicePower>() && message.hasSpicePower)
+                {
+                    entity.get<SpicePower>().setPower(message.spicePower);
                 }
             }
         }

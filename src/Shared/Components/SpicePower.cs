@@ -17,4 +17,9 @@ public class SpicePower: Component
     {
         this.power -= power;
     }
+    
+    public void setPower(int power)
+    {
+        this.power = power;
+    }
 }

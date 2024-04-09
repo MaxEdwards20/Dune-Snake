@@ -1,5 +1,6 @@
 ﻿using Shared.Entities;
 using Shared.Messages;
+using Shared.Systems;
 
 namespace Server.Systems
 {
@@ -15,6 +16,8 @@ namespace Server.Systems
         private DisconnectHandler m_disconnectHandler;
 
         private HashSet<uint> m_reportThese = new HashSet<uint>();
+        private TimeSpan m_lastGlobalUpdateTime = new TimeSpan(m_globalUpdateFrequency);
+        private static int m_globalUpdateFrequency = 300;
 
         /// <summary>
         /// Primary activity in the constructor is to setup the command map
@@ -52,7 +55,22 @@ namespace Server.Systems
         }
 
         // Have to implement this because it is abstract in the base class
-        public override void update(TimeSpan elapsedTime) { }
+        public override void update(TimeSpan elapsedTime)
+        {
+            m_lastGlobalUpdateTime -= elapsedTime;
+            if (m_lastGlobalUpdateTime.TotalMilliseconds < 0)
+            {
+                Console.WriteLine("Global Worm Location Update");
+                m_lastGlobalUpdateTime = new TimeSpan(m_globalUpdateFrequency);
+                foreach (var entity in m_entities.Values)
+                {
+                    if (entity.contains<Shared.Components.Worm>())
+                    {
+                        m_reportThese.Add(entity.id);
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// Have our own version of update, because we need a list of messages to work with, and
@@ -99,25 +117,51 @@ namespace Server.Systems
         private void handleInput(Shared.Messages.Input message)
         {
             var entity = m_entities[message.entityId];
+            var worm = WormMovement.getWormFromHead(entity, m_entities);
+            var update = false;
             foreach (var input in message.inputs)
             {
                 switch (input)
                 {
-                    // case Shared.Components.Input.Type.SnakeUp:
-                        // var snake = Shared.Entities.Utility.thrust(entity, message.elapsedTime, m_entities);
-                        // foreach (var part in snake)
-                        // {
-                        //     m_reportThese.Add(part.id);
-                        // }
-                        // break;
-                    case Shared.Components.Input.Type.RotateLeft:
-                        Shared.Systems.WormMovement.ninetyLeft(entity, message.elapsedTime);
-                        m_reportThese.Add(message.entityId);
+                    case Shared.Components.Input.Type.PointLeft:
+                        Shared.Systems.WormMovement.left(worm, message.elapsedTime);
+                        update = true;
                         break;
-                    case Shared.Components.Input.Type.RotateRight:
-                        Shared.Systems.WormMovement.ninetyRight(entity, message.elapsedTime);
-                        m_reportThese.Add(message.entityId);
+                    case Shared.Components.Input.Type.PointRight:
+                        Shared.Systems.WormMovement.right(worm, message.elapsedTime);
+                        update = true;
                         break;
+                    case Shared.Components.Input.Type.PointUp:
+                        Shared.Systems.WormMovement.up(worm);
+                        update = true;
+                        break;
+                    case Shared.Components.Input.Type.PointDown:
+                        Shared.Systems.WormMovement.down(worm);
+                        update = true;
+                        break;
+                    case Shared.Components.Input.Type.PointUpLeft:
+                        Shared.Systems.WormMovement.upLeft(worm);
+                        update = true;
+                        break;
+                    case Shared.Components.Input.Type.PointUpRight:
+                        Shared.Systems.WormMovement.upRight(worm);
+                        update = true;
+                        break;  
+                    case Shared.Components.Input.Type.PointDownLeft:
+                        Shared.Systems.WormMovement.downLeft(worm);
+                        update = true;
+                        break;
+                    case Shared.Components.Input.Type.PointDownRight:
+                        Shared.Systems.WormMovement.downRight(worm);
+                        update = true;
+                        break;
+                }
+            }
+            if (update)
+            {
+                foreach (var e in worm)
+                {
+                    m_reportThese.Add(e.id);
                 }
             }
         }

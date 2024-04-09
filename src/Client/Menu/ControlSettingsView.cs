@@ -29,6 +29,8 @@ namespace Client.Menu
         {
             SnakeLeft,
             SnakeRight,
+            SnakeUp,
+            SnakeDown,
             None
         }
         
@@ -81,6 +83,12 @@ namespace Client.Menu
                                 case ControlStateEnum.SnakeRight:
                                     m_controls.SnakeRight.switchKey(key);
                                     break;
+                                case ControlStateEnum.SnakeUp:
+                                    m_controls.SnakeUp.switchKey(key);
+                                    break;
+                                case ControlStateEnum.SnakeDown:
+                                    m_controls.SnakeDown.switchKey(key);
+                                    break;
                             }
                             // Now we persist any changes
                             m_controlsPersistence.SaveControls(m_controls);
@@ -109,6 +117,8 @@ namespace Client.Menu
             Drawing.CustomDrawString(m_font, MESSAGE, new Vector2(halfWidth, halfHeight - headerStringSize.Y), Colors.displayColor, m_spriteBatch);
             Drawing.CustomDrawString(m_font, "Move Left  " + m_controls.SnakeLeft.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 50), getStringColor(ControlStateEnum.SnakeLeft), m_spriteBatch);
             Drawing.CustomDrawString(m_font, "Move Right  " + m_controls.SnakeRight.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 100), getStringColor(ControlStateEnum.SnakeRight), m_spriteBatch);
+            Drawing.CustomDrawString(m_font, "Move Up  " + m_controls.SnakeUp.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 150), getStringColor(ControlStateEnum.SnakeUp), m_spriteBatch);
+            Drawing.CustomDrawString(m_font, "Move Down  " + m_controls.SnakeDown.key, new Vector2(halfWidth, halfHeight - headerStringSize.Y + 2 + 200), getStringColor(ControlStateEnum.SnakeDown), m_spriteBatch);
             m_spriteBatch.End();
         }
 
@@ -163,7 +173,7 @@ namespace Client.Menu
             }
             if (controlState == ControlStateEnum.SnakeLeft)
             {
-                controlState = ControlStateEnum.SnakeRight;
+                controlState = ControlStateEnum.SnakeDown;
             }
             else
             {
@@ -177,7 +187,7 @@ namespace Client.Menu
             {
                 return;
             }
-            if (controlState == ControlStateEnum.SnakeRight)
+            if (controlState == ControlStateEnum.SnakeDown)
             {
                 controlState = ControlStateEnum.SnakeLeft;
             }

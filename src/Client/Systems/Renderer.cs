@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using Client.Components;
 using Client.Menu;
+using System.Runtime.CompilerServices;
 
 namespace Client.Systems;
 
@@ -19,6 +20,7 @@ public class Renderer : Shared.Systems.System
     private GraphicsDeviceManager m_graphics;
     private SpriteFont m_font;
     private Texture2D m_sand;
+    private List<Rectangle> m_backgroundTiles = new();
 
     public Renderer(Systems.Camera camera, GraphicsDeviceManager graphics, SpriteFont font, Texture2D sand) :
         base(
@@ -29,6 +31,10 @@ public class Renderer : Shared.Systems.System
         m_graphics = graphics;
         m_font = font;
         m_sand = sand;
+
+        for (int i = 0; i < 6; i++)
+            for (int j = 0; j < 6; j++)
+                m_backgroundTiles.Add(new Rectangle(-100 + i * 500, -100 + j * 500, 500, 500));
     }
 
     public override void update(TimeSpan elapsedTime) { }
@@ -48,17 +54,17 @@ public class Renderer : Shared.Systems.System
         //spriteBatch.Begin();
         spriteBatch.Begin(transformMatrix: matrix);
 
-        Rectangle rect = new(0, 0, 500, 500);
-        spriteBatch.Draw(
-            m_sand,
-            rect,
-            null,
-            Color.White,
-            0,
-            Vector2.Zero,
-            SpriteEffects.None,
-            0
-        );
+        foreach (Rectangle rect in m_backgroundTiles)
+            spriteBatch.Draw(
+                m_sand,
+                rect,
+                null,
+                Color.White,
+                0,
+                Vector2.Zero,
+                SpriteEffects.None,
+                0
+            );
 
         var heads = new List<Entity>();
         var bodies = new List<Entity>();
@@ -78,21 +84,13 @@ public class Renderer : Shared.Systems.System
         }
 
         foreach (Entity entity in others)
-        {
             renderEntity(elapsedTime, spriteBatch, entity);
-        }
         foreach (Entity entity in tails)
-        {
             renderEntity(elapsedTime, spriteBatch, entity);
-        }
         foreach (Entity entity in bodies)
-        {
             renderEntity(elapsedTime, spriteBatch, entity);
-        }
         foreach (Entity entity in heads)
-        {
             renderEntity(elapsedTime, spriteBatch, entity);
-        }
 
         spriteBatch.End();
     }

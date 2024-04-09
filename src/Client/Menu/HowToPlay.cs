@@ -8,7 +8,10 @@ namespace Client.Menu
     public class HowToPlayView : GameStateView
     {
         private SpriteFont font;
-        private string howToPlayMessage = "The snake will change direction based on keypress";
+        private string howToPlayMessage =
+            "Control a snake to eat food and grow. Use arrow keys for movement. \n" +
+            "(Custom controls in Main Menu) \n" +
+            "Avoid wall and other players!. How long can you grow? Try to beat the high score!";
         private string titleMessage = "HOW TO PLAY";
         private string continueMessage = "Press Enter to continue";
         private KeyboardState oldState;
@@ -56,23 +59,32 @@ namespace Client.Menu
         {
             m_spriteBatch.Begin();
 
+            // Define text scale
+            Vector2 textScale = new Vector2(0.5f, 0.5f); 
+
             // Title
             Vector2 titlePosition = new Vector2(m_graphics.PreferredBackBufferWidth / 2, m_graphics.PreferredBackBufferHeight / 4);
             Vector2 titleOrigin = font.MeasureString(titleMessage) / 2;
-            m_spriteBatch.DrawString(font, titleMessage, titlePosition - titleOrigin, Color.White);
+            m_spriteBatch.DrawString(font, titleMessage, titlePosition - (titleOrigin * textScale), Colors.displayColor, 0f, Vector2.Zero, textScale, SpriteEffects.None, 0f);
 
             // How to Play Instructions
-            Vector2 instructionsPosition = new Vector2(m_graphics.PreferredBackBufferWidth / 2, m_graphics.PreferredBackBufferHeight / 2);
-            Vector2 instructionsOrigin = font.MeasureString(howToPlayMessage) / 2;
-            m_spriteBatch.DrawString(font, howToPlayMessage, instructionsPosition - instructionsOrigin, Color.White);
+            Vector2 instructionsPosition = new Vector2(m_graphics.PreferredBackBufferWidth / 2, m_graphics.PreferredBackBufferHeight / 2.5f);
+            string[] lines = howToPlayMessage.Split('\n');
+            foreach (string line in lines)
+            {
+                Vector2 lineSize = font.MeasureString(line) * textScale;
+                m_spriteBatch.DrawString(font, line, instructionsPosition - new Vector2(lineSize.X / 2, 0), Colors.displayColor, 0f, Vector2.Zero, textScale, SpriteEffects.None, 0f);
+                instructionsPosition.Y += lineSize.Y + 5; // Adjust spacing between lines if necessary, taking scale into account
+            }
 
             // Continue Prompt
             Vector2 continuePosition = new Vector2(m_graphics.PreferredBackBufferWidth / 2, (m_graphics.PreferredBackBufferHeight / 4) * 3);
             Vector2 continueOrigin = font.MeasureString(continueMessage) / 2;
-            m_spriteBatch.DrawString(font, continueMessage, continuePosition - continueOrigin, Color.White);
+            m_spriteBatch.DrawString(font, continueMessage, continuePosition - (continueOrigin * textScale), Colors.displayColor, 0f, Vector2.Zero, textScale, SpriteEffects.None, 0f);
 
             m_spriteBatch.End();
         }
+
 
         public override void RegisterCommands()
         {

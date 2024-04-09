@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.Xna.Framework;
+using Server.Systems;
 using Shared.Components;
 using Shared.Components.Appearance;
 using Shared.Entities;
@@ -14,7 +15,10 @@ namespace Server
         private Dictionary<uint, Entity> m_entities = new Dictionary<uint, Entity>();
         private Dictionary<int, uint> m_clientToEntityId = new Dictionary<int, uint>();
         private WormMovement m_systemWormMovement = new WormMovement();
+        private CollisionDetection m_systemCollisionDetection = new CollisionDetection();
+        private CollisionHandler m_systemCollisionHandler = new CollisionHandler();
         Systems.Network m_systemNetwork = new Server.Systems.Network();
+        private int mapSize = 3000;
 
         /// <summary>
         /// This is where the server-side simulation takes place.  Messages
@@ -24,6 +28,8 @@ namespace Server
         public void update(TimeSpan elapsedTime)
         {
             m_systemNetwork.update(elapsedTime, MessageQueueServer.instance.getMessages());
+            m_systemCollisionDetection.update(elapsedTime);
+            m_systemCollisionHandler.update(elapsedTime);
             m_systemWormMovement.update(elapsedTime);
         }
 
@@ -32,13 +38,15 @@ namespace Server
         /// </summary>
         public bool initialize()
         {
+            generateWalls();
             m_systemNetwork.registerJoinHandler(handleJoin);
             m_systemNetwork.registerDisconnectHandler(handleDisconnect);
-
             MessageQueueServer.instance.registerConnectHandler(handleConnect);
-
+            m_systemCollisionDetection.registerRemoveEntity(removeEntity);
             return true;
         }
+
+
 
         /// <summary>
         /// Give everything a chance to gracefully shutdown.
@@ -68,13 +76,11 @@ namespace Server
         private void handleDisconnect(int clientId)
         {
             m_clients.Remove(clientId);
-
             Message message = new Shared.Messages.RemoveEntity(m_clientToEntityId[clientId]);
             MessageQueueServer.instance.broadcastMessage(message);
-
             removeEntity(m_clientToEntityId[clientId]);
-
             m_clientToEntityId.Remove(clientId);
+            
         }
 
         /// <summary>
@@ -91,6 +97,8 @@ namespace Server
 
             m_entities[entity.id] = entity;
             m_systemNetwork.add(entity);
+            m_systemCollisionDetection.add(entity);
+            m_systemCollisionHandler.add(entity);
             m_systemWormMovement.add(entity);
         }
 
@@ -102,7 +110,10 @@ namespace Server
         {
             m_entities.Remove(id);
             m_systemNetwork.remove(id);
+            m_systemCollisionDetection.remove(id);
+            m_systemCollisionHandler.remove(id);
             m_systemWormMovement.remove(id);
+
         }
 
         /// <summary>
@@ -134,66 +145,103 @@ namespace Server
             //         to the newly joined client
             createNewWorm(clientId, name);
         }
+        
+        private void generateWalls()
+        {
+            // We want to create wall entities around the entire map. 5000x5000 is the size of the map
+            // We'll create a wall every 100 units
+            var wallSize = 100;
+            for (int i = 0; i < mapSize/100; i++)
+            {
+                // Top wall
+                Entity wall = Shared.Entities.Wall.create(new Vector2(i * wallSize, 0), wallSize);
+                addEntity(wall);
+                // MessageQueueServer.instance.broadcastMessage(new NewEntity(wall));
+                // Bottom wall
+                wall = Shared.Entities.Wall.create(new Vector2(i * wallSize, mapSize-wallSize), wallSize);
+                addEntity(wall);
+                // MessageQueueServer.instance.broadcastMessage(new NewEntity(wall));
+                // Left wall
+                wall = Shared.Entities.Wall.create(new Vector2(0, i * wallSize), wallSize);
+                addEntity(wall);
+                // MessageQueueServer.instance.broadcastMessage(new NewEntity(wall));
+                // Right wall
+                wall = Shared.Entities.Wall.create(new Vector2(mapSize-wallSize, i * wallSize), wallSize);
+                addEntity(wall);
+                // MessageQueueServer.instance.broadcastMessage(new NewEntity(wall));
+            }
+            
+        }
 
         private void createNewWorm(int clientId, string name)
         {
-            var startLocation = getLeastDenseStartLocation();
+            var headStartLocation = getLeastDenseStartLocation();
+            var segmentStartLocation = new Vector2(headStartLocation.X - 75, headStartLocation.Y);
             var rotationRate = (float) Math.PI / 1000;
-            var moveRate = 0.1f;
+            var moveRate = 0.3f;
             var headSize = 100;
             var bodySize = 80;
             
             // Create the head
-            Entity player = WormHead.create(startLocation, 100, moveRate, rotationRate, name);
-            
-            // Create a body segment
-            Entity segment = WormSegment.create( new Vector2(startLocation.X + 75, startLocation.Y - 20)  , bodySize, moveRate, rotationRate, player.id);
-            player.add(new ChildId(segment.id));
-            
-            // Create a tail segment
-            Entity tail = WormTail.create(new Vector2(startLocation.X + 130, startLocation.Y), bodySize, moveRate, rotationRate, segment.id);
-            segment.add(new ChildId(tail.id));
-            
-            addEntity(player);
-            addEntity(segment);
-            addEntity(tail);
-            
-            m_clientToEntityId[clientId] = player.id;
-            m_clientToEntityId[clientId] = segment.id;
-            m_clientToEntityId[clientId] = tail.id;
-
-            // Step 3: Send the new player entity to the newly joined client
-            MessageQueueServer.instance.sendMessage(clientId, new NewEntity(player));
-            MessageQueueServer.instance.sendMessage(clientId, new NewEntity(segment));
-            MessageQueueServer.instance.sendMessage(clientId, new NewEntity(tail));
-
-            // Step 4: Let all other clients know about this new player entity
-            // Remove components not needed for "other" players
-            player.remove<Shared.Components.Input>();
-            
-            // Now send the new entities to all other clients
-            Message playerMessage = new NewEntity(player);
-            Message segmentMessage = new NewEntity(segment);
-            Message tailMessage = new NewEntity(tail);
-            foreach (int otherId in m_clients)
+            Entity segment = WormHead.create(headStartLocation, headSize, moveRate, rotationRate, name);
+            // Create X number of body segments
+            var parent = segment;
+            var numToCreate = 5;
+            for (int i = 0; i < numToCreate; i++)
             {
-                if (otherId != clientId)
+                segment = WormSegment.create(segmentStartLocation, bodySize, moveRate, rotationRate, parent.id);
+                if (i == numToCreate - 1)
                 {
-                    MessageQueueServer.instance.sendMessage(otherId, playerMessage);
-                    MessageQueueServer.instance.sendMessage(otherId, segmentMessage);
-                    MessageQueueServer.instance.sendMessage(otherId, tailMessage);
+                    segment = WormTail.create(segmentStartLocation, bodySize, moveRate, rotationRate, parent.id);
+                }
+                parent.add(new ChildId(segment.id));
+                addEntity(parent);
+                m_clientToEntityId[clientId] = parent.id;
+                MessageQueueServer.instance.sendMessage(clientId, new NewEntity(parent));
+                segmentStartLocation = new Vector2(segmentStartLocation.X - 50, segmentStartLocation.Y);
+                parent = segment;
+            }
+            addEntity(segment);
+            m_clientToEntityId[clientId] = segment.id;
+            MessageQueueServer.instance.sendMessage(clientId, new NewEntity(segment));
+
+            // Step 4: Let all other clients know about this new player 
+            while (segment != null)
+            {
+                // Don't need to send the input component to other clients
+                if (segment.contains<Shared.Components.Input>())
+                {
+                    segment.remove<Shared.Components.Input>();
+                }
+                // Send to each of the other clients
+                foreach (int otherId in m_clients)
+                {
+                    if (otherId != clientId)
+                    {
+                        var message = new NewEntity(segment);
+                        MessageQueueServer.instance.sendMessage(otherId, message);
+                    }
+                }
+                // Move up the linked list
+                if (segment.contains<ParentId>())
+                {
+                    segment = m_entities[segment.get<ParentId>().id];
+                }
+                else
+                {
+                    segment = null;
                 }
             }
-            
         }
 
         private Vector2 getLeastDenseStartLocation()
         {
             // We want to start the player in the least dense area of the screen
             // For now, we'll just start them randomly generated location
-
             Random random = new Random();
-            return new Vector2(random.Next(0, 800), random.Next(0, 600));
+            var lowerBound = (int)(.1 * mapSize);
+            var upperBound = (int)(.9 * mapSize);
+            return new Vector2(random.Next(lowerBound, upperBound), random.Next(lowerBound, upperBound));
         }
     }
 }
