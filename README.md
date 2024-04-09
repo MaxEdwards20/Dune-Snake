@@ -9,7 +9,6 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 ## In Progress
 
 - [ ] Satchel: Pick head, body, and tail texture for the sandworm
-- [ ] Caden: Map generation
 - [ ] Caden: Spice generation when we spawn
 - [ ] Caden: Periodic spice generation throughout the game
 - [ ] Max: Grow the worm on eating food.
@@ -39,6 +38,7 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 - [x] Max: Setup basic menuing
 - [x] Caden: Camera movement
 - [x] Satchel: Mouse Input Support
+- [x] Caden: Map generation
 
 ## Debugging
 
