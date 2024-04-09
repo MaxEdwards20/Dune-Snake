@@ -117,6 +117,7 @@ public class CollisionDetection : Shared.Systems.System
     private void handleWormAteSpice(Entity head, Entity spice, TimeSpan elapsedTime)
     {
         // Remove the spice
+        m_removeEntity(spice.id);
         MessageQueueServer.instance.broadcastMessage(new RemoveEntity(spice.id));
         // Add power to the worm head
         var headPower = head.get<SpicePower>();
