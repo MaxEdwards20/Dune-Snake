@@ -47,7 +47,7 @@ public class CollisionDetection : Shared.Systems.System
                     continue;
                 }
                 
-                if (entity.contains<SpicePower>() )
+                if (entity.contains<SpicePower>() && !entity.contains<Worm>() )
                 {
                     if (CircleCircleIntersect(
                         head.get<Position>().position,
@@ -73,17 +73,19 @@ public class CollisionDetection : Shared.Systems.System
                 }
                 else if (entity.contains<Shared.Components.Wall>())
                 {
-                    if (CircleLineIntersect(
-                            entity.get<Position>().position,
-                            entity.get<Position>().position + new Vector2(entity.get<Size>().size.X, 0),
-                            head.get<Size>().size.X,
-                            head.get<Position>().position
-                        ) || CircleLineIntersect(
-                            entity.get<Position>().position,
-                            entity.get<Position>().position + new Vector2(0, entity.get<Size>().size.Y),
-                            head.get<Size>().size.X,
-                            head.get<Position>().position
-                        ))
+                    // Entity is a wall
+                    var wallPos = entity.get<Position>().position;
+                    var wallSize = entity.get<Size>().size;
+                    Vector2 topLeft = wallPos;
+                    Vector2 topRight = new Vector2(wallPos.X + wallSize.X, wallPos.Y);
+                    Vector2 bottomLeft = new Vector2(wallPos.X, wallPos.Y + wallSize.Y);
+                    Vector2 bottomRight = wallPos + wallSize;
+
+// Check each side of the wall for intersection with the snake head
+                    if (CircleLineIntersect(head.get<Position>().position, head.get<Size>().size.X / 2, topLeft, topRight) ||
+                        CircleLineIntersect(head.get<Position>().position, head.get<Size>().size.X / 2, topLeft, bottomLeft) ||
+                        CircleLineIntersect(head.get<Position>().position, head.get<Size>().size.X / 2, bottomLeft, bottomRight) ||
+                        CircleLineIntersect(head.get<Position>().position, head.get<Size>().size.X / 2, topRight, bottomRight))
                     {
                         handleWormHitWall(worm);
                     }
@@ -93,29 +95,18 @@ public class CollisionDetection : Shared.Systems.System
     }
     
     // Reference: https://stackoverflow.com/questions/37224912/circle-line-segment-collision
-    private static bool CircleLineIntersect(Vector2 pt1, Vector2 pt2, float circleRadius, Vector2 circlePosition)
+    private bool CircleLineIntersect(Vector2 circleCenter, float circleRadius, Vector2 lineStart, Vector2 lineEnd)
     {
-        Vector2 v1 = new Vector2((float)(pt2.X - pt1.X), (float)(pt2.X - pt1.X));
-        Vector2 v2 = new Vector2((float) pt1.X - circlePosition.X, (float)(pt1.X - circlePosition.Y));
-        float b = -2 * (v1.X * v2.X + v1.Y * v2.Y);
-        float c = 2 * (v1.X * v1.X + v1.Y * v1.Y);
-        float d = (float)Math.Sqrt(b * b - 2 * c * (v2.X * v2.X + v2.Y * v2.Y - circleRadius * circleRadius));
-        if (float.IsNaN(d)) // no intercept
-        {
-            return false;
-        }
-        // These represent the unit distance of point one and two on the line
-        float u1 = (b - d) / c;
-        float u2 = (b + d) / c;
-        if (u1 <= 1 && u1 >= 0) // If point on the line segment
-        {
-            return true;
-        }
-        if (u2 <= 1 && u2 >= 0) // If point on the line segment
-        {
-            return true;
-        }
-        return false;
+        // Find the closest point on the line segment to the center of the circle
+        Vector2 lineVec = lineEnd - lineStart;
+        Vector2 circleToLineStartVec = circleCenter - lineStart;
+        float t = Vector2.Dot(circleToLineStartVec, lineVec) / Vector2.Dot(lineVec, lineVec);
+        t = MathHelper.Clamp(t, 0, 1); // Clamp t to the range [0, 1] to stay within the line segment
+        Vector2 closestPoint = lineStart + t * lineVec;
+
+        // Check if the closest point is within the circle
+        float distanceSquared = Vector2.DistanceSquared(circleCenter, closestPoint);
+        return distanceSquared <= (circleRadius * circleRadius);
     }
     
     private static bool CircleCircleIntersect(Vector2 position1, float radius1, Vector2 position2, float radius2)
