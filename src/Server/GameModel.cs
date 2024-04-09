@@ -178,7 +178,7 @@ namespace Server
             var headStartLocation = getLeastDenseStartLocation();
             var segmentStartLocation = new Vector2(headStartLocation.X - 75, headStartLocation.Y);
             var rotationRate = (float) Math.PI / 1000;
-            var moveRate = 0.1f;
+            var moveRate = 0.3f;
             var headSize = 100;
             var bodySize = 80;
             

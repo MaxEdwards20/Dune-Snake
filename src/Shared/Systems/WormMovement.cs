@@ -88,7 +88,7 @@ public class WormMovement : Shared.Systems.System
         var headPosition = head.get<Position>();
         var frameTotalMovement = movement.moveRate * (float)elapsedTime.TotalMilliseconds;
         var orientation = headPosition.orientation;
-        float LOCATION_THRESHOLD = 2f;
+        float LOCATION_THRESHOLD = movement.moveRate * 20;
         const float MIN_SEGMENT_SPACING = 30f;
         const float IDEAL_SEGMENT_SPACING = 40f;
         
