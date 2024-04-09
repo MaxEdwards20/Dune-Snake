@@ -51,7 +51,7 @@ public class CollisionDetection : Shared.Systems.System
                     continue;
                 }
                 
-                if (entity.contains<SpicePower>() || entity.contains<Worm>())
+                if (entity.contains<SpicePower>() )
                 {
                     if (CircleCircleIntersect(
                         head.get<Position>().position,
@@ -60,7 +60,19 @@ public class CollisionDetection : Shared.Systems.System
                         entity.get<Size>().size.X
                     ))
                     {
-                        MessageQueueServer.instance.broadcastMessage(new Shared.Messages.Collision(head.id, entity.id));
+                        handleWormAteSpice(head, entity, elapsedTime);
+                    }
+                }
+                else if (entity.contains<Worm>())
+                {
+                    if (CircleCircleIntersect(
+                        head.get<Position>().position,
+                        head.get<Size>().size.X,
+                        entity.get<Position>().position,
+                        entity.get<Size>().size.X
+                    ))
+                    {
+                        handleWormAteWorm(worm, entity);
                     }
                 }
                 else if (entity.contains<Shared.Components.Wall>())
@@ -77,7 +89,7 @@ public class CollisionDetection : Shared.Systems.System
                             head.get<Position>().position
                         ))
                     {
-                        MessageQueueServer.instance.broadcastMessage(new Shared.Messages.Collision(head.id, entity.id));
+                        handleWormHitWall(worm);
                     }
                 }
             }
@@ -113,6 +125,44 @@ public class CollisionDetection : Shared.Systems.System
     private static bool CircleCircleIntersect(Vector2 position1, float radius1, Vector2 position2, float radius2)
     {
         return Vector2.Distance(position1, position2) < radius1 + radius2;
+    }
+    
+    private void handleWormAteSpice(Entity head, Entity spice, TimeSpan elapsedTime)
+    {
+        // Remove the spice
+        MessageQueueServer.instance.broadcastMessageWithLastId(new RemoveEntity(spice.id));
+        // Add power to the worm head
+        var headPower = head.get<SpicePower>();
+        var spicePower = spice.get<SpicePower>();
+        headPower.addPower(spicePower.power);
+        MessageQueueServer.instance.broadcastMessageWithLastId(new UpdateEntity(head, elapsedTime));
+    }
+    
+    private void handleWormAteWorm(List<Entity> worm, Entity otherWorm)
+    {
+        if (otherWorm.contains<Head>())
+        {
+            // WE need to compare the sizes of the two worms to see who dies
+        }
+        else
+        {
+            // If the worm hit the body, then the worm dies
+            removeWorm(worm);
+        }
+    }
+    
+    private void handleWormHitWall(List<Entity> worm)
+    {
+        removeWorm(worm);
+    }
+
+    private void removeWorm(List<Entity> worm)
+    {
+        foreach (var entity in worm)
+        {
+            MessageQueueServer.instance.broadcastMessageWithLastId(new RemoveEntity(entity.id));
+        }
+        
     }
 }
 

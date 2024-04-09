@@ -11,7 +11,6 @@ public class Collision : Message
         entity2Id = id2;
     }
     
-    
     public Collision() : base(Type.Collision)
     {
     }

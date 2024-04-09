@@ -52,6 +52,7 @@ namespace Client.Systems
             {
                 m_removeEntityHandler((RemoveEntity)message);
             });
+            
         }
 
         // Have to implement this because it is abstract in the base class
@@ -186,6 +187,11 @@ namespace Client.Systems
                     entity.get<Position>().orientation = message.orientation;
 
                     m_updatedEntities.Add(entity.id);
+                }
+
+                if (entity.contains<SpicePower>() && message.hasSpicePower)
+                {
+                    entity.get<SpicePower>().setPower(message.spicePower);
                 }
             }
         }

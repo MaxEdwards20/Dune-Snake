@@ -7,24 +7,7 @@ public class CollisionHandler : Shared.Systems.System
 {
     public override void update(TimeSpan elapsedTime)
     {
-        throw new NotImplementedException();
+        // Basically we look at each worm head and see how big it is. If it is above a certain threshold, then we update its size and remove the spice power.
     }
     
-    public static void wormAteSpice(Entity worm, Entity spice)
-    {
-        // Remove the spice
-        spice.remove<SpicePower>();
-        // Grow the worm
-        // TODO
-    }
-    
-    public static void wormAteWorm(Entity worm1, Entity worm2)
-    {
-        // TODO
-    }
-    
-    public static void wormHitWall(Entity worm, Entity wall)
-    {
-        // TODO
-    }
 }
