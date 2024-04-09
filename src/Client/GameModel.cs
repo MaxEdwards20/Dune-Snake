@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Input;
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Text.RegularExpressions;
 using Client.Components;
 using Shared.Components;
@@ -28,6 +29,12 @@ public class GameModel
     private GraphicsDeviceManager m_graphics;
     private SpriteFont m_font;
     private Texture2D m_sand;
+    private String m_playerName;
+
+    public GameModel(StringBuilder playerName)
+    {
+        m_playerName = playerName.ToString();
+    }
 
     /// <summary>
     /// This is where everything performs its update.
@@ -69,7 +76,7 @@ public class GameModel
         m_renderer = new Systems.Renderer(m_systemCamera, graphics, m_font, m_sand);
         m_systemCollisionHandler = new Shared.Systems.CollisionHandler();
         m_systemWormMovement = new Shared.Systems.WormMovement();
-        m_systemNetwork = new Systems.Network();
+        m_systemNetwork = new Systems.Network(m_playerName);
 
         m_systemNetwork.registerNewEntityHandler(handleNewEntity);
         m_systemNetwork.registerRemoveEntityHandler(handleRemoveEntity);

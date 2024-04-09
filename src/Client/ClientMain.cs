@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
 using System.Collections.Generic;
+using System.Text;
 using Client.Components;
 using Client.Systems;
 using Shared.Components;
@@ -29,6 +30,7 @@ namespace Client
         private GameModel m_gameModel;
         private Controls m_controls;
         private ControlsPersistence m_ControlsPersistence;
+        private StringBuilder playerName = new StringBuilder();
 
         public ClientMain()
         {
@@ -36,7 +38,7 @@ namespace Client
             Content.RootDirectory = "Content";
             m_menuKeyboardInput = new MenuKeyboardInput();
             IsMouseVisible = true;
-            m_gameModel = new GameModel();
+            m_gameModel = new GameModel(playerName);
             m_controls = new Controls();
             m_ControlsPersistence = new ControlsPersistence();
         }
@@ -58,12 +60,12 @@ namespace Client
             m_states = new Dictionary<MenuStateEnum, IGameState>
             {
                 { MenuStateEnum.MainMenu, new MainMenuView() },
-                { MenuStateEnum.GamePlay, new GamePlayView(m_controls) }, 
+                { MenuStateEnum.GamePlay, new GamePlayView(m_controls, playerName) }, 
                 { MenuStateEnum.HighScores, new HighScoresView() },
                 { MenuStateEnum.Controls, new ControlSettingsView(m_controls) },
                 { MenuStateEnum.Help, new HelpView() },
                 { MenuStateEnum.Credits, new AboutView() },
-                { MenuStateEnum.ChooseName, new ChooseNameView() },
+                { MenuStateEnum.ChooseName, new ChooseNameView(playerName)},
                 { MenuStateEnum.HowToPlay, new HowToPlayView() }
             };
 

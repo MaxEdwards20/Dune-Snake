@@ -27,11 +27,7 @@ namespace Shared.Messages
         {
             List<byte> data = new List<byte>();
             data.AddRange(base.serialize());
-            data.AddRange(BitConverter.GetBytes(hasName));
-            if (hasName)
-            {
-                data.AddRange(Encoding.UTF8.GetBytes(name));
-            }
+            serializeName(data);
             return data.ToArray();
         }
 
@@ -42,16 +38,36 @@ namespace Shared.Messages
         public override int parse(byte[] data)
         {
             int offset = base.parse(data);
+            offset = parseName(data, offset);
+            return offset;
+        }
+        
+        private void serializeName(List<byte> data)
+        {
+            data.AddRange(BitConverter.GetBytes(hasName));
+            if (hasName)
+            {
+                data.AddRange(Encoding.UTF8.GetBytes(name));
+            }
+        }
+        
+        private int parseName(byte[] data, int offset)
+        {
             this.hasName = BitConverter.ToBoolean(data, offset);
             offset += sizeof(bool);
             if (hasName)
             {
-                int nameSize = BitConverter.ToInt32(data, offset);
-                offset += sizeof(Int32);
+                // int nameSize = BitConverter.ToInt32(data, offset);
+                // offset += sizeof(Int32);
+                int nameSize = data.Length - offset;
                 this.name = Encoding.UTF8.GetString(data, offset, nameSize);
                 offset += nameSize;
             }
             return offset;
         }
+        
+        
     }
+    
+
 }
