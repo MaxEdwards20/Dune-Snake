@@ -40,6 +40,7 @@ namespace Server
             m_systemNetwork.registerJoinHandler(handleJoin);
             m_systemNetwork.registerDisconnectHandler(handleDisconnect);
             MessageQueueServer.instance.registerConnectHandler(handleConnect);
+            m_systemCollisionDetection.registerRemoveEntity(removeEntity);
 
             return true;
         }
@@ -77,8 +78,8 @@ namespace Server
             MessageQueueServer.instance.broadcastMessage(message);
 
             removeEntity(m_clientToEntityId[clientId]);
-
             m_clientToEntityId.Remove(clientId);
+            
         }
 
         /// <summary>
@@ -111,6 +112,7 @@ namespace Server
             m_systemCollisionDetection.remove(id);
             m_systemCollisionHandler.remove(id);
             m_systemWormMovement.remove(id);
+
         }
 
         /// <summary>

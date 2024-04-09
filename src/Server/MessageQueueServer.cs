@@ -161,7 +161,6 @@ namespace Server
         public void registerConnectHandler(ConnectHandler handler)
         {
             m_connectHandler = handler;
-
         }
 
         /// <summary>

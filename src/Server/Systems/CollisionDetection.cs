@@ -8,6 +8,8 @@ namespace Server.Systems;
 
 public class CollisionDetection : Shared.Systems.System
 {
+    private System.Action<uint> m_removeEntity;
+    
     public CollisionDetection() :
         base(
             typeof(Shared.Components.Collision), typeof(Shared.Components.Position), typeof(Shared.Components.Size)
@@ -17,12 +19,6 @@ public class CollisionDetection : Shared.Systems.System
     
     public override void update(TimeSpan elapsedTime)
     {
-        // If we collide with food, we need to remove the food and grow the worm
-        // If we collide with a worm, we need to remove the worm and end the game for that client
-        // If we collide with a wall, we need to remove the worm and end the game for that client
-        
-        // We know that the heads of the worms are the only things that may be colliding with something. So we just need to check the heads of the worms against everything else.
-        
         // Get the heads of the worms
         List<Entity> heads = new List<Entity>();
         foreach (var entity in m_entities.Values)
@@ -138,13 +134,23 @@ public class CollisionDetection : Shared.Systems.System
         MessageQueueServer.instance.broadcastMessageWithLastId(new UpdateEntity(head, elapsedTime));
     }
     
-    private void handleWormAteWorm(List<Entity> worm, Entity otherWorm)
+    private void handleWormAteWorm(List<Entity> worm, Entity otherHead)
     {
-        if (otherWorm.contains<Head>())
+        // Check if we hit head on
+        if (otherHead.contains<Head>())
         {
-            // WE need to compare the sizes of the two worms to see who dies
+            // We need to compare the sizes of the two worms to see who dies
+            List<Entity> otherWorm = WormMovement.getWormFromHead(otherHead, m_entities);
+            if (worm.Count > otherWorm.Count)
+            {
+                removeWorm(otherWorm);
+            }
+            else
+            {
+                removeWorm(worm);
+            }
         }
-        else
+        else // We hit the side of the worm
         {
             // If the worm hit the body, then the worm dies
             removeWorm(worm);
@@ -160,9 +166,17 @@ public class CollisionDetection : Shared.Systems.System
     {
         foreach (var entity in worm)
         {
+            
             MessageQueueServer.instance.broadcastMessageWithLastId(new RemoveEntity(entity.id));
+            m_removeEntity(entity.id);
         }
+        // TODO: Add new entities to the world where the body was
         
+    }
+
+    public void registerRemoveEntity(Action<uint> removeEntity)
+    {
+        m_removeEntity = removeEntity;
     }
 }
 
