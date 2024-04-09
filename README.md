@@ -12,7 +12,6 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 - [ ] Caden: Map generation
 - [ ] Caden: Spice generation when we spawn
 - [ ] Caden: Periodic spice generation throughout the game
-- [ ] Menu Screen to let player name themselves (probably similar to how control selection screen will work) - Satchel
 - [ ] Max: Grow the worm on eating food.
 
 ## Items to Develop
