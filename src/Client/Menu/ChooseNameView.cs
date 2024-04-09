@@ -10,10 +10,16 @@ namespace Client.Menu
 {
     public class ChooseNameView : GameStateView
     {
-        private StringBuilder playerName = new StringBuilder();
+        private StringBuilder playerName;
         private SpriteFont font;
         private KeyboardState oldState;
         private GameModel m_gameModel;
+
+        public ChooseNameView(StringBuilder name)
+        {
+            this.playerName = name;
+            oldState = Keyboard.GetState();
+        }
 
         public override void loadContent(ContentManager contentManager)
         {
@@ -22,23 +28,19 @@ namespace Client.Menu
 
         public override MenuStateEnum processInput(GameTime gameTime)
         {
-            KeyboardState newState = Keyboard.GetState(); // Get the new state
-
             
-
+            KeyboardState newState = Keyboard.GetState(); // Get the new state
+            
             // Simple example for input handling
-            foreach (var key in newState.GetPressedKeys())
+            foreach (var key in MenuKeyboardInput.GetPressedKeys())
             {
-                
-
                 // Check for Escape key press to return to MainMenu
                 if (newState.IsKeyDown(Keys.Escape))
                 {
-                    playerName.Clear();
+                    playerName.Clear(); // Clear the player name when Escape is pressed
                     return MenuStateEnum.MainMenu; // Immediately return to MainMenu when Escape is pressed
                 }
-
-
+                
                 if (!oldState.IsKeyDown(key)) // Only take action if the key was not pressed before
                 {
                     if (key == Keys.Back && playerName.Length > 0) // Handle backspace
@@ -47,10 +49,7 @@ namespace Client.Menu
                     }
                     else if (key == Keys.Enter && playerName.Length > 0) // Confirm with Enter key
                     {
-
-
-                        // TODO SET PLAYER NAME
-
+                        
                         // Transition to the next state (e.g., HowToPlay)
                         return MenuStateEnum.HowToPlay;
                     }
