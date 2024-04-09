@@ -18,7 +18,7 @@ namespace Server
         private CollisionDetection m_systemCollisionDetection = new CollisionDetection();
         private CollisionHandler m_systemCollisionHandler = new CollisionHandler();
         Systems.Network m_systemNetwork = new Server.Systems.Network();
-        private int mapSize = 5000;
+        private int mapSize = 3000;
 
         /// <summary>
         /// This is where the server-side simulation takes place.  Messages
