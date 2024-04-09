@@ -9,15 +9,15 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 ## In Progress
 
 - [ ] Satchel: Pick head, body, and tail texture for the sandworm
-- [ ] Satchel: Keyboard vs. Mouse input menu screen - Satchel
 - [ ] Caden: Map generation
 - [ ] Caden: Spice generation when we spawn
 - [ ] Caden: Periodic spice generation throughout the game
 - [ ] Max: Keyboard support for left, right, up, down, diagonal up left and diagonal up right. Also add these to the wormMovement system.
+- [ ] Menu Screen to let player name themselves (probably similar to how control selection screen will work) - Satchel
+
 
 ## Items to Develop
 - [ ] Fix ability to exit the game and come back in. Dean talked about what we need to do in Teams.
-- [ ] Menu Screen to let player name themselves (probably similar to how control selection screen will work) - Satchel
 - [ ] 3 different animated sprites for the spice
 - [ ] Sound effects on death of worm and when food is eaten - Satchel
 - [ ] Collision detection. Know whether we hit spice or another sandworm
