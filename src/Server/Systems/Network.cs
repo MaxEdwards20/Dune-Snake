@@ -105,13 +105,37 @@ namespace Server.Systems
             {
                 switch (input)
                 {
-                    case Shared.Components.Input.Type.RotateLeft:
-                        Shared.Systems.WormMovement.ninetyLeft(worm, message.elapsedTime);
-                        m_reportThese.Add(message.entityId);
+                    case Shared.Components.Input.Type.PointLeft:
+                        Shared.Systems.WormMovement.left(worm, message.elapsedTime);
+                        m_reportThese.Add(entity.id);
                         break;
-                    case Shared.Components.Input.Type.RotateRight:
-                        Shared.Systems.WormMovement.ninetyRight(worm, message.elapsedTime);
-                        m_reportThese.Add(message.entityId);
+                    case Shared.Components.Input.Type.PointRight:
+                        Shared.Systems.WormMovement.right(worm, message.elapsedTime);
+                        m_reportThese.Add(entity.id);
+                        break;
+                    case Shared.Components.Input.Type.PointUp:
+                        Shared.Systems.WormMovement.up(worm);
+                        m_reportThese.Add(entity.id);
+                        break;
+                    case Shared.Components.Input.Type.PointDown:
+                        Shared.Systems.WormMovement.down(worm);
+                        m_reportThese.Add(entity.id);
+                        break;
+                    case Shared.Components.Input.Type.PointUpLeft:
+                        Shared.Systems.WormMovement.upLeft(worm);
+                        m_reportThese.Add(entity.id);
+                        break;
+                    case Shared.Components.Input.Type.PointUpRight:
+                        Shared.Systems.WormMovement.upRight(worm);
+                        m_reportThese.Add(entity.id);
+                        break;  
+                    case Shared.Components.Input.Type.PointDownLeft:
+                        Shared.Systems.WormMovement.downLeft(worm);
+                        m_reportThese.Add(entity.id);
+                        break;
+                    case Shared.Components.Input.Type.PointDownRight:
+                        Shared.Systems.WormMovement.downRight(worm);
+                        m_reportThese.Add(entity.id);
                         break;
                 }
             }

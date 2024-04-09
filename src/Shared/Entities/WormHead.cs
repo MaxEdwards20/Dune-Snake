@@ -20,9 +20,10 @@ public class WormHead
         entity.add(new Worm());
             
         List<Input.Type> inputs = new List<Input.Type>();
-        inputs.Add(Input.Type.SnakeUp);
-        inputs.Add(Input.Type.RotateLeft);
-        inputs.Add(Input.Type.RotateRight);
+        foreach (Shared.Components.Input.Type input in Enum.GetValues(typeof(Input.Type)))
+        {
+            inputs.Add(input);
+        }
         entity.add(new Input(inputs));
 
         return entity;

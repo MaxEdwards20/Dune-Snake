@@ -36,16 +36,49 @@ public class WormMovement : Shared.Systems.System
         return heads;
     }
 
-    public static void ninetyLeft(List<Entity> snake, TimeSpan elapsedTime)
+    private static float UP_Radians = -MathHelper.PiOver2;
+    private static float DOWN_Radians = MathHelper.PiOver2;
+    
+    public static void upLeft(List<Entity> snake)
     {
-        applyRotation(snake, -MathHelper.PiOver2);
-    }
-
-    public static void ninetyRight(List<Entity> snake, TimeSpan elapsedTime)
-    {
-        applyRotation(snake, MathHelper.PiOver2);
+        changeDirection(snake, UP_Radians - MathHelper.PiOver4);
     }
     
+    public static void upRight(List<Entity> snake)
+    {
+        changeDirection(snake, UP_Radians + MathHelper.PiOver4);
+    }
+    
+    public static void downRight(List<Entity> snake)
+    {
+        changeDirection(snake, DOWN_Radians - MathHelper.PiOver4);
+    }
+
+    public static void downLeft(List<Entity> snake)
+    {
+        changeDirection(snake, DOWN_Radians + MathHelper.PiOver4);
+    }
+    
+    public static void left(List<Entity> snake, TimeSpan elapsedTime)
+    {
+        changeDirection(snake, MathHelper.Pi);
+    }
+    
+    public static void up(List<Entity> snake)
+    {
+        changeDirection(snake, UP_Radians);
+    }
+    
+    public static void down(List<Entity> snake)
+    {
+        changeDirection(snake, DOWN_Radians);
+    }
+
+    public static void right(List<Entity> snake, TimeSpan elapsedTime)
+    {
+        changeDirection(snake, MathHelper.TwoPi);
+    }
+
     private void applyThrust(Entity wormHead, TimeSpan elapsedTime)
     {
         // Setup variables
@@ -56,8 +89,8 @@ public class WormMovement : Shared.Systems.System
         var frameTotalMovement = movement.moveRate * (float)elapsedTime.TotalMilliseconds;
         var orientation = headPosition.orientation;
         float LOCATION_THRESHOLD = 2f;
-        const float MIN_SEGMENT_SPACING = 40f;
-        const float IDEAL_SEGMENT_SPACING = 50f;
+        const float MIN_SEGMENT_SPACING = 20f;
+        const float IDEAL_SEGMENT_SPACING = 40f;
         
         // Check how close the head is to its child
         if (head.contains<ChildId>())
@@ -115,17 +148,18 @@ public class WormMovement : Shared.Systems.System
         }
     }
     
-    private static void applyRotation(List<Entity> snake, float radians)
+    private static void changeDirection(List<Entity> worm, float radians)
     {
-        if (snake == null || snake.Count == 0) 
+        if (worm == null || worm.Count == 0) 
             return;
 
             // Assuming the first entity in the list is the head
-            var head = snake[0];
+            var head = worm[0];
             var headPosition = head.get<Position>();
 
             // Adjust the head's orientation by the specified radians
-            headPosition.orientation += radians;
+            if (headPosition.orientation == radians) return;
+            headPosition.orientation = radians;
 
             // Normalize the orientation to ensure it stays within a valid range (e.g., 0 to 2*PI)
             // This step is important if your system expects orientations within a specific range
@@ -134,9 +168,9 @@ public class WormMovement : Shared.Systems.System
 
             // For each segment, add the current head position to its queue for following
             // Skip the head itself, start with the first segment following the head
-            for (int i = 1; i < snake.Count; i++)
+            for (int i = 1; i < worm.Count; i++)
             {
-                var segment = snake[i];
+                var segment = worm[i];
                 var queueComponent = segment.get<AnchorQueue>();
                 // Here, we're adding the head's current position as the new target for each segment
                 // This mimics the behavior where, upon rotation, each segment should aim to move
