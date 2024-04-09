@@ -138,7 +138,7 @@ namespace Server
         private void createNewWorm(int clientId, string name)
         {
             var headStartLocation = getLeastDenseStartLocation();
-            var segmentStartLocation = new Vector2(headStartLocation.X + 75, headStartLocation.Y);
+            var segmentStartLocation = new Vector2(headStartLocation.X - 75, headStartLocation.Y);
             var rotationRate = (float) Math.PI / 1000;
             var moveRate = 0.1f;
             var headSize = 100;
@@ -160,7 +160,7 @@ namespace Server
                 addEntity(parent);
                 m_clientToEntityId[clientId] = parent.id;
                 MessageQueueServer.instance.sendMessage(clientId, new NewEntity(parent));
-                segmentStartLocation = new Vector2(segmentStartLocation.X + 50, segmentStartLocation.Y);
+                segmentStartLocation = new Vector2(segmentStartLocation.X - 50, segmentStartLocation.Y);
                 parent = segment;
             }
             addEntity(segment);
