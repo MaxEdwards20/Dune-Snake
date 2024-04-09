@@ -38,15 +38,14 @@ public class WormMovement : Shared.Systems.System
 
     public static void ninetyLeft(List<Entity> snake, TimeSpan elapsedTime)
     {
-        applyLeftRotation(snake, MathHelper.PiOver2);
+        applyRotation(snake, -MathHelper.PiOver2);
     }
 
     public static void ninetyRight(List<Entity> snake, TimeSpan elapsedTime)
     {
-        applyRightRotation(snake, MathHelper.PiOver2);
+        applyRotation(snake, MathHelper.PiOver2);
     }
     
-    // TODO: Adjust this to get the parent's virtual position, not their screen position
     private void applyThrust(Entity wormHead, TimeSpan elapsedTime)
     {
         // Setup variables
@@ -56,7 +55,21 @@ public class WormMovement : Shared.Systems.System
         var headPosition = head.get<Position>();
         var frameTotalMovement = movement.moveRate * (float)elapsedTime.TotalMilliseconds;
         var orientation = headPosition.orientation;
-        var threshold = 2f;
+        float LOCATION_THRESHOLD = 2f;
+        const float MIN_SEGMENT_SPACING = 40f;
+        const float IDEAL_SEGMENT_SPACING = 50f;
+        
+        // Check how close the head is to its child
+        if (head.contains<ChildId>())
+        {
+            var child = m_entities[head.get<ChildId>().id];
+            var childPosition = child.get<Position>();
+            var distanceToChild = Vector2.Distance(headPosition.position, childPosition.position);
+            if (distanceToChild >= IDEAL_SEGMENT_SPACING)
+            {
+                // frameTotalMovement *= 0.1f;
+            }
+        }
         
         // Move the head
         var direction = new Vector2((float)Math.Cos(orientation), (float)Math.Sin(orientation));
@@ -68,29 +81,32 @@ public class WormMovement : Shared.Systems.System
         {
             var entity = snake[i];
             var queueComponent = entity.get<AnchorQueue>();
-            var positionComponent = entity.get<Position>();
-            if (queueComponent != null)
+            var currentPosition = entity.get<Position>();
+            var parent = snake[i - 1];
+            var parentPosition = parent.get<Position>();
+            
+            // Default moving towards parent position
+            var target = new Position(parentPosition.position, parentPosition.orientation);
+
+            if (queueComponent.m_anchorPositions.Count != 0)
             {
-                if (queueComponent.m_anchorPositions.Count == 0)
-                {
-                    var parent = snake[i - 1];
-                    var parentPosition = parent.get<Position>();
-                    queueComponent.m_anchorPositions.Enqueue(new Position(parentPosition.position, parentPosition.orientation));
-                }
-                
-                // Check where we want to move towards
-                var target = queueComponent.m_anchorPositions.Peek();
-                
-                // Move towards that target
-                var directionToTarget = target.position - positionComponent.position;
+                // queueComponent.m_anchorPositions.Enqueue(new Position(parentPosition.position, parentPosition.orientation));
+                target = queueComponent.m_anchorPositions.Peek();
+            }
+            // Move towards that target
+            var distanceToTarget = Vector2.Distance(currentPosition.position, target.position);
+            var distanceToParent = Vector2.Distance(currentPosition.position, parentPosition.position);
+            if (distanceToTarget > MIN_SEGMENT_SPACING || distanceToParent > IDEAL_SEGMENT_SPACING)
+            {
+                var directionToTarget = target.position - currentPosition.position;
                 directionToTarget.Normalize();
-                positionComponent.position += directionToTarget * frameTotalMovement;
+                currentPosition.position += directionToTarget * frameTotalMovement;
 
                 // Update the orientation to match the direction we're moving
-                positionComponent.orientation = (float)Math.Atan2(directionToTarget.Y, directionToTarget.X);
+                currentPosition.orientation = (float)Math.Atan2(directionToTarget.Y, directionToTarget.X);
 
                 // Check if we have hit the target
-                if (Vector2.Distance(positionComponent.position, target.position) <= threshold)
+                if (Vector2.Distance(currentPosition.position, target.position) <= LOCATION_THRESHOLD && queueComponent.m_anchorPositions.Count > 0)
                 {
                     // Remove the target from the queue
                     queueComponent.m_anchorPositions.Dequeue();
@@ -98,20 +114,11 @@ public class WormMovement : Shared.Systems.System
             }
         }
     }
-
-    private static void applyLeftRotation(List<Entity> snake, float radians)
-    {
-        applyRotation(snake, -radians);
-    }
-    
-    private static void applyRightRotation(List<Entity> snake, float radians)
-    {
-        applyRotation(snake, radians);
-    }
     
     private static void applyRotation(List<Entity> snake, float radians)
     {
-        if (snake == null || snake.Count == 0) return;
+        if (snake == null || snake.Count == 0) 
+            return;
 
             // Assuming the first entity in the list is the head
             var head = snake[0];
@@ -131,14 +138,11 @@ public class WormMovement : Shared.Systems.System
             {
                 var segment = snake[i];
                 var queueComponent = segment.get<AnchorQueue>();
-
-                if (queueComponent != null)
-                {
-                    // Here, we're adding the head's current position as the new target for each segment
-                    // This mimics the behavior where, upon rotation, each segment should aim to move
-                    // towards the position where the head was at the time of rotation
-                    queueComponent.m_anchorPositions.Enqueue(new Position(headPosition.position, headPosition.orientation));
-                }
+                // Here, we're adding the head's current position as the new target for each segment
+                // This mimics the behavior where, upon rotation, each segment should aim to move
+                // towards the position where the head was at the time of rotation
+                queueComponent.m_anchorPositions.Enqueue(new Position(headPosition.position, headPosition.orientation));
+                
             }
     }
 
