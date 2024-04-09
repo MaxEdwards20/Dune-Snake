@@ -29,13 +29,12 @@ namespace Client.Systems
         /// Primary activity in the constructor is to setup the command map
         // that maps from message types to their handlers.
         /// </summary>
-        public Network() :
+        public Network(String playerName) :
             base(typeof(Shared.Components.Position))
         {
-
             registerHandler(Shared.Messages.Type.ConnectAck, (TimeSpan elapsedTime, Message message) =>
             {
-                handleConnectAck(elapsedTime, (ConnectAck)message);
+                handleConnectAck(elapsedTime, (ConnectAck)message, playerName);
             });
 
             registerHandler(Shared.Messages.Type.NewEntity, (TimeSpan elapsedTime, Message message) =>
@@ -153,9 +152,9 @@ namespace Client.Systems
         /// assigned to it by the server, it also sends a request to the server
         /// to join the game.
         /// </summary>
-        private void handleConnectAck(TimeSpan elapsedTime, ConnectAck message) 
+        private void handleConnectAck(TimeSpan elapsedTime, ConnectAck message, string name) 
         {
-            MessageQueueClient.instance.sendMessage(new Join());
+            MessageQueueClient.instance.sendMessage(new Join(name));
         }
 
         /// <summary>

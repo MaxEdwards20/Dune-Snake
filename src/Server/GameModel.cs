@@ -137,7 +137,7 @@ namespace Server
         {
             // Create a default name for the player
             var joinMessage = (Join)message;
-            string name = "Player" + clientId;
+            string name = joinMessage.name;
             // Step 1: Tell the newly connected player about all other entities
             reportAllEntities(clientId);
 

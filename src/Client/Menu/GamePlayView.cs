@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Client.IO;
 using System.Runtime.Serialization;
+using System.Text;
 using Client.Components;
 using Microsoft.Xna.Framework.Input;
 using Shared.Components;
@@ -21,15 +22,17 @@ namespace Client.Menu
         private GameModel m_gameModel;
         private TimeSpan m_connectToServerTime = TimeSpan.Zero;
         private Controls m_controls;
+        private StringBuilder playerName;
         
-        public GamePlayView(Controls controls)
+        public GamePlayView(Controls controls, StringBuilder name)
         {
             m_controls = controls;
+            playerName = name;
         }
         
         public override void initialize()
         {
-            m_gameModel = new GameModel();
+            m_gameModel = new GameModel(playerName);
             m_gameModel.initialize(m_contentManager, m_controls, m_graphics);
             m_isSetup = false;
             m_isKeyboardRegistered = false;
