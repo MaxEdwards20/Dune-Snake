@@ -16,9 +16,9 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 
 ## Items to Develop
 
-- [ ] Fix ability to exit the game and come back in. Dean talked about what we need to do in Teams.
+- [ ] Fix the ability to exit the game and come back in. Dean talked about what we need to do in Teams.
 - [ ] 3 different animated sprites for the spice - Satchel
-- [ ] Sound effects on death of worm and when food is eaten - Satchel
+- [ ] Sound effects on the death of worm and when food is eaten - Satchel
 - [ ] On collision, sandworm breaks apart and is available as food for other snakes
 - [ ] Record players score, kills and highest position. Probably can be added to the `GameScores` object.
 - [ ] Game over screen with score, kills, and highest position achieved. This is an overlay on the multiplayer game behind it.
@@ -26,7 +26,8 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 - [ ] Leaderboard to display top 5 players and client's score in corner of game.
 - [ ] The new player should join as an invincible entity. Add this functionality and a system to update it after 3 seconds to be removed from the entity.
 - [ ] Add a player status in leaderboard to show whether the player is currently invincible.
-- [ ] Port Particle System - Satchel 
+- [ ] Port Particle System - Satchel
+- [ ] Connection View sprite font or visual indicator. 
 
 ## Done
 
@@ -43,6 +44,7 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 - [x] Caden: Map generation
 - [x] Satchel: How to Play View
 - [x] Satchel: Create Name View
+- [x] Satchel: Create Connection View   
 
 ## Debugging
 
