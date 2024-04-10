@@ -13,7 +13,6 @@ namespace Client.Menu
         private bool isConnected = false;
         private double elapsedTimeSinceLastAttempt = 0;
         private const double attemptInterval = 2000; // Attempt to connect every 2 seconds
-        private int numberOfPeriods = 1;
         private double periodUpdateTime = 500; // Update period for visual
 
         public override void loadContent(ContentManager contentManager)
@@ -37,13 +36,6 @@ namespace Client.Menu
         public override void update(GameTime gameTime)
         {
             elapsedTimeSinceLastAttempt += gameTime.ElapsedGameTime.TotalMilliseconds;
-
-            // Update visual connecting message
-            if (elapsedTimeSinceLastAttempt >= periodUpdateTime)
-            {
-                numberOfPeriods = numberOfPeriods % 3 + 1;
-                connectingMessage = "Connecting to Server" + new string('.', numberOfPeriods);
-            }
 
             // Attempt to connect every 2 seconds
             if (!isConnected && elapsedTimeSinceLastAttempt >= attemptInterval)
