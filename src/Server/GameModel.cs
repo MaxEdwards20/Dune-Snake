@@ -46,7 +46,6 @@ public class GameModel
         MessageQueueServer.instance.registerConnectHandler(handleConnect);
         m_systemCollisionDetection.registerRemoveEntity(removeEntity);
         m_systemCollisionDetection.registerAddEntity(addEntity);
-        // m_systemCollisionDetection.registerUpdateEntity(updateEntity);
         m_systemSpiceGen.registerAddEntity(addEntity);
         return true;
     }
