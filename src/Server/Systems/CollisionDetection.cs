@@ -178,6 +178,10 @@ public class CollisionDetection : Shared.Systems.System
     
     private void handleWormAteWorm(List<Entity> worm, Entity otherHead)
     {
+        if (worm[0].contains<Invincible>() || otherHead.contains<Invincible>())
+        {
+            return;
+        }
         // Check if we hit head on head
         if (otherHead.contains<Head>())
         {
@@ -185,17 +189,11 @@ public class CollisionDetection : Shared.Systems.System
             List<Entity> otherWorm = WormMovement.getWormFromHead(otherHead, m_entities);
             if (worm.Count > otherWorm.Count)
             {
-                if (!otherWorm[0].contains<Invincible>())
-                {
-                    handleRemoveWormAndGenerateSpice(otherWorm);
-                }
+                handleRemoveWormAndGenerateSpice(otherWorm);
             }
             else
             {
-                if (!worm[0].contains<Invincible>())
-                {
                     handleRemoveWormAndGenerateSpice(worm);
-                }
             }
         }
         else // We hit the side of the worm
