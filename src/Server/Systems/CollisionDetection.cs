@@ -60,21 +60,23 @@ public class CollisionDetection : Shared.Systems.System
                 
                 if (entity.contains<SpicePower>() && !entity.contains<Worm>() )
                 {
+                    var headPos = head.get<Position>().position;
                     if (CircleCircleIntersect(
-                        head.get<Position>().position,
-                        head.get<Size>().size.X,
-                        entity.get<Position>().position,
-                        entity.get<Size>().size.X
-                    ))
+                            headPos,
+                            head.get<Size>().size.X /2,
+                            entity.get<Position>().position,
+                            entity.get<Size>().size.X
+                        ))
                     {
                         handleWormAteSpice(head, entity, elapsedTime);
                     }
                 }
                 else if (entity.contains<Worm>())
                 {
+                    var headPos = head.get<Position>().position;
                     if (CircleCircleIntersect(
-                        head.get<Position>().position,
-                        head.get<Size>().size.X,
+                        headPos,
+                        head.get<Size>().size.X /2,
                         entity.get<Position>().position,
                         entity.get<Size>().size.X
                     ))
@@ -91,12 +93,13 @@ public class CollisionDetection : Shared.Systems.System
                     Vector2 topRight = new Vector2(wallPos.X + wallSize.X, wallPos.Y);
                     Vector2 bottomLeft = new Vector2(wallPos.X, wallPos.Y + wallSize.Y);
                     Vector2 bottomRight = wallPos + wallSize;
+                    var headPos = head.get<Position>().position;
 
 // Check each side of the wall for intersection with the snake head
-                    if (CircleLineIntersect(head.get<Position>().position, head.get<Size>().size.X / 2, topLeft, topRight) ||
-                        CircleLineIntersect(head.get<Position>().position, head.get<Size>().size.X / 2, topLeft, bottomLeft) ||
-                        CircleLineIntersect(head.get<Position>().position, head.get<Size>().size.X / 2, bottomLeft, bottomRight) ||
-                        CircleLineIntersect(head.get<Position>().position, head.get<Size>().size.X / 2, topRight, bottomRight))
+                    if (CircleLineIntersect(headPos, head.get<Size>().size.X / 2, topLeft, topRight) ||
+                        CircleLineIntersect(headPos, head.get<Size>().size.X / 2, topLeft, bottomLeft) ||
+                        CircleLineIntersect(headPos, head.get<Size>().size.X / 2, bottomLeft, bottomRight) ||
+                        CircleLineIntersect(headPos, head.get<Size>().size.X / 2, topRight, bottomRight))
                     {
                         handleWormHitWall(worm);
                     }
@@ -104,7 +107,7 @@ public class CollisionDetection : Shared.Systems.System
             }
         }
         processNewEntities();
-        processUpdatedEntities();
+        processUpdatedEntities(elapsedTime);
         processRemovedEntities();
     }
     
@@ -182,32 +185,39 @@ public class CollisionDetection : Shared.Systems.System
             List<Entity> otherWorm = WormMovement.getWormFromHead(otherHead, m_entities);
             if (worm.Count > otherWorm.Count)
             {
-                m_removedEntities.AddRange(otherWorm);
+                handleRemoveWormAndGenerateSpice(otherWorm);
             }
             else
             {
-                m_removedEntities.AddRange(worm);
+                handleRemoveWormAndGenerateSpice(worm);
             }
         }
         else // We hit the side of the worm
         {
             // If the worm hit the body, then the worm dies
-            m_removedEntities.AddRange(worm);
+            handleRemoveWormAndGenerateSpice(worm);
         }
     }
     
     private void handleWormHitWall(List<Entity> worm)
     {
+        handleRemoveWormAndGenerateSpice(worm);
+    }
+    
+    private void handleRemoveWormAndGenerateSpice(List<Entity> worm)
+    {
         m_removedEntities.AddRange(worm);
+        // Generate a new spice
+        for (int i = 0; i < worm.Count; i++)
+        {
+            var spice = DeadWormSpice.create(worm[i].get<Position>().position);
+            m_newEntities.Add(spice);
+        }
     }
     
     public void registerRemoveEntity(Action<uint> removeEntity)
     {
         m_removeEntity = removeEntity;
-    }
-    public void registerUpdateEntity(Action<Entity> updateEntity)
-    {
-        m_updateEntity = updateEntity;
     }
     
     public void registerAddEntity(Action<Entity> addEntity)
@@ -224,12 +234,12 @@ public class CollisionDetection : Shared.Systems.System
         }
     }
     
-    private void processUpdatedEntities()
+    private void processUpdatedEntities(TimeSpan elapsedTime)
     {
         foreach (var entity in m_updatedEntities)
         {
             // m_updateEntity(entity);
-            MessageQueueServer.instance.broadcastMessage(new UpdateEntity(entity, TimeSpan.Zero));
+            MessageQueueServer.instance.broadcastMessage(new UpdateEntity(entity, elapsedTime));
         }
     }
     
@@ -241,7 +251,6 @@ public class CollisionDetection : Shared.Systems.System
             MessageQueueServer.instance.broadcastMessage(new RemoveEntity(entity.id));
         }
     }
-    
     
 }
 

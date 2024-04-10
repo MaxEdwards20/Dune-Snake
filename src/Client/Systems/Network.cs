@@ -19,7 +19,6 @@ namespace Client.Systems
         public delegate void Handler(TimeSpan elapsedTime, Shared.Messages.Message message);
         public delegate void RemoveEntityHandler(RemoveEntity message);
         public delegate void NewEntityHandler(NewEntity message);
-
         private Dictionary<Shared.Messages.Type, Handler> m_commandMap = new Dictionary<Shared.Messages.Type, Handler>();
         private RemoveEntityHandler m_removeEntityHandler;
         private NewEntityHandler m_newEntityHandler;
@@ -197,11 +196,6 @@ namespace Client.Systems
                 if (entity.contains<ParentId>() && message.hasParent)
                 {
                     var q = entity.get<AnchorQueue>();
-                    if (q.m_anchorPositions.Count != 0)
-                    {
-                        var p = q.m_anchorPositions.Dequeue();
-                        q.m_anchorPositions.Enqueue(new Position(new Vector2(message.position.X, message.position.Y), p.orientation));
-                    }
                     entity.remove<ParentId>();
                     entity.add(new ParentId(message.parentId));
                     // NOTE: This would trigger an update of everyone's anchor points

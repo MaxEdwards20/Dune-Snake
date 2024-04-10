@@ -232,8 +232,8 @@ public class GameModel
         // We want to start the player in the least dense area of the screen
         // For now, we'll just start them randomly generated location
         Random random = new Random();
-        var lowerBound = (int)(.1 * mapSize);
-        var upperBound = (int)(.9 * mapSize);
+        var lowerBound = (int)(300);
+        var upperBound = (int)(mapSize - 300);
         return new Vector2(random.Next(lowerBound, upperBound), random.Next(lowerBound, upperBound));
     }
 }
