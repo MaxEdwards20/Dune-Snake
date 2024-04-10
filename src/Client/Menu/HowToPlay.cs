@@ -38,7 +38,7 @@ namespace Client.Menu
             // Proceed to the next game state if the player presses Enter and enough time has passed since the last Enter press
             if (newState.IsKeyDown(Keys.Enter) && oldState.IsKeyUp(Keys.Enter) && timeSinceLastEnterPress >= enterKeyDelay)
             {
-                return MenuStateEnum.GamePlay; // Transition to the gameplay state
+                return MenuStateEnum.Connecting; // Transition to the gameplay state
             }
             // Update the enter released state
             if (!newState.IsKeyDown(Keys.Enter))
@@ -67,12 +67,14 @@ namespace Client.Menu
             Vector2 titleOrigin = font.MeasureString(titleMessage) / 2;
             m_spriteBatch.DrawString(font, titleMessage, titlePosition - (titleOrigin * textScale), Colors.displayColor, 0f, Vector2.Zero, textScale, SpriteEffects.None, 0f);
 
+
             // How to Play Instructions
             Vector2 instructionsPosition = new Vector2(m_graphics.PreferredBackBufferWidth / 2, m_graphics.PreferredBackBufferHeight / 2.5f);
             string[] lines = howToPlayMessage.Split('\n');
             foreach (string line in lines)
             {
                 Vector2 lineSize = font.MeasureString(line) * textScale;
+
                 m_spriteBatch.DrawString(font, line, instructionsPosition - new Vector2(lineSize.X / 2, 0), Colors.displayColor, 0f, Vector2.Zero, textScale, SpriteEffects.None, 0f);
                 instructionsPosition.Y += lineSize.Y + 5; // Adjust spacing between lines if necessary, taking scale into account
             }
@@ -80,7 +82,9 @@ namespace Client.Menu
             // Continue Prompt
             Vector2 continuePosition = new Vector2(m_graphics.PreferredBackBufferWidth / 2, (m_graphics.PreferredBackBufferHeight / 4) * 3);
             Vector2 continueOrigin = font.MeasureString(continueMessage) / 2;
+
             m_spriteBatch.DrawString(font, continueMessage, continuePosition - (continueOrigin * textScale), Colors.displayColor, 0f, Vector2.Zero, textScale, SpriteEffects.None, 0f);
+
 
             m_spriteBatch.End();
         }

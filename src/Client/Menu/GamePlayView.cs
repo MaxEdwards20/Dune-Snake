@@ -51,36 +51,36 @@ namespace Client.Menu
                 m_isKeyboardRegistered = true;
             }
 
-            if (!m_isSetup)
-            {
-                setup(gameTime);
-            }
+            //if (!m_isSetup)
+            //{
+            //    setup(gameTime);
+            //}
 
             MenuKeyboardInput.Update(gameTime); // essentially just checking for whether we have escaped to the main menu
             if (m_newState != MenuStateEnum.GamePlay){return handleSwitchToMainMenu();}
             return MenuStateEnum.GamePlay;
         }
 
-        private void setup(GameTime gameTime)
-        {
-            if (m_connectToServerTime == TimeSpan.Zero)
-            {
-                m_connectToServerTime = TimeSpan.FromSeconds(2); // Try to connect every 2 seconds
-                var res = connectToServer();
-                if (res)
-                {
-                    m_isSetup = true;
-                }
-            }
-            else
-            {
-                m_connectToServerTime -= gameTime.ElapsedGameTime;
-                if (m_connectToServerTime <= TimeSpan.Zero)
-                {
-                    m_connectToServerTime = TimeSpan.Zero;
-                }
-            }
-        }
+        //private void setup(GameTime gameTime)
+        //{
+        //    if (m_connectToServerTime == TimeSpan.Zero)
+        //    {
+        //        m_connectToServerTime = TimeSpan.FromSeconds(2); // Try to connect every 2 seconds
+        //        var res = connectToServer();
+        //        if (res)
+        //        {
+        //            m_isSetup = true;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        m_connectToServerTime -= gameTime.ElapsedGameTime;
+        //        if (m_connectToServerTime <= TimeSpan.Zero)
+        //        {
+        //            m_connectToServerTime = TimeSpan.Zero;
+        //        }
+        //    }
+        //}
 
         public override void update(GameTime gameTime)
         {
@@ -98,10 +98,10 @@ namespace Client.Menu
             MenuKeyboardInput.registerCommand(MenuKeyboardInput.Escape, true, escape);
         }
 
-        private bool connectToServer()
-        {
-            return MessageQueueClient.instance.initialize("localhost", 3000);
-        }
+        //private bool connectToServer()
+        //{
+        //    return MessageQueueClient.instance.initialize("localhost", 3000);
+        //}
 
         private void escape(GameTime gameTime, float scale)
         {

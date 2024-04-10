@@ -66,7 +66,9 @@ namespace Client
                 { MenuStateEnum.Help, new HelpView() },
                 { MenuStateEnum.Credits, new AboutView() },
                 { MenuStateEnum.ChooseName, new ChooseNameView(playerName)},
-                { MenuStateEnum.HowToPlay, new HowToPlayView() }
+                { MenuStateEnum.HowToPlay, new HowToPlayView() },
+                { MenuStateEnum.Connecting, new ConnectingView() }
+
             };
 
             // Give all game states a chance to initialize, other than constructor
