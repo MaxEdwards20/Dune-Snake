@@ -1,6 +1,6 @@
 # Dune-Snake
 
-<!-- TODO ![Gameplay Image](./gameplay.png) -->
+![Gameplay Image](./gameplay.png)
 
 A game of Snake built using C# in the MonoGame framework, themed around everyone's favorite Sci-Fi franchise: [Dune](https://www.sfgate.com/sf-culture/article/dune-part-two-review-18678628.php).
 
@@ -26,6 +26,7 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 - [ ] Message receiver for the client about collisions that can be used to call the particle system and sound effects.
 
 ## Done
+
 - [x] Max: On collision, sandworm breaks apart and is available as food for other snakes
 - [x] Max: Grow the worm on eating food.
 - [x] Satchel: Loading Screen while joining game
