@@ -9,7 +9,7 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 ## In Progress
 
 - [ ] Satchel: Pick head, body, and tail texture for the sandworm
-- [ ] Max: On collision, sandworm breaks apart and is available as food for other snakes
+- [ ] Max: Sync the anchor points across clients.
 
 ## Items to Develop
 
@@ -23,11 +23,10 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 - [ ] The new player should join as an invincible entity. Add this functionality and a system to update it after 3 seconds to be removed from the entity.
 - [ ] Add a player status in leaderboard to show whether the player is currently invincible.
 - [ ] Port Particle System - Satchel
-- [ ] Connection View sprite font or visual indicator.
 - [ ] Message receiver for the client about collisions that can be used to call the particle system and sound effects.
 
 ## Done
-
+- [x] Max: On collision, sandworm breaks apart and is available as food for other snakes
 - [x] Max: Grow the worm on eating food.
 - [x] Satchel: Loading Screen while joining game
 - [x] Caden: Spice generation when we spawn
