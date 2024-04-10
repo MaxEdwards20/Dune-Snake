@@ -38,7 +38,7 @@ namespace Client.Menu
             // Proceed to the next game state if the player presses Enter and enough time has passed since the last Enter press
             if (newState.IsKeyDown(Keys.Enter) && oldState.IsKeyUp(Keys.Enter) && timeSinceLastEnterPress >= enterKeyDelay)
             {
-                return MenuStateEnum.GamePlay; // Transition to the gameplay state
+                return MenuStateEnum.Connecting; // Transition to the gameplay state
             }
             // Update the enter released state
             if (!newState.IsKeyDown(Keys.Enter))
