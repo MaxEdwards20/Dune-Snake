@@ -51,7 +51,7 @@ namespace Client.Menu
             m_spriteBatch.Begin();
             Vector2 position = new Vector2(m_graphics.PreferredBackBufferWidth / 2, m_graphics.PreferredBackBufferHeight / 2);
             Vector2 origin = font.MeasureString(connectingMessage) / 2;
-            m_spriteBatch.DrawString(font, connectingMessage, position - origin, Color.White);
+            m_spriteBatch.DrawString(font, connectingMessage, position - origin, Colors.displayColor);
             m_spriteBatch.End();
         }
 
