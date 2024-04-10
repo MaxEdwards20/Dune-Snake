@@ -9,10 +9,10 @@ using System.IO.IsolatedStorage;
 using System.Runtime.Serialization.Json;
 using System.Threading.Tasks;
 
-namespace Shared.Components{
+namespace Shared.Entities{
 
 [DataContract(Name = "GameScores")]
-public class GameScores: Component {
+public class GameScores {
     [DataMember(Name = "scores")]
     public List<PlayerData> scores { get;  private set; }
     public GameScores() {

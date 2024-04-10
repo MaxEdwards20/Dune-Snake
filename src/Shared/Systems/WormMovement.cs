@@ -20,6 +20,20 @@ public class WormMovement : Shared.Systems.System
         {
             applyThrust(head, elapsedTime);
         }
+        // Update our invincibily while here
+        foreach (var entity in m_entities.Values)
+        {
+            if (entity.contains<Invincible>())
+            {
+                var invincible = entity.get<Invincible>();
+                invincible.update((int)elapsedTime.TotalMilliseconds);
+                if (invincible.duration <= 0)
+                {
+                    entity.remove<Invincible>();
+                }
+            }
+        }
+        
     }
 
     private List<Entity> getHeads()

@@ -1,9 +1,9 @@
 using System.Runtime.Serialization;
 
-namespace Shared.Components;
+namespace Shared.Entities;
 
 [DataContract(Name = "GameScore")]
-public class PlayerData: Component
+public class PlayerData
 {
     [DataMember(Name = "date")] public DateTime date { get; private set; }
     [DataMember(Name = "score")] public int score { get; private set; }

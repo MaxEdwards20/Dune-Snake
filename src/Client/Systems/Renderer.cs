@@ -101,6 +101,25 @@ public class Renderer : Shared.Systems.System
         var size = entity.get<Shared.Components.Size>().size;
         var texCenter = entity.get<Components.Sprite>().center;
         var texture = entity.get<Components.Sprite>().texture;
+        var color = Color.White;
+        
+        if (entity.contains<Invincible>())
+        {
+            var invincible = entity.get<Invincible>();
+            if (invincible.duration < 1000)
+                color = Color.Coral;
+            else
+                color = Colors.displayColor;
+        }
+        
+        if (entity.contains<SpicePower>() && !entity.contains<Worm>())
+        {
+            var spicePower = entity.get<SpicePower>();
+            if (spicePower.power > 6)
+                color = Color.Aqua;
+            else if (spicePower.power > 3)
+                color = Color.Green;
+        }
 
         // Build a rectangle centered at position, with width/height of size
         Rectangle rectangle = new Rectangle(
@@ -113,7 +132,7 @@ public class Renderer : Shared.Systems.System
             texture,
             rectangle,
             null,
-            Color.White,
+            color,
             orientation,
             texCenter,
             SpriteEffects.None,

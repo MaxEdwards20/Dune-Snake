@@ -185,23 +185,35 @@ public class CollisionDetection : Shared.Systems.System
             List<Entity> otherWorm = WormMovement.getWormFromHead(otherHead, m_entities);
             if (worm.Count > otherWorm.Count)
             {
-                handleRemoveWormAndGenerateSpice(otherWorm);
+                if (!otherWorm[0].contains<Invincible>())
+                {
+                    handleRemoveWormAndGenerateSpice(otherWorm);
+                }
             }
             else
             {
-                handleRemoveWormAndGenerateSpice(worm);
+                if (!worm[0].contains<Invincible>())
+                {
+                    handleRemoveWormAndGenerateSpice(worm);
+                }
             }
         }
         else // We hit the side of the worm
         {
             // If the worm hit the body, then the worm dies
-            handleRemoveWormAndGenerateSpice(worm);
+            if (!worm[0].contains<Invincible>())
+            {
+                handleRemoveWormAndGenerateSpice(worm);
+            }
         }
     }
     
     private void handleWormHitWall(List<Entity> worm)
     {
-        handleRemoveWormAndGenerateSpice(worm);
+        if (!worm[0].contains<Invincible>())
+        {
+            handleRemoveWormAndGenerateSpice(worm);
+        }
     }
     
     private void handleRemoveWormAndGenerateSpice(List<Entity> worm)
