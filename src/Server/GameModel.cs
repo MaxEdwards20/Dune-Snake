@@ -176,13 +176,16 @@ public class GameModel
         var bodySize = 80;
 
         // Create the head
-        Entity? segment = WormHead.create(headStartLocation, name);
+        Entity segment = WormHead.create(headStartLocation, name);
+        segment.add(new Invincible());
+
         // Create X number of body segments
         var parent = segment;
         var numToCreate = 5;
         for (int i = 0; i < numToCreate; i++)
         {
             segment = WormSegment.create(segmentStartLocation,  parent.id);
+            segment.add(new Invincible());
             if (i == numToCreate - 1)
             {
                 segment = WormTail.create(segmentStartLocation,  parent.id);

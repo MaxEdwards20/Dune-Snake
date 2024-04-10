@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using Client.IO;
 using Shared.Components;
+using Shared.Entities;
 using Shared.Systems;
 
 namespace Client.Menu

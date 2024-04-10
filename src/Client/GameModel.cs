@@ -163,6 +163,16 @@ public class GameModel
             entity.add(new Worm());
             entity.add(new AnchorQueue()); // We implicitly need this because every worm part has it
         }
+        
+        if (message.hasInvincible)
+        {
+            entity.add(new Invincible(message.invincibleDuration));
+        }
+        
+        if (message.hasSpicePower)
+        {
+            entity.add(new SpicePower(message.spicePower));
+        }
 
         if (message.hasName)
         {

@@ -9,7 +9,6 @@ namespace Shared.Messages
 {
     public class NewEntity : Message
     {
-        // TODO: Add a wall component check
         public NewEntity(Entity entity) : base(Type.NewEntity)
         {
             this.id = entity.id;
@@ -97,6 +96,18 @@ namespace Shared.Messages
             {
                 this.hasWall = true;
             }
+            
+            if (entity.contains<Shared.Components.Invincible>())
+            {
+                this.hasInvincible = true;
+                this.invincibleDuration = entity.get<Shared.Components.Invincible>().duration;
+            }
+            
+            if (entity.contains<Shared.Components.SpicePower>())
+            {
+                this.hasSpicePower = true;
+                this.spicePower = entity.get<Shared.Components.SpicePower>().power;
+            }
         }
         public NewEntity() : base(Type.NewEntity)
         {
@@ -140,6 +151,14 @@ namespace Shared.Messages
         // Input
         public bool hasInput { get; private set; } = false;
         public List<Components.Input.Type> inputs { get; private set; }
+        
+        // Invincible
+        public bool hasInvincible { get; private set; } = false;
+        public int invincibleDuration { get; private set; }
+        
+        // SpicePower
+        public bool hasSpicePower { get; private set; } = false;
+        public int spicePower { get; private set; }
 
         public override byte[] serialize()
         {
@@ -162,8 +181,9 @@ namespace Shared.Messages
             serializeParentId(data);
             serializeChild(data);
             data.AddRange(BitConverter.GetBytes(hasWorm));
+            serializeInvincible(data);
+            serializeSpicePower(data);
             serializeName(data); // Make sure this is the last item to serialize
-            
             
             return data.ToArray();
         }
@@ -190,7 +210,35 @@ namespace Shared.Messages
             offset = parseParent(data, offset);
             offset = parseChild(data, offset);
             offset = parseWorm(data, offset);
+            offset = parseInvincible(data, offset);
+            offset = parseSpicePower(data, offset);
             offset = parseName(data, offset); // Make sure this is the last item to parse
+            return offset;
+        }
+        
+        private int parseSpicePower(byte[] data, int offset)
+        {
+            this.hasSpicePower = BitConverter.ToBoolean(data, offset);
+            offset += sizeof(bool);
+            if (hasSpicePower)
+            {
+                this.spicePower = BitConverter.ToInt32(data, offset);
+                offset += sizeof(int);
+            }
+
+            return offset;
+        }
+        
+        private int parseInvincible(byte[] data, int offset)
+        {
+            this.hasInvincible = BitConverter.ToBoolean(data, offset);
+            offset += sizeof(bool);
+            if (hasInvincible)
+            {
+                this.invincibleDuration = BitConverter.ToInt32(data, offset);
+                offset += sizeof(int);
+            }
+
             return offset;
         }
 
@@ -357,7 +405,24 @@ namespace Shared.Messages
 
             return offset;
         }
+        
+        private void serializeSpicePower(List<byte> data)
+        {
+            data.AddRange(BitConverter.GetBytes(hasSpicePower));
+            if (hasSpicePower)
+            {
+                data.AddRange(BitConverter.GetBytes(spicePower));
+            }
+        }
 
+        private void serializeInvincible(List<byte> data)
+        {
+            data.AddRange(BitConverter.GetBytes(hasInvincible));
+            if (hasInvincible)
+            {
+                data.AddRange(BitConverter.GetBytes(invincibleDuration));
+            }
+        }
         private void serializeChild(List<byte> data)
         {
             data.AddRange(BitConverter.GetBytes(hasChild));

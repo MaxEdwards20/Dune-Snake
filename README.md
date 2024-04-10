@@ -1,6 +1,6 @@
 # Dune-Snake
 
-<!-- TODO ![Gameplay Image](./gameplay.png) -->
+![Gameplay Image](./gameplay.png)
 
 A game of Snake built using C# in the MonoGame framework, themed around everyone's favorite Sci-Fi franchise: [Dune](https://www.sfgate.com/sf-culture/article/dune-part-two-review-18678628.php).
 
@@ -20,12 +20,13 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 - [ ] Game over screen with score, kills, and highest position achieved. This is an overlay on the multiplayer game behind it.
 - [ ] Particle system for the death of a sandworm
 - [ ] Leaderboard to display top 5 players and client's score in corner of game.
-- [ ] The new player should join as an invincible entity. Add this functionality and a system to update it after 3 seconds to be removed from the entity.
 - [ ] Add a player status in leaderboard to show whether the player is currently invincible.
 - [ ] Port Particle System - Satchel
 - [ ] Message receiver for the client about collisions that can be used to call the particle system and sound effects.
 
 ## Done
+
+- [x] Max: The new player should join as an invincible entity. Add this functionality and a system to update it after 3 seconds to be removed from the entity.
 - [x] Max: On collision, sandworm breaks apart and is available as food for other snakes
 - [x] Max: Grow the worm on eating food.
 - [x] Satchel: Loading Screen while joining game

@@ -1,6 +1,7 @@
 using System.IO.IsolatedStorage;
 using System.Runtime.Serialization.Json;
 using Shared.Components;
+using Shared.Entities;
 
 namespace Shared.Systems;
 
@@ -8,6 +9,7 @@ public class GameScoresPersistence
 {
     private bool saving = false;
     private bool loading = false;
+    
     private GameScores m_loadedState = new GameScores();
 
 
