@@ -8,4 +8,9 @@ public class ChildId : Component
         this.id = id;
     }
     
+    public void setId(uint id)
+    {
+        this.id = id;
+    }
+    
 }

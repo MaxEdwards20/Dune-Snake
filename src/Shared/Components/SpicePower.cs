@@ -22,4 +22,9 @@ public class SpicePower: Component
     {
         this.power = power;
     }
+    
+    public void resetPower()
+    {
+        this.power = 0;
+    }
 }

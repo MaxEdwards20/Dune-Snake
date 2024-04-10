@@ -6,8 +6,12 @@ namespace Shared.Entities;
 
 public class WormSegment
 {
-    public static Entity create(Vector2 position, float size, float moveRate, float rotateRate, uint parent)
+    static readonly int size = 80; 
+    static readonly  float moveRate = 0.3f;
+    static readonly  float rotateRate = (float) Math.PI / 1000;
+    public static Entity create(Vector2 position, uint parent)
     {
+        
         Entity entity = new Entity();
         entity.add(new Position(position));
         entity.add(new Appearance("Textures/circleBody")); 

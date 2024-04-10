@@ -6,7 +6,10 @@ namespace Shared.Entities;
 
 public class WormHead
 {
-    public static Entity create(Vector2 position, float size, float moveRate, float rotateRate, string name)
+    static readonly int size = 10; 
+    static readonly  float moveRate = 0.3f;
+    static readonly  float rotateRate = (float) Math.PI / 1000;
+    public static Entity create(Vector2 position, string name)
     {
         Entity entity = new Entity();
         entity.add(new Position(position));
