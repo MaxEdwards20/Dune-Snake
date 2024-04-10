@@ -5,8 +5,10 @@ using Shared.Messages;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Net.Mail;
 using System.Runtime.InteropServices;
+using Shared.Entities;
 using Shared.Systems;
 using Input = Shared.Components.Input;
 
@@ -184,19 +186,25 @@ namespace Client.Systems
                 {
                     entity.get<Position>().position = message.position;
                     entity.get<Position>().orientation = message.orientation;
-
+ 
                     m_updatedEntities.Add(entity.id);
                 }
                 if (entity.contains<SpicePower>() && message.hasSpicePower)
                 {
                     entity.get<SpicePower>().setPower(message.spicePower);
                 }
+                
                 if (entity.contains<ParentId>() && message.hasParent)
                 {
+                    var q = entity.get<AnchorQueue>();
+                    if (q.m_anchorPositions.Count != 0)
+                    {
+                        var p = q.m_anchorPositions.Dequeue();
+                        q.m_anchorPositions.Enqueue(new Position(new Vector2(message.position.X, message.position.Y), p.orientation));
+                    }
                     entity.remove<ParentId>();
                     entity.add(new ParentId(message.parentId));
                     // NOTE: This would trigger an update of everyone's anchor points
-                    
                 }
                 if (entity.contains<ChildId>() && message.hasChild)
                 {
@@ -206,6 +214,16 @@ namespace Client.Systems
                 }
             }
 
+        }
+        
+        private void updateQueues(Entity head)
+        {
+            // var worm = WormMovement.getWormFromHead(head, m_entities);
+            // var headPos = head.get<Position>();
+            // foreach (var segment in worm.Skip(1))
+            // {
+            //     segment.get<AnchorQueue>().m_anchorPositions.Enqueue(headPos);
+            // }
         }
     }
 }
