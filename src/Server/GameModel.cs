@@ -18,7 +18,7 @@ public class GameModel
     private readonly CollisionDetection m_systemCollisionDetection = new();
     private readonly GrowthHandler m_SystemGrowthHandler = new();
     private readonly Network m_systemNetwork = new();
-    private readonly SpiceGen m_systemSpiceGen = new(mapSize, 300);
+    private readonly SpiceGen m_systemSpiceGen = new(mapSize - 200, 300);
     private const int mapSize = 3000;
 
     /// <summary>

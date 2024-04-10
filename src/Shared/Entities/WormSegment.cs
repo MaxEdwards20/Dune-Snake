@@ -11,7 +11,6 @@ public class WormSegment
     static readonly  float rotateRate = (float) Math.PI / 1000;
     public static Entity create(Vector2 position, uint parent)
     {
-        
         Entity entity = new Entity();
         entity.add(new Position(position));
         entity.add(new Appearance("Textures/circleBody")); 
@@ -21,7 +20,6 @@ public class WormSegment
         entity.add(new Collision());
         entity.add(new Worm());
         entity.add(new AnchorQueue());
-
         return entity;
     }
 }

@@ -16,6 +16,8 @@ public class CollisionDetection : Shared.Systems.System
     private List<Entity> m_updatedEntities = new List<Entity>();
     private List<Entity> m_removedEntities = new List<Entity>();
     
+    public static int POWER_TO_GROW = 50;
+    
     public CollisionDetection() :
         base(
             typeof(Shared.Components.Collision), typeof(Shared.Components.Position), typeof(Shared.Components.Size)
@@ -136,18 +138,18 @@ public class CollisionDetection : Shared.Systems.System
         var spicePower = spice.get<SpicePower>();
         headPower.addPower(spicePower.power);
         // Now we check if the head has grown enough to add a new segment
-        if (headPower.power >= 10)
+        if (headPower.power >= POWER_TO_GROW)
         {
             headPower.resetPower();
             // Add a new segment directly behind the worm head
             var worm = WormMovement.getWormFromHead(head, m_entities);
             var headPos = head.get<Position>().position;
+            var segmentPos = new Vector2(headPos.X , headPos.Y);
+            // update the head pos to be more forward
             var headSize = head.get<Size>().size.X;
             var headRotation = head.get<Position>().orientation;
-            var segmentPos = new Vector2(
-                headPos.X - headSize * (float)Math.Cos(headRotation),
-                headPos.Y - headSize * (float)Math.Sin(headRotation)
-            );
+            headPos.X += (float) Math.Cos(headRotation) * headSize;
+            headPos.Y += (float) Math.Sin(headRotation) * headSize;
             var newSegment = WormSegment.create(segmentPos, head.id);
             var headChild = head.get<ChildId>();
             newSegment.add(new ChildId(headChild.id)); // now the new segment is between the head and the previous child segment
@@ -159,9 +161,9 @@ public class CollisionDetection : Shared.Systems.System
             // now update the heads child
             head.remove<ChildId>();
             head.add(new ChildId(newSegment.id));
-            // NOTE: Now we may need to update of everyones anchor points
+            worm.Insert(1, newSegment);
             m_newEntities.Add(newSegment);
-            m_updatedEntities.Add(head);
+            m_updatedEntities.AddRange(worm);
             m_updatedEntities.Add(oldChild);
         }
         else

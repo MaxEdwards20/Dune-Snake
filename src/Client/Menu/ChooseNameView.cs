@@ -74,7 +74,7 @@ namespace Client.Menu
             m_spriteBatch.Begin();
 
             // Calculate the center position for "Enter Your Name" text
-            string enterNameText = $"Enter Your Name: [ Using Keyboard ] \n {playerName}";
+            string enterNameText = $"Enter Your Name: \n {playerName}";
             Vector2 textSize = font.MeasureString(enterNameText);
             Vector2 textPosition = new Vector2(
                 (m_graphics.PreferredBackBufferWidth) / 2,
