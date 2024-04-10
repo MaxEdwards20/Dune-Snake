@@ -16,9 +16,9 @@ public class GameModel
     private readonly Dictionary<int, uint> m_clientToEntityId = new();
     private readonly WormMovement m_systemWormMovement = new();
     private readonly CollisionDetection m_systemCollisionDetection = new();
-    private readonly CollisionHandler m_systemCollisionHandler = new();
+    private readonly GrowthHandler m_SystemGrowthHandler = new();
     private readonly Network m_systemNetwork = new();
-    private readonly SpiceGen m_systemSpiceGen = new(mapSize, 300);
+    private readonly SpiceGen m_systemSpiceGen = new(mapSize - 200, 300);
     private const int mapSize = 3000;
 
     /// <summary>
@@ -30,7 +30,7 @@ public class GameModel
     {
         m_systemNetwork.update(elapsedTime, MessageQueueServer.instance.getMessages());
         m_systemCollisionDetection.update(elapsedTime);
-        m_systemCollisionHandler.update(elapsedTime);
+        m_SystemGrowthHandler.update(elapsedTime);
         m_systemWormMovement.update(elapsedTime);
         m_systemSpiceGen.update(elapsedTime);
     }
@@ -45,6 +45,7 @@ public class GameModel
         m_systemNetwork.registerDisconnectHandler(handleDisconnect);
         MessageQueueServer.instance.registerConnectHandler(handleConnect);
         m_systemCollisionDetection.registerRemoveEntity(removeEntity);
+        m_systemCollisionDetection.registerAddEntity(addEntity);
         m_systemSpiceGen.registerAddEntity(addEntity);
         return true;
     }
@@ -93,7 +94,7 @@ public class GameModel
         m_entities[entity.id] = entity;
         m_systemNetwork.add(entity);
         m_systemCollisionDetection.add(entity);
-        m_systemCollisionHandler.add(entity);
+        m_SystemGrowthHandler.add(entity);
         m_systemWormMovement.add(entity);
         m_systemSpiceGen.add(entity);
     }
@@ -107,7 +108,7 @@ public class GameModel
         m_entities.Remove(id);
         m_systemNetwork.remove(id);
         m_systemCollisionDetection.remove(id);
-        m_systemCollisionHandler.remove(id);
+        m_SystemGrowthHandler.remove(id);
         m_systemWormMovement.remove(id);
         m_systemSpiceGen.remove(id);
     }
@@ -175,16 +176,16 @@ public class GameModel
         var bodySize = 80;
 
         // Create the head
-        Entity? segment = WormHead.create(headStartLocation, headSize, moveRate, rotationRate, name);
+        Entity? segment = WormHead.create(headStartLocation, name);
         // Create X number of body segments
         var parent = segment;
         var numToCreate = 5;
         for (int i = 0; i < numToCreate; i++)
         {
-            segment = WormSegment.create(segmentStartLocation, bodySize, moveRate, rotationRate, parent.id);
+            segment = WormSegment.create(segmentStartLocation,  parent.id);
             if (i == numToCreate - 1)
             {
-                segment = WormTail.create(segmentStartLocation, bodySize, moveRate, rotationRate, parent.id);
+                segment = WormTail.create(segmentStartLocation,  parent.id);
             }
             parent.add(new ChildId(segment.id));
             addEntity(parent);

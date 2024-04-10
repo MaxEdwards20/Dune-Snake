@@ -10,11 +10,11 @@ public class Spice
     public static Entity create(Vector2 position)
     {
         int power = random.Next(1, 10);
-        float size = 10;
+        float size = 30;
         Entity entity = new();
         entity.add(new Appearance("Textures/spice"));
         entity.add(new Position(position));
-        entity.add(new Size(new Vector2(50 + size * power, 50 + size * power)));
+        entity.add(new Size(new Vector2(size, size)));
         entity.add(new Collision());
         entity.add(new SpicePower(power));
         return entity;

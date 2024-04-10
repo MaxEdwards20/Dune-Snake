@@ -9,6 +9,14 @@ namespace Server.Systems;
 public class CollisionDetection : Shared.Systems.System
 {
     private System.Action<uint> m_removeEntity;
+    private System.Action<Entity> m_addEntity;
+    private System.Action<Entity> m_updateEntity;
+    
+    private List<Entity> m_newEntities = new List<Entity>();
+    private List<Entity> m_updatedEntities = new List<Entity>();
+    private List<Entity> m_removedEntities = new List<Entity>();
+    
+    public static int POWER_TO_GROW = 50;
     
     public CollisionDetection() :
         base(
@@ -19,6 +27,9 @@ public class CollisionDetection : Shared.Systems.System
     
     public override void update(TimeSpan elapsedTime)
     {
+        m_newEntities.Clear();
+        m_updatedEntities.Clear();
+        m_removedEntities.Clear();
         // Get the heads of the worms
         List<Entity> heads = new List<Entity>();
         foreach (var entity in m_entities.Values)
@@ -92,6 +103,9 @@ public class CollisionDetection : Shared.Systems.System
                 }
             }
         }
+        processNewEntities();
+        processUpdatedEntities();
+        processRemovedEntities();
     }
     
     // Reference: https://stackoverflow.com/questions/37224912/circle-line-segment-collision
@@ -123,52 +137,112 @@ public class CollisionDetection : Shared.Systems.System
         var headPower = head.get<SpicePower>();
         var spicePower = spice.get<SpicePower>();
         headPower.addPower(spicePower.power);
-        MessageQueueServer.instance.broadcastMessage(new UpdateEntity(head, elapsedTime));
+        // Now we check if the head has grown enough to add a new segment
+        if (headPower.power >= POWER_TO_GROW)
+        {
+            headPower.resetPower();
+            // Add a new segment directly behind the worm head
+            var worm = WormMovement.getWormFromHead(head, m_entities);
+            var headPos = head.get<Position>().position;
+            var segmentPos = new Vector2(headPos.X , headPos.Y);
+            // update the head pos to be more forward
+            var headSize = head.get<Size>().size.X;
+            var headRotation = head.get<Position>().orientation;
+            headPos.X += (float) Math.Cos(headRotation) * headSize;
+            headPos.Y += (float) Math.Sin(headRotation) * headSize;
+            var newSegment = WormSegment.create(segmentPos, head.id);
+            var headChild = head.get<ChildId>();
+            newSegment.add(new ChildId(headChild.id)); // now the new segment is between the head and the previous child segment
+            // now we update this previous child segment to point to the new segment
+            var oldChild = m_entities[headChild.id];
+            oldChild.remove<ParentId>();
+            oldChild.add(new ParentId(newSegment.id));
+            
+            // now update the heads child
+            head.remove<ChildId>();
+            head.add(new ChildId(newSegment.id));
+            worm.Insert(1, newSegment);
+            m_newEntities.Add(newSegment);
+            m_updatedEntities.AddRange(worm);
+            m_updatedEntities.Add(oldChild);
+        }
+        else
+        {
+            MessageQueueServer.instance.broadcastMessage(new UpdateEntity(head, elapsedTime));
+        }
+
     }
     
     private void handleWormAteWorm(List<Entity> worm, Entity otherHead)
     {
-        // Check if we hit head on
+        // Check if we hit head on head
         if (otherHead.contains<Head>())
         {
             // We need to compare the sizes of the two worms to see who dies
             List<Entity> otherWorm = WormMovement.getWormFromHead(otherHead, m_entities);
             if (worm.Count > otherWorm.Count)
             {
-                removeWorm(otherWorm);
+                m_removedEntities.AddRange(otherWorm);
             }
             else
             {
-                removeWorm(worm);
+                m_removedEntities.AddRange(worm);
             }
         }
         else // We hit the side of the worm
         {
             // If the worm hit the body, then the worm dies
-            removeWorm(worm);
+            m_removedEntities.AddRange(worm);
         }
     }
     
     private void handleWormHitWall(List<Entity> worm)
     {
-        removeWorm(worm);
+        m_removedEntities.AddRange(worm);
     }
-
-    private void removeWorm(List<Entity> worm)
-    {
-        foreach (var entity in worm)
-        {
-            MessageQueueServer.instance.broadcastMessage(new RemoveEntity(entity.id));
-            m_removeEntity(entity.id);
-        }
-        // TODO: Add new entities to the world where the body was
-        
-    }
-
+    
     public void registerRemoveEntity(Action<uint> removeEntity)
     {
         m_removeEntity = removeEntity;
     }
+    public void registerUpdateEntity(Action<Entity> updateEntity)
+    {
+        m_updateEntity = updateEntity;
+    }
+    
+    public void registerAddEntity(Action<Entity> addEntity)
+    {
+        m_addEntity = addEntity;
+    }
+    
+    private void processNewEntities()
+    {
+        foreach (var entity in m_newEntities)
+        {
+            m_addEntity(entity);
+            MessageQueueServer.instance.broadcastMessage(new NewEntity(entity));
+        }
+    }
+    
+    private void processUpdatedEntities()
+    {
+        foreach (var entity in m_updatedEntities)
+        {
+            // m_updateEntity(entity);
+            MessageQueueServer.instance.broadcastMessage(new UpdateEntity(entity, TimeSpan.Zero));
+        }
+    }
+    
+    private void processRemovedEntities()
+    {
+        foreach (var entity in m_removedEntities)
+        {
+            m_removeEntity(entity.id);
+            MessageQueueServer.instance.broadcastMessage(new RemoveEntity(entity.id));
+        }
+    }
+    
+    
 }
 
 

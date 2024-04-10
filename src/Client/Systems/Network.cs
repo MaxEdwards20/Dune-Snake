@@ -162,8 +162,8 @@ namespace Client.Systems
         /// actually has the entity, and if it does, updates the components
         /// that are in common between the message and the entity.
         /// </summary>
-        private void handleUpdateEntity(TimeSpan elapsedTime, UpdateEntity message) 
-        { 
+        private void handleUpdateEntity(TimeSpan elapsedTime, UpdateEntity message)
+        {
             if (m_entities.ContainsKey(message.id))
             {
                 var entity = m_entities[message.id];
@@ -191,7 +191,21 @@ namespace Client.Systems
                 {
                     entity.get<SpicePower>().setPower(message.spicePower);
                 }
+                if (entity.contains<ParentId>() && message.hasParent)
+                {
+                    entity.remove<ParentId>();
+                    entity.add(new ParentId(message.parentId));
+                    // NOTE: This would trigger an update of everyone's anchor points
+                    
+                }
+                if (entity.contains<ChildId>() && message.hasChild)
+                {
+                    entity.remove<ChildId>();
+                    entity.add(new ChildId(message.childId));
+                    // NOTE: This would trigger an update of everyone's anchor points
+                }
             }
+
         }
     }
 }

@@ -22,6 +22,18 @@ namespace Shared.Messages
             {
                 this.spicePower = entity.get<SpicePower>().power;
             }
+            
+            if (entity.contains<ParentId>())
+            {
+                this.hasParent = true;
+                this.parentId = entity.get<ParentId>().id;
+            }
+            
+            if (entity.contains<ChildId>())
+            {
+                this.hasChild = true;
+                this.childId = entity.get<ChildId>().id;
+            }
 
             this.updateWindow = updateWindow;
         }
@@ -40,6 +52,10 @@ namespace Shared.Messages
         // SpicePower
         public bool hasSpicePower { get; private set; } = false;
         public int spicePower { get; private set; } = 0;
+        public bool hasParent { get; private set; } = false;
+        public uint parentId { get; private set; }
+        public bool hasChild { get; private set; } = false;
+        public uint childId { get; private set; }
 
         // Only the milliseconds are used/serialized
         public TimeSpan updateWindow { get; private set; } = TimeSpan.Zero;
@@ -64,6 +80,8 @@ namespace Shared.Messages
             {
                 data.AddRange(BitConverter.GetBytes(spicePower));
             }
+            serializeParent(data);
+            serializeChild(data);
 
             data.AddRange(BitConverter.GetBytes((float)updateWindow.TotalMilliseconds));
 
@@ -97,11 +115,56 @@ namespace Shared.Messages
                 this.spicePower = BitConverter.ToInt32(data, offset);
                 offset += sizeof(int);
             }
+            offset = parseParent(data, offset);
+            offset = parseChild(data, offset);
 
             this.updateWindow = TimeSpan.FromMilliseconds(BitConverter.ToSingle(data, offset));
             offset += sizeof(Single);
 
             return offset;
+        }
+        
+        private int parseParent(byte[] data, int offset)
+        {
+            this.hasParent = BitConverter.ToBoolean(data, offset);
+            offset += sizeof(bool);
+            if (hasParent)
+            {
+                this.parentId = BitConverter.ToUInt32(data, offset);
+                offset += sizeof(uint);
+            }
+
+            return offset;
+        }
+
+        private int parseChild(byte[] data, int offset)
+        {
+            this.hasChild = BitConverter.ToBoolean(data, offset);
+            offset += sizeof(bool);
+            if (hasChild)
+            {
+                this.childId = BitConverter.ToUInt32(data, offset);
+                offset += sizeof(uint);
+            }
+            return offset;
+        }
+        
+        private void serializeChild(List<byte> data)
+        {
+            data.AddRange(BitConverter.GetBytes(hasChild));
+            if (hasChild)
+            {
+                data.AddRange(BitConverter.GetBytes(childId));
+            }
+        }
+
+        private void serializeParent(List<byte> data)
+        {
+            data.AddRange(BitConverter.GetBytes(hasParent));
+            if (hasParent)
+            {
+                data.AddRange(BitConverter.GetBytes(parentId));
+            }
         }
     }
 }

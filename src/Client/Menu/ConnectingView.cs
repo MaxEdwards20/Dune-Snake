@@ -12,7 +12,7 @@ namespace Client.Menu
         private SpriteFont font;
         private string connectingMessage = "Connecting to Server";
         private bool isConnected = false;
-        private double elapsedTimeSinceLastAttempt = 0;
+        private double elapsedTimeSinceLastAttempt = 1500; // Start at 1500 so we only need to wait 500ms before first attempt
         private const double attemptInterval = 2000; // Attempt to connect every 2 seconds
         private double periodUpdateTime = 500; // Update period for visual
 
@@ -51,7 +51,7 @@ namespace Client.Menu
             m_spriteBatch.Begin();
             Vector2 position = new Vector2(m_graphics.PreferredBackBufferWidth / 2, m_graphics.PreferredBackBufferHeight / 2);
             Vector2 origin = font.MeasureString(connectingMessage) / 2;
-            m_spriteBatch.DrawString(font, connectingMessage, position - origin, Colors.displayColor);
+            Drawing.CustomDrawString(font, connectingMessage, position, Colors.displayColor, m_spriteBatch, true, true, true);
             m_spriteBatch.End();
         }
 

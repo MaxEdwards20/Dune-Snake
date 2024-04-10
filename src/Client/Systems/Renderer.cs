@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using Client.Components;
 using Client.Menu;
 using System.Runtime.CompilerServices;
+using Shared.Systems;
 
 namespace Client.Systems;
 
@@ -67,31 +68,29 @@ public class Renderer : Shared.Systems.System
             );
 
         var heads = new List<Entity>();
-        var bodies = new List<Entity>();
-        var tails = new List<Entity>();
         var others = new List<Entity>();
-
+        
         foreach (Entity entity in m_entities.Values)
         {
             if (entity.contains<Head>())
                 heads.Add(entity);
-            else if (entity.contains<Tail>())
-                tails.Add(entity);
             else if (entity.contains<Worm>())
-                bodies.Add(entity);
+                continue;
             else
                 others.Add(entity);
         }
-
+        
         foreach (Entity entity in others)
             renderEntity(elapsedTime, spriteBatch, entity);
-        foreach (Entity entity in tails)
-            renderEntity(elapsedTime, spriteBatch, entity);
-        foreach (Entity entity in bodies)
-            renderEntity(elapsedTime, spriteBatch, entity);
-        foreach (Entity entity in heads)
-            renderEntity(elapsedTime, spriteBatch, entity);
+        
+        // We want to sort bodies by their position in the worm
 
+        foreach (Entity head in heads)
+        {
+            var worm = WormMovement.getWormFromHead(head, m_entities);
+            for (int i = worm.Count - 1; i >= 0; i--)
+                renderEntity(elapsedTime, spriteBatch, worm[i]);
+        }
         spriteBatch.End();
     }
 

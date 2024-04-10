@@ -357,14 +357,6 @@ namespace Shared.Messages
 
             return offset;
         }
-        
-        
-        
-        private void serializeWormEntities(List<byte> data)
-        {
-
-
-        }
 
         private void serializeChild(List<byte> data)
         {
