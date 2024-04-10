@@ -77,12 +77,13 @@ namespace Client.Menu
             string enterNameText = $"Enter Your Name: [ Using Keyboard ] \n {playerName}";
             Vector2 textSize = font.MeasureString(enterNameText);
             Vector2 textPosition = new Vector2(
-                (m_graphics.PreferredBackBufferWidth - textSize.X) / 2,
-                (m_graphics.PreferredBackBufferHeight - textSize.Y) / 2);
+                (m_graphics.PreferredBackBufferWidth) / 2,
+                (m_graphics.PreferredBackBufferHeight) / 2);
 
             // Draw "Enter Your Name" text
 
-            m_spriteBatch.DrawString(font, enterNameText, textPosition, Colors.displayColor);
+            Drawing.CustomDrawString(font, enterNameText, textPosition, Colors.displayColor, m_spriteBatch, true, true, scale:.8f);
+            // m_spriteBatch.DrawString(font, enterNameText, textPosition, Colors.displayColor);
 
 
             // Draw "Press Enter to proceed" below the name text if a name has been entered
@@ -91,11 +92,11 @@ namespace Client.Menu
                 string proceedText = "Press Enter to proceed";
                 Vector2 proceedTextSize = font.MeasureString(proceedText);
                 Vector2 proceedTextPosition = new Vector2(
-                    (m_graphics.PreferredBackBufferWidth - proceedTextSize.X) / 2,
-                    textPosition.Y + textSize.Y + 20); // 20 pixels below the name text
+                    textPosition.X,
+                    textPosition.Y + 90); // 20 pixels below the name text
 
-
-                m_spriteBatch.DrawString(font, proceedText, proceedTextPosition, Colors.displayColor);
+                Drawing.CustomDrawString(font, proceedText, proceedTextPosition, Colors.displayColor, m_spriteBatch, true, false, scale:.6f);
+                // m_spriteBatch.DrawString(font, proceedText, proceedTextPosition, Colors.displayColor);
             }
 
             m_spriteBatch.End();
