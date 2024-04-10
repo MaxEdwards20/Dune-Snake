@@ -11,35 +11,173 @@ public class WormMovement : Shared.Systems.System
     {
     }
     
-    public override void update(TimeSpan elapsedTime) 
+    public override void update(TimeSpan elapsedTime)
     {
         // Get all of the heads of the worms
-        var heads = new List<Entity>();
-        foreach (var entityPair in m_entities)
-        {
-            var entity = entityPair.Value;
-            if (entity.contains<Head>())
-            {
-                heads.Add(entity);;
-            }
-        }
-        
+        var heads = getHeads();
         // Apply thrust to all of the worms
         foreach (var head in heads)
         {
             applyThrust(head, elapsedTime);
         }
     }
-    
 
-    public static void ninetyLeft(Entity head, TimeSpan elapsedTime)
+    private List<Entity> getHeads()
     {
-        applyLeftRotation(head, -MathHelper.PiOver2);
+        var heads = new List<Entity>();
+        foreach (var entityPair in m_entities)
+        {
+            var entity = entityPair.Value;
+            if (entity.contains<Head>())
+            {
+                heads.Add(entity);
+            }
+        }
+        return heads;
     }
 
-    public static void ninetyRight(Entity head, TimeSpan elapsedTime)
+    private static float UP_Radians = -MathHelper.PiOver2;
+    private static float DOWN_Radians = MathHelper.PiOver2;
+    
+    public static void upLeft(List<Entity> snake)
     {
-        applyRightRotation(head, MathHelper.PiOver2);
+        changeDirection(snake, UP_Radians - MathHelper.PiOver4);
+    }
+    
+    public static void upRight(List<Entity> snake)
+    {
+        changeDirection(snake, UP_Radians + MathHelper.PiOver4);
+    }
+    
+    public static void downRight(List<Entity> snake)
+    {
+        changeDirection(snake, DOWN_Radians - MathHelper.PiOver4);
+    }
+
+    public static void downLeft(List<Entity> snake)
+    {
+        changeDirection(snake, DOWN_Radians + MathHelper.PiOver4);
+    }
+    
+    public static void left(List<Entity> snake, TimeSpan elapsedTime)
+    {
+        changeDirection(snake, MathHelper.Pi);
+    }
+    
+    public static void up(List<Entity> snake)
+    {
+        changeDirection(snake, UP_Radians);
+    }
+    
+    public static void down(List<Entity> snake)
+    {
+        changeDirection(snake, DOWN_Radians);
+    }
+
+    public static void right(List<Entity> snake, TimeSpan elapsedTime)
+    {
+        changeDirection(snake, MathHelper.TwoPi);
+    }
+
+    private void applyThrust(Entity wormHead, TimeSpan elapsedTime)
+    {
+        // Setup variables
+        var snake = getWormFromHead(wormHead, m_entities);
+        var head = snake[0];
+        var movement = head.get<Movement>();
+        var headPosition = head.get<Position>();
+        var frameTotalMovement = movement.moveRate * (float)elapsedTime.TotalMilliseconds;
+        var orientation = headPosition.orientation;
+        float LOCATION_THRESHOLD = movement.moveRate * 20;
+        const float MIN_SEGMENT_SPACING = 30f;
+        const float IDEAL_SEGMENT_SPACING = 40f;
+        
+        // Check how close the head is to its child
+        if (head.contains<ChildId>())
+        {
+            var child = m_entities[head.get<ChildId>().id];
+            var childPosition = child.get<Position>();
+            var distanceToChild = Vector2.Distance(headPosition.position, childPosition.position);
+            if (distanceToChild >= IDEAL_SEGMENT_SPACING)
+            {
+                // frameTotalMovement *= 0.1f;
+            }
+        }
+        
+        // Move the head
+        var direction = new Vector2((float)Math.Cos(orientation), (float)Math.Sin(orientation));
+        direction.Normalize();
+        headPosition.position += direction * frameTotalMovement;
+        
+        // Move the rest of the worm
+        for (int i = 1; i < snake.Count; i++)
+        {
+            var entity = snake[i];
+            var queueComponent = entity.get<AnchorQueue>();
+            var currentPosition = entity.get<Position>();
+            var parent = snake[i - 1];
+            var parentPosition = parent.get<Position>();
+            
+            // Default moving towards parent position
+            var target = new Position(parentPosition.position, parentPosition.orientation);
+
+            if (queueComponent.m_anchorPositions.Count != 0)
+            {
+                // queueComponent.m_anchorPositions.Enqueue(new Position(parentPosition.position, parentPosition.orientation));
+                target = queueComponent.m_anchorPositions.Peek();
+            }
+            // Move towards that target
+            var distanceToTarget = Vector2.Distance(currentPosition.position, target.position);
+            var distanceToParent = Vector2.Distance(currentPosition.position, parentPosition.position);
+            if (distanceToTarget >= MIN_SEGMENT_SPACING || distanceToParent >= IDEAL_SEGMENT_SPACING)
+            {
+                var directionToTarget = target.position - currentPosition.position;
+                directionToTarget.Normalize();
+                currentPosition.position += directionToTarget * frameTotalMovement;
+
+                // Update the orientation to match the direction we're moving
+                currentPosition.orientation = (float)Math.Atan2(directionToTarget.Y, directionToTarget.X);
+
+                // Check if we have hit the target
+                if (Vector2.Distance(currentPosition.position, target.position) <= LOCATION_THRESHOLD && queueComponent.m_anchorPositions.Count > 0)
+                {
+                    // Remove the target from the queue
+                    queueComponent.m_anchorPositions.Dequeue();
+                }
+            }
+        }
+    }
+    
+    private static void changeDirection(List<Entity> worm, float radians)
+    {
+        if (worm == null || worm.Count == 0) 
+            return;
+
+            // Assuming the first entity in the list is the head
+            var head = worm[0];
+            var headPosition = head.get<Position>();
+
+            // Adjust the head's orientation by the specified radians
+            if (headPosition.orientation == radians) return;
+            headPosition.orientation = radians;
+
+            // Normalize the orientation to ensure it stays within a valid range (e.g., 0 to 2*PI)
+            // This step is important if your system expects orientations within a specific range
+            headPosition.orientation = (float)(headPosition.orientation % (2 * Math.PI));
+            if (headPosition.orientation < 0) headPosition.orientation += (float)(2 * Math.PI);
+
+            // For each segment, add the current head position to its queue for following
+            // Skip the head itself, start with the first segment following the head
+            for (int i = 1; i < worm.Count; i++)
+            {
+                var segment = worm[i];
+                var queueComponent = segment.get<AnchorQueue>();
+                // Here, we're adding the head's current position as the new target for each segment
+                // This mimics the behavior where, upon rotation, each segment should aim to move
+                // towards the position where the head was at the time of rotation
+                queueComponent.m_anchorPositions.Enqueue(new Position(headPosition.position, headPosition.orientation));
+                
+            }
     }
     
     private static Entity getHead(Entity entity, Dictionary<uint, Entity> entities)
@@ -52,7 +190,7 @@ public class WormMovement : Shared.Systems.System
         return current;
     }
     
-    private List<Entity> getSnakeFromHead(Entity head, Dictionary<uint, Entity> entities)
+    public static List<Entity> getWormFromHead(Entity head, Dictionary<uint, Entity> entities)
     {
         var snakeEntities = new List<Entity>();
         var current = head;
@@ -71,16 +209,16 @@ public class WormMovement : Shared.Systems.System
         return snakeEntities;
     }
     
-    private List<Entity> getSnakeFromTail(Entity tail)
+    public static List<Entity> getSnakeFromTail(Entity tail, Dictionary<uint, Entity> entities)
     {
         var snakeEntities = new List<Entity>();
         var current = tail;
         while (current != null)
         {
             snakeEntities.Add(current);
-            if (current.contains<ParentId>() && m_entities.ContainsKey(current.get<ParentId>().id))
+            if (current.contains<ParentId>() && entities.ContainsKey(current.get<ParentId>().id))
             {
-                current = m_entities[current.get<ParentId>().id];
+                current = entities[current.get<ParentId>().id];
             }
             else
             {
@@ -88,69 +226,6 @@ public class WormMovement : Shared.Systems.System
             }
         }
         return snakeEntities;
-    }
-
-
-    // TODO: Add a periodic 2/second or maybe 10/second updates of the position to the server
-    // TODO: Transition to using the queue of positions each entity should move towards
-    private void applyThrust(Entity wormHead, TimeSpan elapsedTime)
-    {
-        // Get the movement component of the head to determine the direction and speed
-        var movementComponent = wormHead.get<Movement>();
-        var positionComponent = wormHead.get<Position>();
-
-        // Calculate the new position of the head based on its direction and speed
-        Vector2 direction = new Vector2((float) Math.Cos(positionComponent.orientation),
-            (float) Math.Sin(positionComponent.orientation));
-        direction.Normalize(); // Ensure the direction vector is normalized
-        Vector2 newPosition = positionComponent.position - direction * movementComponent.moveRate * (float)elapsedTime.TotalMilliseconds;
-
-        // Update the head's position
-        positionComponent.position = newPosition;
-
-        // Now, update each following segment to move towards the position of its preceding segment
-        Entity currentSegment = wormHead; // Start with the head
-        Vector2 previousPosition = newPosition; // Position to move towards, start with the new head position
-
-        while (true)
-        {
-            // Assuming each segment has a ParentId component that points to its preceding segment
-            if (!currentSegment.contains<ChildId>())
-            {
-                break; // No more segments in the chain
-            }
-            
-            // Get the next segment in the chain
-            uint childId = currentSegment.get<ChildId>().id;
-            var nextSegment = m_entities[childId];
-
-            // Temporarily store the current segment's position to use for the next segment
-            Vector2 tempPosition = nextSegment.get<Position>().position;
-
-            // Move the current segment towards the previous position
-            nextSegment.get<Position>().position = previousPosition;
-
-            // Prepare for the next iteration
-            previousPosition = tempPosition;
-            currentSegment = nextSegment;
-        }
-    }
-
-
-
-    // We don't need to update the entire worm with these because it will be updated in the next frame when thrust is applied
-    private static void applyLeftRotation(Entity head, float radians)
-    {
-        var position = head.get<Position>();
-        var movement = head.get<Movement>();
-        position.orientation += radians;
-    }
-
-    private static void applyRightRotation(Entity head, float radians)
-    {
-        var position = head.get<Position>();
-        var movement = head.get<Movement>();
-        position.orientation += radians;
     }
     
 }

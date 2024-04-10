@@ -18,6 +18,10 @@ namespace Client.Components
         public Control SnakeLeft = new Control(Keys.Left);
         [DataMember(Name = "SnakeRight")]
         public Control SnakeRight = new Control(Keys.Right);
+        [DataMember(Name = "SnakeUp")]
+        public Control SnakeUp = new Control(Keys.Up);
+        [DataMember(Name = "SnakeDown")]
+        public Control SnakeDown = new Control(Keys.Down);
         [DataMember (Name = "UseKeyboard")]
         public bool UseKeyboard = true;
     }

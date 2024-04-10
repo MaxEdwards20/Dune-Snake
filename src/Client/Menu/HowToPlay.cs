@@ -65,7 +65,8 @@ namespace Client.Menu
             // Title
             Vector2 titlePosition = new Vector2(m_graphics.PreferredBackBufferWidth / 2, m_graphics.PreferredBackBufferHeight / 4);
             Vector2 titleOrigin = font.MeasureString(titleMessage) / 2;
-            m_spriteBatch.DrawString(font, titleMessage, titlePosition - (titleOrigin * textScale), Color.PaleGoldenrod, 0f, Vector2.Zero, textScale, SpriteEffects.None, 0f);
+            m_spriteBatch.DrawString(font, titleMessage, titlePosition - (titleOrigin * textScale), Colors.displayColor, 0f, Vector2.Zero, textScale, SpriteEffects.None, 0f);
+
 
             // How to Play Instructions
             Vector2 instructionsPosition = new Vector2(m_graphics.PreferredBackBufferWidth / 2, m_graphics.PreferredBackBufferHeight / 2.5f);
@@ -73,14 +74,17 @@ namespace Client.Menu
             foreach (string line in lines)
             {
                 Vector2 lineSize = font.MeasureString(line) * textScale;
-                m_spriteBatch.DrawString(font, line, instructionsPosition - new Vector2(lineSize.X / 2, 0), Color.PaleGoldenrod, 0f, Vector2.Zero, textScale, SpriteEffects.None, 0f);
+
+                m_spriteBatch.DrawString(font, line, instructionsPosition - new Vector2(lineSize.X / 2, 0), Colors.displayColor, 0f, Vector2.Zero, textScale, SpriteEffects.None, 0f);
                 instructionsPosition.Y += lineSize.Y + 5; // Adjust spacing between lines if necessary, taking scale into account
             }
 
             // Continue Prompt
             Vector2 continuePosition = new Vector2(m_graphics.PreferredBackBufferWidth / 2, (m_graphics.PreferredBackBufferHeight / 4) * 3);
             Vector2 continueOrigin = font.MeasureString(continueMessage) / 2;
-            m_spriteBatch.DrawString(font, continueMessage, continuePosition - (continueOrigin * textScale), Color.PaleGoldenrod, 0f, Vector2.Zero, textScale, SpriteEffects.None, 0f);
+
+            m_spriteBatch.DrawString(font, continueMessage, continuePosition - (continueOrigin * textScale), Colors.displayColor, 0f, Vector2.Zero, textScale, SpriteEffects.None, 0f);
+
 
             m_spriteBatch.End();
         }

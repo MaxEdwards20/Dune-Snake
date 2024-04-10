@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Media;
 using System.Collections.Generic;
+using System.Text;
 using Client.Components;
 using Client.Systems;
 using Shared.Components;
@@ -28,7 +29,8 @@ namespace Client
         private Texture2D m_background;
         private GameModel m_gameModel;
         private Controls m_controls;
-        private ControlsPersistence _mControlsPersistence;
+        private ControlsPersistence m_ControlsPersistence;
+        private StringBuilder playerName = new StringBuilder();
 
         public ClientMain()
         {
@@ -36,10 +38,9 @@ namespace Client
             Content.RootDirectory = "Content";
             m_menuKeyboardInput = new MenuKeyboardInput();
             IsMouseVisible = true;
-            m_gameModel = new GameModel();
+            m_gameModel = new GameModel(playerName);
             m_controls = new Controls();
-            _mControlsPersistence = new ControlsPersistence();
-            
+            m_ControlsPersistence = new ControlsPersistence();
         }
 
         protected override void Initialize()
@@ -53,20 +54,21 @@ namespace Client
             
             // Load the controls
             // We pass in our own controls so we always have them as a default if they were not saved
-            _mControlsPersistence.LoadControls(m_controls); 
+            m_ControlsPersistence.LoadControls(m_controls); 
 
             // Create all the game states here
             m_states = new Dictionary<MenuStateEnum, IGameState>
             {
                 { MenuStateEnum.MainMenu, new MainMenuView() },
-                { MenuStateEnum.GamePlay, new GamePlayView(m_controls) }, 
+                { MenuStateEnum.GamePlay, new GamePlayView(m_controls, playerName) }, 
                 { MenuStateEnum.HighScores, new HighScoresView() },
                 { MenuStateEnum.Controls, new ControlSettingsView(m_controls) },
                 { MenuStateEnum.Help, new HelpView() },
                 { MenuStateEnum.Credits, new AboutView() },
-                { MenuStateEnum.ChooseName, new ChooseNameView() },
+                { MenuStateEnum.ChooseName, new ChooseNameView(playerName)},
                 { MenuStateEnum.HowToPlay, new HowToPlayView() },
                 { MenuStateEnum.Connecting, new ConnectingView() }
+
             };
 
             // Give all game states a chance to initialize, other than constructor

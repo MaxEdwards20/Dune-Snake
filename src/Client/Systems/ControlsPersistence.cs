@@ -38,7 +38,8 @@ public class ControlsPersistence: Shared.Systems.System
             // All of them have a default value in case they were not saved
             controls.SnakeLeft = m_loadedState.SnakeLeft == null? new Control(Keys.Left) : m_loadedState.SnakeLeft;
             controls.SnakeRight = m_loadedState.SnakeRight == null? new Control(Keys.Right) : m_loadedState.SnakeRight;
-            // controls.UseKeyboard = m_loadedState.UseKeyboard == null ? true: m_loadedState.UseKeyboard; // Real. 
+            controls.SnakeUp = m_loadedState.SnakeUp == null? new Control(Keys.Up) : m_loadedState.SnakeUp;
+            controls.SnakeDown = m_loadedState.SnakeDown == null? new Control(Keys.Down) : m_loadedState.SnakeDown;
             controls.UseKeyboard = true; // FOR TESTING. Allow us to switch keyboard on and off.
         }
     }

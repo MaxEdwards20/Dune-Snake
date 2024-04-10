@@ -18,6 +18,11 @@ namespace Shared.Messages
                 this.orientation = entity.get<Position>().orientation;
             }
 
+            if (entity.contains<SpicePower>())
+            {
+                this.spicePower = entity.get<SpicePower>().power;
+            }
+
             this.updateWindow = updateWindow;
         }
 
@@ -31,6 +36,10 @@ namespace Shared.Messages
         public bool hasPosition { get; private set; } = false;
         public Vector2 position { get; private set; }
         public float orientation { get; private set; }
+        
+        // SpicePower
+        public bool hasSpicePower { get; private set; } = false;
+        public int spicePower { get; private set; } = 0;
 
         // Only the milliseconds are used/serialized
         public TimeSpan updateWindow { get; private set; } = TimeSpan.Zero;
@@ -48,6 +57,12 @@ namespace Shared.Messages
                 data.AddRange(BitConverter.GetBytes(position.X));
                 data.AddRange(BitConverter.GetBytes(position.Y));
                 data.AddRange(BitConverter.GetBytes(orientation));
+            }
+            
+            data.AddRange(BitConverter.GetBytes(hasSpicePower));
+            if (hasSpicePower)
+            {
+                data.AddRange(BitConverter.GetBytes(spicePower));
             }
 
             data.AddRange(BitConverter.GetBytes((float)updateWindow.TotalMilliseconds));
@@ -73,6 +88,14 @@ namespace Shared.Messages
                 this.position = new Vector2(positionX, positionY);
                 this.orientation = BitConverter.ToSingle(data, offset);
                 offset += sizeof(Single);
+            }
+            
+            this.hasSpicePower = BitConverter.ToBoolean(data, offset);
+            offset += sizeof(bool);
+            if (hasSpicePower)
+            {
+                this.spicePower = BitConverter.ToInt32(data, offset);
+                offset += sizeof(int);
             }
 
             this.updateWindow = TimeSpan.FromMilliseconds(BitConverter.ToSingle(data, offset));
