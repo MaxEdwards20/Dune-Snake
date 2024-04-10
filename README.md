@@ -8,7 +8,6 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 
 ## In Progress
 
-- [ ] Satchel: Pick head, body, and tail texture for the sandworm
 - [ ] Max: Sync the anchor points across clients.
 
 ## Items to Develop
