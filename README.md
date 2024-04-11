@@ -7,18 +7,19 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 <!-- ## Project Description -->
 
 ## In Progress
-
+- [ ] Particle system for the death of a sandworm and eating food. - Satchel
+- [ ] Sound effects on the death of worm and when food is eaten - Satchel
 ## Items to Develop
 
 - [ ] Fix the ability to exit the game and come back in. Dean talked about what we need to do in Teams.
-- [ ] 3 different animated sprites for the spice - Satchel
-- [ ] Sound effects on the death of worm and when food is eaten - Satchel
+- [ ] 3 different animated sprites for the spice 
+- [ ] Sound effects on the death of worm and when food is eaten 
 - [ ] Record players score, kills and highest position. Probably can be added to the `GameScores` object.
 - [ ] Game over screen with score, kills, and highest position achieved. This is an overlay on the multiplayer game behind it.
 - [ ] Particle system for the death of a sandworm
 - [ ] Leaderboard to display top 5 players and client's score in corner of game.
 - [ ] Add a player status in leaderboard to show whether the player is currently invincible.
-- [ ] Port Particle System - Satchel
+
 
 ## Done
 
@@ -44,7 +45,7 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 - [x] Satchel: How to Play View
 - [x] Satchel: Create Name View
 - [x] Satchel: Create Connection View
-
+- [x] Satchel: Port Particle System
 ## Debugging
 
 ### Connection Refused
