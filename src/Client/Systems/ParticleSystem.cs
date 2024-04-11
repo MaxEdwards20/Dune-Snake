@@ -44,6 +44,7 @@ namespace CS5410
                     (float)m_random.nextGaussian(m_speedMean / 2, m_speedStDev / 2), // Slower speed
                     new Vector2(size, size),
                     TimeSpan.FromMilliseconds(m_random.nextGaussian(m_lifetimeMean / 3, m_lifetimeStdDev / 3)), // Shorter lifetime
+
                     initialColor
                 );
                 m_particles.Add(particle.name, particle);
@@ -65,6 +66,7 @@ namespace CS5410
                     (float)m_random.nextGaussian(m_speedMean, m_speedStDev), // Normal speed
                     new Vector2(size, size),
                     TimeSpan.FromMilliseconds(m_random.nextGaussian(m_lifetimeMean, m_lifetimeStdDev)), // Normal lifetime
+
                     initialColor
                 );
                 m_particles.Add(particle.name, particle);
