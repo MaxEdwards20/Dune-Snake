@@ -78,6 +78,7 @@ public class CollisionDetection : Shared.Systems.System
 
     private void wormToWall(Entity entity, Entity head, List<Entity> worm)
     {
+        if (worm[0].contains<Invincible>()) return; // NOTE: Could potentially add some logic here to stop the worm from moving or to turn it around if it hits a wall
         // Entity is a wall
         var wallPos = entity.get<Position>().position;
         var wallSize = entity.get<Size>().size;
@@ -100,6 +101,7 @@ public class CollisionDetection : Shared.Systems.System
 
     private void wormToWorm(Entity head, Entity entity, List<Entity> worm)
     {
+        if (head.contains<Invincible>() || entity.contains<Invincible>()) return; // This says that I can't eat or be eaten as an invincible worm
         var headPos = head.get<Position>().position;
         var headSize = head.get<Size>().size.X/4;
         if (CircleCircleIntersect(
@@ -116,7 +118,7 @@ public class CollisionDetection : Shared.Systems.System
     private void wormToSpice(TimeSpan elapsedTime, Entity head, Entity entity)
     {
         var headPos = head.get<Position>().position;
-        var headSize = head.get<Size>().size.X/4;
+        var headSize = head.get<Size>().size.X/3;
         if (CircleCircleIntersect(
                 headPos,
                 headSize,
@@ -201,7 +203,7 @@ public class CollisionDetection : Shared.Systems.System
 
     private void handleWormAteWorm(List<Entity> worm, Entity otherHead)
     {
-        if (worm[0].contains<Invincible>() || otherHead.contains<Invincible>()) return;
+
 
         // Check if we hit head on head
         if (otherHead.contains<Head>())
@@ -232,7 +234,7 @@ public class CollisionDetection : Shared.Systems.System
     
     private void handleWormHitWall(List<Entity> worm, Entity wall)
     {
-        if (worm[0].contains<Invincible>()) return;
+        
         
         // There was a collision let everyone know about it
         MessageQueueServer.instance.broadcastMessage(new Collision(worm[0].id, wall.id,

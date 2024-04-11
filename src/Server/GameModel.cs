@@ -19,6 +19,7 @@ public class GameModel
     private readonly GrowthHandler m_SystemGrowthHandler = new();
     private readonly Network m_systemNetwork = new();
     private readonly SpiceGen m_systemSpiceGen = new(mapSize - 200, 300);
+    private const int wallSize = 100;
     private const int mapSize = 3000;
 
     /// <summary>
@@ -145,7 +146,6 @@ public class GameModel
     {
         // We want to create wall entities around the entire map. 5000x5000 is the size of the map
         // We'll create a wall every 100 units
-        var wallSize = 100;
         for (int i = 0; i < mapSize / 100; i++)
         {
             // Top wall
@@ -178,6 +178,7 @@ public class GameModel
         // Create the head
         Entity segment = WormHead.create(headStartLocation, name);
         segment.add(new Invincible());
+        m_clientToEntityId[clientId] = segment.id; // Associate the client with the head of the worm
 
         // Create X number of body segments
         var parent = segment;
@@ -192,13 +193,11 @@ public class GameModel
             }
             parent.add(new ChildId(segment.id));
             addEntity(parent);
-            m_clientToEntityId[clientId] = parent.id;
             MessageQueueServer.instance.sendMessage(clientId, new NewEntity(parent));
             segmentStartLocation = new Vector2(segmentStartLocation.X - 50, segmentStartLocation.Y);
             parent = segment;
         }
         addEntity(segment);
-        m_clientToEntityId[clientId] = segment.id;
         MessageQueueServer.instance.sendMessage(clientId, new NewEntity(segment));
 
         // Step 4: Let all other clients know about this new player 
@@ -235,8 +234,9 @@ public class GameModel
         // We want to start the player in the least dense area of the screen
         // For now, we'll just start them randomly generated location
         Random random = new Random();
-        var lowerBound = (int)(300);
-        var upperBound = (int)(mapSize - 300);
+        var offset = wallSize * 5;
+        var lowerBound = offset;
+        var upperBound = mapSize - offset;
         return new Vector2(random.Next(lowerBound, upperBound), random.Next(lowerBound, upperBound));
     }
 }

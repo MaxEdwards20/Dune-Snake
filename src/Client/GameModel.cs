@@ -245,7 +245,7 @@ public class GameModel
     
     private void handleNewAnchorPoint(Shared.Messages.NewAnchorPoint message)
     {
-        if (m_entities.ContainsKey(message.wormHeadId))
+        if (m_entities.ContainsKey(message.wormHeadId) && !m_entities.Values.ToArray()[0].id.Equals(message.wormHeadId))
         {
             var wormHead = m_entities[message.wormHeadId];
             var worm = WormMovement.getWormFromHead(wormHead, m_entities);
@@ -261,6 +261,10 @@ public class GameModel
         // We need to know if the collision occurred on the screen of the client
         if (m_entities.ContainsKey(message.entity1Id) && m_entities.ContainsKey(message.entity2Id))
         {
+            // Check where our current client is and see if the collision is relevant
+            var player = m_entities.Values.ToArray()[0];
+            // TODO: Implement the check for the client's screen here. If it is in the screen then we will handle the collision
+            
 
             if (message.collisionType == Collision.CollisionType.HeadToSpice)
             {
@@ -280,8 +284,7 @@ public class GameModel
             // Check the position
             var position = message.position;
             
-            // Check where our current client is and see if the collision is relevant
-            // TODO: Implement this
+
             
             // If it is relevant, we either send a boolean flag to the particle system and collision handling or we call those here. 
             
