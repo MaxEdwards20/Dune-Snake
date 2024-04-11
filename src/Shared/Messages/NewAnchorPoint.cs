@@ -44,7 +44,7 @@ public class NewAnchorPoint :Message
     }
 
 
-    public NewAnchorPoint(Type type) : base(type)
+    public NewAnchorPoint() : base(Type.NewAnchorPoint)
     {
     }
 }

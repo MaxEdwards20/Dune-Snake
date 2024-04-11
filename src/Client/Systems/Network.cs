@@ -20,11 +20,13 @@ namespace Client.Systems
         public delegate void RemoveEntityHandler(RemoveEntity message);
         public delegate void NewEntityHandler(NewEntity message);
         public delegate void CollisionHandler(Collision message);
+        public delegate void NewAnchorPointHandler(NewAnchorPoint message);
         
         private Dictionary<Shared.Messages.Type, Handler> m_commandMap = new Dictionary<Shared.Messages.Type, Handler>();
         private RemoveEntityHandler m_removeEntityHandler;
         private NewEntityHandler m_newEntityHandler;
         private CollisionHandler m_collisionHandler;
+        private NewAnchorPointHandler m_newAnchorPointHandler;
         private uint m_lastMessageId = 0;
         private HashSet<uint> m_updatedEntities = new HashSet<uint>();
         
@@ -59,6 +61,11 @@ namespace Client.Systems
             registerHandler(Shared.Messages.Type.Collision, (TimeSpan elapsedTime, Message message) =>
             {
                 m_collisionHandler((Collision)message);
+            });
+            
+            registerHandler(Shared.Messages.Type.NewAnchorPoint, (TimeSpan elapsedTime, Message message) =>
+            {
+                m_newAnchorPointHandler((NewAnchorPoint)message);
             });
             
         }
@@ -160,6 +167,11 @@ namespace Client.Systems
         {
             m_collisionHandler = handler;
         }
+        
+        public void registerNewAnchorPointHandler(NewAnchorPointHandler handler)
+        {
+            m_newAnchorPointHandler = handler;
+        }
 
         /// <summary>
         /// Handler for the ConnectAck message.  This records the clientId
@@ -221,16 +233,6 @@ namespace Client.Systems
                 }
             }
 
-        }
-        
-        private void updateQueues(Entity head)
-        {
-            // var worm = WormMovement.getWormFromHead(head, m_entities);
-            // var headPos = head.get<Position>();
-            // foreach (var segment in worm.Skip(1))
-            // {
-            //     segment.get<AnchorQueue>().m_anchorPositions.Enqueue(headPos);
-            // }
         }
     }
 }

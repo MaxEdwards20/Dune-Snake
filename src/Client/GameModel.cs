@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Input;
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Client.Components;
@@ -84,6 +85,7 @@ public class GameModel
         m_systemNetwork.registerNewEntityHandler(handleNewEntity);
         m_systemNetwork.registerRemoveEntityHandler(handleRemoveEntity);
         m_systemNetwork.registerCollisionHandler(handleCollision);
+        m_systemNetwork.registerNewAnchorPointHandler(handleNewAnchorPoint);
         m_controls = controls;
 
         m_systemKeyboardInput = new Systems.KeyboardInput(new List<Tuple<Shared.Components.Input.Type, Keys>>
@@ -238,6 +240,20 @@ public class GameModel
     private void handleRemoveEntity(Shared.Messages.RemoveEntity message)
     {
         removeEntity(message.id);
+    }
+    
+    
+    private void handleNewAnchorPoint(Shared.Messages.NewAnchorPoint message)
+    {
+        if (m_entities.ContainsKey(message.wormHeadId))
+        {
+            var wormHead = m_entities[message.wormHeadId];
+            var worm = WormMovement.getWormFromHead(wormHead, m_entities);
+            foreach (var segment in worm.Skip(1))
+            {
+                segment.get<AnchorQueue>().m_anchorPositions.Enqueue( new Position(message.position, message.orientation));
+            }
+        }
     }
     
     private void handleCollision(Shared.Messages.Collision message)
