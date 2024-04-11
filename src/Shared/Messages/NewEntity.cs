@@ -76,7 +76,7 @@ namespace Shared.Messages
                 this.childId = entity.get<ChildId>().id;
             }
             
-            if (entity.contains<Shared.Components.Collision>())
+            if (entity.contains<Shared.Components.Collidable>())
             {
                 this.hasCollision = true;
             }

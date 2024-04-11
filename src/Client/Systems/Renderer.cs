@@ -1,16 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Content;
 
 using Shared.Entities;
 using Shared.Components;
-using Shared.Components.Appearance;
 
 using System;
 using System.Collections.Generic;
 using Client.Components;
 using Client.Menu;
-using System.Runtime.CompilerServices;
 using Shared.Systems;
 
 namespace Client.Systems;
@@ -106,10 +103,7 @@ public class Renderer : Shared.Systems.System
         if (entity.contains<Invincible>())
         {
             var invincible = entity.get<Invincible>();
-            if (invincible.duration < 1000)
-                color = Color.Coral;
-            else
-                color = Colors.displayColor;
+            color = invincible.duration < 1000 ? Color.Coral : Colors.displayColor;
         }
         
         if (entity.contains<SpicePower>() && !entity.contains<Worm>())

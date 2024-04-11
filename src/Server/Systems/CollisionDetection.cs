@@ -20,7 +20,7 @@ public class CollisionDetection : Shared.Systems.System
     
     public CollisionDetection() :
         base(
-            typeof(Shared.Components.Collision), typeof(Shared.Components.Position), typeof(Shared.Components.Size)
+            typeof(Shared.Components.Collidable), typeof(Shared.Components.Position), typeof(Shared.Components.Size)
         )
     {
     }
@@ -57,17 +57,52 @@ public class CollisionDetection : Shared.Systems.System
                 {
                     continue;
                 }
+                
                 if (entity.contains<SpicePower>() && !entity.contains<Worm>() )
                 {
-                    wormToSpice(elapsedTime, head, entity);
+                    var headPos = head.get<Position>().position;
+                    if (CircleCircleIntersect(
+                            headPos,
+                            head.get<Size>().size.X /2,
+                            entity.get<Position>().position,
+                            entity.get<Size>().size.X
+                        ))
+                    {
+                        handleWormAteSpice(head, entity, elapsedTime);
+                    }
                 }
                 else if (entity.contains<Worm>())
                 {
-                    wormToWorm(head, entity, worm);
+                    var headPos = head.get<Position>().position;
+                    if (CircleCircleIntersect(
+                        headPos,
+                        head.get<Size>().size.X /2,
+                        entity.get<Position>().position,
+                        entity.get<Size>().size.X
+                    ))
+                    {
+                        handleWormAteWorm(worm, entity);
+                    }
                 }
                 else if (entity.contains<Shared.Components.Wall>())
                 {
-                    wormToWall(entity, head, worm);
+                    // Entity is a wall
+                    var wallPos = entity.get<Position>().position;
+                    var wallSize = entity.get<Size>().size;
+                    Vector2 topLeft = wallPos;
+                    Vector2 topRight = new Vector2(wallPos.X + wallSize.X, wallPos.Y);
+                    Vector2 bottomLeft = new Vector2(wallPos.X, wallPos.Y + wallSize.Y);
+                    Vector2 bottomRight = wallPos + wallSize;
+                    var headPos = head.get<Position>().position;
+
+// Check each side of the wall for intersection with the snake head
+                    if (CircleLineIntersect(headPos, head.get<Size>().size.X / 2, topLeft, topRight) ||
+                        CircleLineIntersect(headPos, head.get<Size>().size.X / 2, topLeft, bottomLeft) ||
+                        CircleLineIntersect(headPos, head.get<Size>().size.X / 2, bottomLeft, bottomRight) ||
+                        CircleLineIntersect(headPos, head.get<Size>().size.X / 2, topRight, bottomRight))
+                    {
+                        handleWormHitWall(worm, entity);
+                    }
                 }
             }
         }
@@ -75,59 +110,7 @@ public class CollisionDetection : Shared.Systems.System
         processUpdatedEntities(elapsedTime);
         processRemovedEntities();
     }
-
-    private void wormToWall(Entity wall, Entity head, List<Entity> worm)
-    {
-        // Entity is a wall
-        var wallPos = wall.get<Position>().position;
-        var wallSize = wall.get<Size>().size;
-        Vector2 topLeft = wallPos;
-        Vector2 topRight = new Vector2(wallPos.X + wallSize.X, wallPos.Y);
-        Vector2 bottomLeft = new Vector2(wallPos.X, wallPos.Y + wallSize.Y);
-        Vector2 bottomRight = wallPos + wallSize;
-        var headPos = head.get<Position>().position;
-        var headSize = head.get<Size>().size.X / 4;
-
-// Check each side of the wall for intersection with the snake head
-        if (CircleLineIntersect(headPos, headSize, topLeft, topRight) ||
-            CircleLineIntersect(headPos, headSize, topLeft, bottomLeft) ||
-            CircleLineIntersect(headPos, headSize, bottomLeft, bottomRight) ||
-            CircleLineIntersect(headPos, headSize, topRight, bottomRight))
-        {
-            handleWormHitWall(worm);
-        }
-    }
-
-    private void wormToWorm(Entity head, Entity entity, List<Entity> worm)
-    {
-        var headPos = head.get<Position>().position;
-        var headSize = head.get<Size>().size.X / 2;
-        if (CircleCircleIntersect(
-                headPos,
-                headSize,
-                entity.get<Position>().position,
-                entity.get<Size>().size.X
-            ))
-        {
-            handleWormAteWorm(worm, entity);
-        }
-    }
-
-    private void wormToSpice(TimeSpan elapsedTime, Entity head, Entity entity)
-    {
-        var headPos = head.get<Position>().position;
-        var headSize = head.get<Size>().size.X / 2;
-        if (CircleCircleIntersect(
-                headPos,
-                headSize,
-                entity.get<Position>().position,
-                entity.get<Size>().size.X
-            ))
-        {
-            handleWormAteSpice(head, entity, elapsedTime);
-        }
-    }
-
+    
     // Reference: https://stackoverflow.com/questions/37224912/circle-line-segment-collision
     private bool CircleLineIntersect(Vector2 circleCenter, float circleRadius, Vector2 lineStart, Vector2 lineEnd)
     {
@@ -150,6 +133,9 @@ public class CollisionDetection : Shared.Systems.System
     
     private void handleWormAteSpice(Entity head, Entity spice, TimeSpan elapsedTime)
     {
+        // There was a collision let everyone know about it
+        MessageQueueServer.instance.broadcastMessage(new Collision(head.id, spice.id,
+            Collision.CollisionType.HeadToSpice, head.get<Position>()));
         // Remove the spice
         m_removeEntity(spice.id);
         MessageQueueServer.instance.broadcastMessage(new RemoveEntity(spice.id));
@@ -199,9 +185,13 @@ public class CollisionDetection : Shared.Systems.System
         {
             return;
         }
+
         // Check if we hit head on head
         if (otherHead.contains<Head>())
         {
+            // There was a collision let everyone know about it
+            MessageQueueServer.instance.broadcastMessage(new Collision(worm[0].id, otherHead.id,
+                Collision.CollisionType.HeadToHead, worm[0].get<Position>()));
             // We need to compare the sizes of the two worms to see who dies
             List<Entity> otherWorm = WormMovement.getWormFromHead(otherHead, m_entities);
             if (worm.Count > otherWorm.Count)
@@ -209,26 +199,28 @@ public class CollisionDetection : Shared.Systems.System
                 handleRemoveWormAndGenerateSpice(otherWorm);
             }
             else
-            {
-                    handleRemoveWormAndGenerateSpice(worm);
+            { 
+                handleRemoveWormAndGenerateSpice(worm);
             }
         }
         else // We hit the side of the worm
         {
+            // There was a collision let everyone know about it
+            MessageQueueServer.instance.broadcastMessage(new Collision(worm[0].id, otherHead.id,
+                Collision.CollisionType.HeadToBody, worm[0].get<Position>()));
             // If the worm hit the body, then the worm dies
-            if (!worm[0].contains<Invincible>())
-            {
-                handleRemoveWormAndGenerateSpice(worm);
-            }
+            handleRemoveWormAndGenerateSpice(worm);
         }
     }
     
-    private void handleWormHitWall(List<Entity> worm)
+    private void handleWormHitWall(List<Entity> worm, Entity wall)
     {
-        if (!worm[0].contains<Invincible>())
-        {
-            handleRemoveWormAndGenerateSpice(worm);
-        }
+        if (worm[0].contains<Invincible>()) return;
+        
+        // There was a collision let everyone know about it
+        MessageQueueServer.instance.broadcastMessage(new Collision(worm[0].id, wall.id,
+            Collision.CollisionType.HeadToWall, wall.get<Position>()));
+        handleRemoveWormAndGenerateSpice(worm);
     }
     
     private void handleRemoveWormAndGenerateSpice(List<Entity> worm)

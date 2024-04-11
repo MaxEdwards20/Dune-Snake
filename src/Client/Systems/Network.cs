@@ -19,9 +19,12 @@ namespace Client.Systems
         public delegate void Handler(TimeSpan elapsedTime, Shared.Messages.Message message);
         public delegate void RemoveEntityHandler(RemoveEntity message);
         public delegate void NewEntityHandler(NewEntity message);
+        public delegate void CollisionHandler(Collision message);
+        
         private Dictionary<Shared.Messages.Type, Handler> m_commandMap = new Dictionary<Shared.Messages.Type, Handler>();
         private RemoveEntityHandler m_removeEntityHandler;
         private NewEntityHandler m_newEntityHandler;
+        private CollisionHandler m_collisionHandler;
         private uint m_lastMessageId = 0;
         private HashSet<uint> m_updatedEntities = new HashSet<uint>();
         
@@ -51,6 +54,11 @@ namespace Client.Systems
             registerHandler(Shared.Messages.Type.RemoveEntity, (TimeSpan elapsedTime, Message message) =>
             {
                 m_removeEntityHandler((RemoveEntity)message);
+            });
+            
+            registerHandler(Shared.Messages.Type.Collision, (TimeSpan elapsedTime, Message message) =>
+            {
+                m_collisionHandler((Collision)message);
             });
             
         }
@@ -146,6 +154,11 @@ namespace Client.Systems
         public void registerRemoveEntityHandler(RemoveEntityHandler handler)
         {
             m_removeEntityHandler = handler;
+        }
+        
+        public void registerCollisionHandler(CollisionHandler handler)
+        {
+            m_collisionHandler = handler;
         }
 
         /// <summary>

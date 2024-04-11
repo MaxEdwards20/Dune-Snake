@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using Client.Components;
 using Shared.Components;
 using Shared.Entities;
+using Shared.Messages;
 using Shared.Systems;
 
 namespace Client;
@@ -30,6 +31,7 @@ public class GameModel
     private SpriteFont m_font;
     private Texture2D m_sand;
     private String m_playerName;
+    private PlayerData m_playerData;
 
     public GameModel(StringBuilder playerName)
     {
@@ -47,6 +49,7 @@ public class GameModel
         m_systemWormMovement.update(elapsedTime);
         m_systemInterpolation.update(elapsedTime);
         m_systemCamera.update(elapsedTime);
+        // m_systemScore.update(elapsedTime); // TODO
     }
 
     /// <summary>
@@ -80,6 +83,7 @@ public class GameModel
 
         m_systemNetwork.registerNewEntityHandler(handleNewEntity);
         m_systemNetwork.registerRemoveEntityHandler(handleRemoveEntity);
+        m_systemNetwork.registerCollisionHandler(handleCollision);
         m_controls = controls;
 
         m_systemKeyboardInput = new Systems.KeyboardInput(new List<Tuple<Shared.Components.Input.Type, Keys>>
@@ -128,7 +132,7 @@ public class GameModel
 
         if (message.hasCollision)
         {
-            entity.add(new Collision());
+            entity.add(new Collidable());
         }
         
         if (message.hasWall)
@@ -234,6 +238,40 @@ public class GameModel
     private void handleRemoveEntity(Shared.Messages.RemoveEntity message)
     {
         removeEntity(message.id);
+    }
+    
+    private void handleCollision(Shared.Messages.Collision message)
+    {
+        // We need to know if the collision occurred on the screen of the client
+        if (m_entities.ContainsKey(message.entity1Id) && m_entities.ContainsKey(message.entity2Id))
+        {
+
+            if (message.collisionType == Collision.CollisionType.HeadToSpice)
+            {
+                // TODO: Spice particle effect collision flag
+            }
+
+            if (message.collisionType == Collision.CollisionType.HeadToWall)
+            {
+                // TODO: Wall particle effect collision flag
+            }
+            
+            // We hit another worm
+
+            // Grab the entities
+            var entity1 = m_entities[message.entity1Id];
+            var entity2 = m_entities[message.entity2Id];
+            // Check the position
+            var position = message.position;
+            
+            // Check where our current client is and see if the collision is relevant
+            // TODO: Implement this
+            
+            // If it is relevant, we either send a boolean flag to the particle system and collision handling or we call those here. 
+            
+            // TODO: Implement this
+            
+        }
     }
 }
 

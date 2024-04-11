@@ -12,7 +12,7 @@ public class Wall
         entity.add(new Appearance("Textures/wall"));
         entity.add(new Position(position));
         entity.add(new Size(new Vector2(size, size)));
-        entity.add(new Collision());
+        entity.add(new Collidable());
         entity.add(new Components.Wall());
         return entity;
     }

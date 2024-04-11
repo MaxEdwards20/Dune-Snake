@@ -17,7 +17,7 @@ public class WormSegment
         entity.add(new Size(new Vector2(size, size)));
         entity.add(new Movement(moveRate, rotateRate));
         entity.add(new ParentId(parent));
-        entity.add(new Collision());
+        entity.add(new Collidable());
         entity.add(new Worm());
         entity.add(new AnchorQueue());
         return entity;
