@@ -29,81 +29,42 @@ namespace CS5410
             m_lifetimeStdDev = lifetimeStdDev;
         }
 
-        public void ShipThrust(Vector2 landerCenter, Vector2 direction, float landerRotation, float landerSize)
+        public void FoodEaten(Vector2 foodPosition)
         {
-            Vector2 thrustOffset = new Vector2(0, landerSize / 2);
-
-            Matrix rotationMatrix = Matrix.CreateRotationZ(landerRotation);
-            thrustOffset = Vector2.Transform(thrustOffset, rotationMatrix);
-
-            Vector2 thrustStartPosition = landerCenter + thrustOffset;
-
-            Color[] particleColors = new Color[] { Color.Red, Color.Orange, Color.Yellow };
-
-            Vector2[] trianglePoints = new Vector2[]
+            Color[] particleColors = { Color.Green, Color.Yellow, Color.White };
+            for (int i = 0; i < 30; i++) // Smaller number of particles for food eaten
             {
-        new Vector2(-0.5f, 1), 
-        new Vector2(0.5f, 1),
-        new Vector2(0, 0)
-            };
-
-            float triangleScale = 5.0f; 
-
-            // Scale the triangle points
-            for (int i = 0; i < trianglePoints.Length; i++)
-            {
-                trianglePoints[i] *= triangleScale;
-            }
-
-            
-            for (int i = 0; i < 20; i++) 
-            {
-                float size = (float)m_random.nextGaussian(m_sizeMean, m_sizeStdDev);
-                size *= 4;
-
+                float size = (float)m_random.nextGaussian(m_sizeMean / 2, m_sizeStdDev / 2); // Smaller particles
                 Color initialColor = particleColors[m_random.Next(particleColors.Length)];
-
-                Vector2 randomPoint = thrustStartPosition + trianglePoints[m_random.Next(trianglePoints.Length)];
-                Vector2 targetDirection = randomPoint - thrustStartPosition;
-
-               
-                float angleVariation = MathHelper.ToRadians(10); 
-                float randomAngle = (float)(m_random.NextDouble() * angleVariation - angleVariation / 2);
-                targetDirection = Vector2.Transform(targetDirection, Matrix.CreateRotationZ(randomAngle));
-
-                targetDirection.Y *= 1;
+                Vector2 direction = m_random.nextCircleVector();
 
                 var particle = new Particle(
-                    thrustStartPosition,
-                    direction + targetDirection * 0.2f, 
-                    (float)m_random.nextGaussian(m_speedMean, m_speedStDev) * 0.5f, 
-                    new Vector2(size, size), 
-                    TimeSpan.FromMilliseconds(m_random.nextGaussian(m_lifetimeMean / 2, m_lifetimeStdDev / 2)),
+                    foodPosition,
+                    direction * 0.3f, // Less forceful ejection
+                    (float)m_random.nextGaussian(m_speedMean / 2, m_speedStDev / 2), // Slower speed
+                    new Vector2(size, size),
+                    TimeSpan.FromMilliseconds(m_random.nextGaussian(m_lifetimeMean / 3, m_lifetimeStdDev / 3)), // Shorter lifetime
                     initialColor
                 );
                 m_particles.Add(particle.name, particle);
             }
         }
 
-
-
-
-
-        public void ShipCrash(Vector2 position)
+        public void SnakeDeath(Vector2 snakePosition)
         {
-            Color[] particleColors = { Color.Red, Color.Orange, Color.Yellow };
-            for (int i = 0; i < 500; i++) 
+            Color[] particleColors = { Color.Red, Color.DarkRed, Color.Maroon };
+            for (int i = 0; i < 200; i++) // More particles for death to emphasize the event
             {
                 float size = (float)m_random.nextGaussian(m_sizeMean, m_sizeStdDev);
                 Color initialColor = particleColors[m_random.Next(particleColors.Length)];
-                Vector2 direction = m_random.nextCircleVector() * 0.5f;
+                Vector2 direction = m_random.nextCircleVector() * 2; // More spread
 
                 var particle = new Particle(
-                    position,
-                    direction, // Less spread out direction
-                    (float)m_random.nextGaussian(m_speedMean, m_speedStDev) * 0.3f, // Slower speed for a more condensed effect
+                    snakePosition,
+                    direction, // Greater spread
+                    (float)m_random.nextGaussian(m_speedMean, m_speedStDev), // Normal speed
                     new Vector2(size, size),
-                    TimeSpan.FromMilliseconds(m_random.nextGaussian(m_lifetimeMean, m_lifetimeStdDev)),
+                    TimeSpan.FromMilliseconds(m_random.nextGaussian(m_lifetimeMean, m_lifetimeStdDev)), // Normal lifetime
                     initialColor
                 );
                 m_particles.Add(particle.name, particle);
