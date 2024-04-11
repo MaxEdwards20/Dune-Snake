@@ -19,6 +19,12 @@
 /processorParam:Quality=Best
 /build:Audio/backgroundMusic.mp3
 
+#begin Audio/death.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/death.wav
+
 #begin Audio/menu.mp3
 /importer:Mp3Importer
 /processor:SoundEffectProcessor
@@ -123,6 +129,18 @@
 /processorParam:TextureFormat=Color
 /build:Textures/circleTail.png
 
+#begin Textures/deadWormSpice.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/deadWormSpice.png
+
 #begin Textures/head.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -134,6 +152,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/head.png
+
+#begin Textures/particle.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/particle.png
 
 #begin Textures/SandTile.png
 /importer:TextureImporter
@@ -182,18 +212,4 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/wall.png
-
-#begin Textures/deadWormSpice.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Textures/deadWormSpice.png
-
-
 
