@@ -54,3 +54,9 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 - Use netcat on Mac or Linux to see whether the server is available.
   `nc -vz 192.168.4.20 3000`
 - Turn off your firewall. On macOS that is found in System Preferences > Security & Privacy > Firewall
+
+### Client Prediction and Server Reconcilition
+
+- When input occurs the client does that and send it to the server
+- The server receives the client input and upates the game state
+- Server Reconcilition happens on the client side for the items that have not been acknowledged by the server

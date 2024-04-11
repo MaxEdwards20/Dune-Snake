@@ -57,52 +57,17 @@ public class CollisionDetection : Shared.Systems.System
                 {
                     continue;
                 }
-                
                 if (entity.contains<SpicePower>() && !entity.contains<Worm>() )
                 {
-                    var headPos = head.get<Position>().position;
-                    if (CircleCircleIntersect(
-                            headPos,
-                            head.get<Size>().size.X /2,
-                            entity.get<Position>().position,
-                            entity.get<Size>().size.X
-                        ))
-                    {
-                        handleWormAteSpice(head, entity, elapsedTime);
-                    }
+                    wormToSpice(elapsedTime, head, entity);
                 }
                 else if (entity.contains<Worm>())
                 {
-                    var headPos = head.get<Position>().position;
-                    if (CircleCircleIntersect(
-                        headPos,
-                        head.get<Size>().size.X /2,
-                        entity.get<Position>().position,
-                        entity.get<Size>().size.X
-                    ))
-                    {
-                        handleWormAteWorm(worm, entity);
-                    }
+                    wormToWorm(head, entity, worm);
                 }
                 else if (entity.contains<Shared.Components.Wall>())
                 {
-                    // Entity is a wall
-                    var wallPos = entity.get<Position>().position;
-                    var wallSize = entity.get<Size>().size;
-                    Vector2 topLeft = wallPos;
-                    Vector2 topRight = new Vector2(wallPos.X + wallSize.X, wallPos.Y);
-                    Vector2 bottomLeft = new Vector2(wallPos.X, wallPos.Y + wallSize.Y);
-                    Vector2 bottomRight = wallPos + wallSize;
-                    var headPos = head.get<Position>().position;
-
-// Check each side of the wall for intersection with the snake head
-                    if (CircleLineIntersect(headPos, head.get<Size>().size.X / 2, topLeft, topRight) ||
-                        CircleLineIntersect(headPos, head.get<Size>().size.X / 2, topLeft, bottomLeft) ||
-                        CircleLineIntersect(headPos, head.get<Size>().size.X / 2, bottomLeft, bottomRight) ||
-                        CircleLineIntersect(headPos, head.get<Size>().size.X / 2, topRight, bottomRight))
-                    {
-                        handleWormHitWall(worm);
-                    }
+                    wormToWall(entity, head, worm);
                 }
             }
         }
@@ -110,7 +75,59 @@ public class CollisionDetection : Shared.Systems.System
         processUpdatedEntities(elapsedTime);
         processRemovedEntities();
     }
-    
+
+    private void wormToWall(Entity wall, Entity head, List<Entity> worm)
+    {
+        // Entity is a wall
+        var wallPos = wall.get<Position>().position;
+        var wallSize = wall.get<Size>().size;
+        Vector2 topLeft = wallPos;
+        Vector2 topRight = new Vector2(wallPos.X + wallSize.X, wallPos.Y);
+        Vector2 bottomLeft = new Vector2(wallPos.X, wallPos.Y + wallSize.Y);
+        Vector2 bottomRight = wallPos + wallSize;
+        var headPos = head.get<Position>().position;
+        var headSize = head.get<Size>().size.X / 4;
+
+// Check each side of the wall for intersection with the snake head
+        if (CircleLineIntersect(headPos, headSize, topLeft, topRight) ||
+            CircleLineIntersect(headPos, headSize, topLeft, bottomLeft) ||
+            CircleLineIntersect(headPos, headSize, bottomLeft, bottomRight) ||
+            CircleLineIntersect(headPos, headSize, topRight, bottomRight))
+        {
+            handleWormHitWall(worm);
+        }
+    }
+
+    private void wormToWorm(Entity head, Entity entity, List<Entity> worm)
+    {
+        var headPos = head.get<Position>().position;
+        var headSize = head.get<Size>().size.X / 2;
+        if (CircleCircleIntersect(
+                headPos,
+                headSize,
+                entity.get<Position>().position,
+                entity.get<Size>().size.X
+            ))
+        {
+            handleWormAteWorm(worm, entity);
+        }
+    }
+
+    private void wormToSpice(TimeSpan elapsedTime, Entity head, Entity entity)
+    {
+        var headPos = head.get<Position>().position;
+        var headSize = head.get<Size>().size.X / 2;
+        if (CircleCircleIntersect(
+                headPos,
+                headSize,
+                entity.get<Position>().position,
+                entity.get<Size>().size.X
+            ))
+        {
+            handleWormAteSpice(head, entity, elapsedTime);
+        }
+    }
+
     // Reference: https://stackoverflow.com/questions/37224912/circle-line-segment-collision
     private bool CircleLineIntersect(Vector2 circleCenter, float circleRadius, Vector2 lineStart, Vector2 lineEnd)
     {
