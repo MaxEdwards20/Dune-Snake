@@ -16,7 +16,7 @@ public class WormHead
         entity.add(new Appearance("Textures/circleHead"));
         entity.add(new Size(new Vector2(size, size)));
         entity.add(new Movement(moveRate, rotateRate));
-        entity.add(new Collision());
+        entity.add(new Collidable());
         entity.add(new SpicePower(0));
         entity.add(new Head());
         entity.add(new Name(name));

@@ -15,7 +15,7 @@ public class Spice
         entity.add(new Appearance("Textures/spice"));
         entity.add(new Position(position));
         entity.add(new Size(new Vector2(size, size)));
-        entity.add(new Collision());
+        entity.add(new Collidable());
         entity.add(new SpicePower(power));
         return entity;
     }

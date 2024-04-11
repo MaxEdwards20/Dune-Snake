@@ -14,7 +14,7 @@ public class DeadWormSpice
         entity.add(new Appearance("Textures/deadWormSpice"));
         entity.add(new Position(position));
         entity.add(new Size(new Vector2(size, size)));
-        entity.add(new Collision());
+        entity.add(new Collidable());
         entity.add(new SpicePower(10));
         return entity;
     }
