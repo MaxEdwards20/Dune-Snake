@@ -8,8 +8,6 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 
 ## In Progress
 
-- [ ] Max: Sync the anchor points across clients.
-
 ## Items to Develop
 
 - [ ] Fix the ability to exit the game and come back in. Dean talked about what we need to do in Teams.
@@ -24,6 +22,7 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 
 ## Done
 
+- [x] Max: Sync the anchor points across clients.
 - [x] Max: Collision message and its wiring for the client to then render its own effects.
 - [x] Max: The new player should join as an invincible entity. Add this functionality and a system to update it after 3 seconds to be removed from the entity.
 - [x] Max: On collision, sandworm breaks apart and is available as food for other snakes
@@ -54,3 +53,9 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 - Use netcat on Mac or Linux to see whether the server is available.
   `nc -vz 192.168.4.20 3000`
 - Turn off your firewall. On macOS that is found in System Preferences > Security & Privacy > Firewall
+
+### Client Prediction and Server Reconcilition
+
+- When input occurs the client does that and send it to the server
+- The server receives the client input and upates the game state
+- Server Reconcilition happens on the client side for the items that have not been acknowledged by the server

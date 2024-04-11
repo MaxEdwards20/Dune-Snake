@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Input;
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Client.Components;
@@ -84,6 +85,7 @@ public class GameModel
         m_systemNetwork.registerNewEntityHandler(handleNewEntity);
         m_systemNetwork.registerRemoveEntityHandler(handleRemoveEntity);
         m_systemNetwork.registerCollisionHandler(handleCollision);
+        m_systemNetwork.registerNewAnchorPointHandler(handleNewAnchorPoint);
         m_controls = controls;
 
         m_systemKeyboardInput = new Systems.KeyboardInput(new List<Tuple<Shared.Components.Input.Type, Keys>>
@@ -240,11 +242,29 @@ public class GameModel
         removeEntity(message.id);
     }
     
+    
+    private void handleNewAnchorPoint(Shared.Messages.NewAnchorPoint message)
+    {
+        if (m_entities.ContainsKey(message.wormHeadId) && !m_entities.Values.ToArray()[0].id.Equals(message.wormHeadId))
+        {
+            var wormHead = m_entities[message.wormHeadId];
+            var worm = WormMovement.getWormFromHead(wormHead, m_entities);
+            foreach (var segment in worm.Skip(1))
+            {
+                segment.get<AnchorQueue>().m_anchorPositions.Enqueue( new Position(message.position, message.orientation));
+            }
+        }
+    }
+    
     private void handleCollision(Shared.Messages.Collision message)
     {
         // We need to know if the collision occurred on the screen of the client
         if (m_entities.ContainsKey(message.entity1Id) && m_entities.ContainsKey(message.entity2Id))
         {
+            // Check where our current client is and see if the collision is relevant
+            var player = m_entities.Values.ToArray()[0];
+            // TODO: Implement the check for the client's screen here. If it is in the screen then we will handle the collision
+            
 
             if (message.collisionType == Collision.CollisionType.HeadToSpice)
             {
@@ -264,8 +284,7 @@ public class GameModel
             // Check the position
             var position = message.position;
             
-            // Check where our current client is and see if the collision is relevant
-            // TODO: Implement this
+
             
             // If it is relevant, we either send a boolean flag to the particle system and collision handling or we call those here. 
             

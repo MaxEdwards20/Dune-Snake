@@ -1,4 +1,5 @@
-﻿using Shared.Entities;
+﻿using Shared.Components;
+using Shared.Entities;
 using Shared.Messages;
 using Shared.Systems;
 
@@ -14,7 +15,6 @@ public class Network : Shared.Systems.System
     private Dictionary<Shared.Messages.Type, Handler> m_commandMap = new Dictionary<Shared.Messages.Type, Handler>();
     private JoinHandler m_joinHandler;
     private DisconnectHandler m_disconnectHandler;
-
     private HashSet<uint> m_reportThese = new HashSet<uint>();
     private TimeSpan m_lastGlobalUpdateTime = new TimeSpan(m_globalUpdateFrequency);
     private static int m_globalUpdateFrequency = 300;
@@ -156,6 +156,7 @@ public class Network : Shared.Systems.System
                     update = true;
                     break;
             }
+            MessageQueueServer.instance.broadcastMessage(new NewAnchorPoint(worm[0].get<Position>(), worm[0].id));
         }
         if (update)
         {

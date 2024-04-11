@@ -85,9 +85,6 @@ public class Collision : Message
         return offset;
     }
     
-    
-
-
 
     public Collision() : base(Type.Collision)
     {
