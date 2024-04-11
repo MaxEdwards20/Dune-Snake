@@ -20,7 +20,7 @@ public class CollisionDetection : Shared.Systems.System
     
     public CollisionDetection() :
         base(
-            typeof(Shared.Components.Collision), typeof(Shared.Components.Position), typeof(Shared.Components.Size)
+            typeof(Shared.Components.Collidable), typeof(Shared.Components.Position), typeof(Shared.Components.Size)
         )
     {
     }
@@ -101,7 +101,7 @@ public class CollisionDetection : Shared.Systems.System
                         CircleLineIntersect(headPos, head.get<Size>().size.X / 2, bottomLeft, bottomRight) ||
                         CircleLineIntersect(headPos, head.get<Size>().size.X / 2, topRight, bottomRight))
                     {
-                        handleWormHitWall(worm);
+                        handleWormHitWall(worm, entity);
                     }
                 }
             }
@@ -133,6 +133,9 @@ public class CollisionDetection : Shared.Systems.System
     
     private void handleWormAteSpice(Entity head, Entity spice, TimeSpan elapsedTime)
     {
+        // There was a collision let everyone know about it
+        MessageQueueServer.instance.broadcastMessage(new Collision(head.id, spice.id,
+            Collision.CollisionType.HeadToSpice, head.get<Position>()));
         // Remove the spice
         m_removeEntity(spice.id);
         MessageQueueServer.instance.broadcastMessage(new RemoveEntity(spice.id));
@@ -182,9 +185,13 @@ public class CollisionDetection : Shared.Systems.System
         {
             return;
         }
+
         // Check if we hit head on head
         if (otherHead.contains<Head>())
         {
+            // There was a collision let everyone know about it
+            MessageQueueServer.instance.broadcastMessage(new Collision(worm[0].id, otherHead.id,
+                Collision.CollisionType.HeadToHead, worm[0].get<Position>()));
             // We need to compare the sizes of the two worms to see who dies
             List<Entity> otherWorm = WormMovement.getWormFromHead(otherHead, m_entities);
             if (worm.Count > otherWorm.Count)
@@ -192,26 +199,28 @@ public class CollisionDetection : Shared.Systems.System
                 handleRemoveWormAndGenerateSpice(otherWorm);
             }
             else
-            {
-                    handleRemoveWormAndGenerateSpice(worm);
+            { 
+                handleRemoveWormAndGenerateSpice(worm);
             }
         }
         else // We hit the side of the worm
         {
+            // There was a collision let everyone know about it
+            MessageQueueServer.instance.broadcastMessage(new Collision(worm[0].id, otherHead.id,
+                Collision.CollisionType.HeadToBody, worm[0].get<Position>()));
             // If the worm hit the body, then the worm dies
-            if (!worm[0].contains<Invincible>())
-            {
-                handleRemoveWormAndGenerateSpice(worm);
-            }
+            handleRemoveWormAndGenerateSpice(worm);
         }
     }
     
-    private void handleWormHitWall(List<Entity> worm)
+    private void handleWormHitWall(List<Entity> worm, Entity wall)
     {
-        if (!worm[0].contains<Invincible>())
-        {
-            handleRemoveWormAndGenerateSpice(worm);
-        }
+        if (worm[0].contains<Invincible>()) return;
+        
+        // There was a collision let everyone know about it
+        MessageQueueServer.instance.broadcastMessage(new Collision(worm[0].id, wall.id,
+            Collision.CollisionType.HeadToWall, wall.get<Position>()));
+        handleRemoveWormAndGenerateSpice(worm);
     }
     
     private void handleRemoveWormAndGenerateSpice(List<Entity> worm)

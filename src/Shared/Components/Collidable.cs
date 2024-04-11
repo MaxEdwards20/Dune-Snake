@@ -1,6 +1,6 @@
 namespace Shared.Components;
 
-public class Collision: Component
+public class Collidable: Component
 {
     
 }

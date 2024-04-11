@@ -19,7 +19,7 @@ public class WormTail
         entity.add(new Size(new Vector2(size, size)));
         entity.add(new ParentId(parent));
         entity.add(new Movement(moveRate, rotateRate));
-        entity.add(new Collision());
+        entity.add(new Collidable());
         entity.add(new Tail());
         entity.add(new AnchorQueue());
         entity.add(new Worm());
