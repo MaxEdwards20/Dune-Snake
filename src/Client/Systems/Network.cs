@@ -229,8 +229,14 @@ namespace Client.Systems
                     entity.remove<ChildId>();
                     entity.add(new ChildId(message.childId));
                 }
+                if (entity.contains<Stats>() && message.hasStats)
+                {
+                    Stats stats = entity.get<Stats>();
+                    stats.Kills = message.Kills;
+                    stats.Score = message.Score;
+                }
             }
-
         }
     }
 }
+

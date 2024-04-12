@@ -185,7 +185,7 @@ public class WormMovement : Shared.Systems.System
             }
     }
     
-    private static Entity getHead(Entity entity, Dictionary<uint, Entity> entities)
+    public static Entity getHead(Entity entity, Dictionary<uint, Entity> entities)
     {
         var current = entity;
         while (current.contains<ParentId>() && entities.ContainsKey(current.get<ParentId>().id))

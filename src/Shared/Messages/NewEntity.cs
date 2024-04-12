@@ -3,7 +3,6 @@ using Shared.Components;
 using Shared.Entities;
 using System.Text;
 using Shared.Components.Appearance;
-using Wall = Shared.Entities.Wall;
 
 namespace Shared.Messages
 {
@@ -22,7 +21,7 @@ namespace Shared.Messages
             {
                 this.texture = "";
             }
-            
+
             if (entity.contains<Position>())
             {
                 this.hasPosition = true;
@@ -52,57 +51,65 @@ namespace Shared.Messages
             {
                 this.inputs = new List<Components.Input.Type>();
             }
-            
+
             // Worm parts
             if (entity.contains<Head>())
             {
                 this.hasHead = true;
             }
-            
+
             if (entity.contains<Tail>())
             {
                 this.hasTail = true;
             }
-            
+
             if (entity.contains<ParentId>())
             {
                 this.hasParent = true;
                 this.parentId = entity.get<ParentId>().id;
             }
-            
+
             if (entity.contains<ChildId>())
             {
                 this.hasChild = true;
                 this.childId = entity.get<ChildId>().id;
             }
-            
+
             if (entity.contains<Shared.Components.Collidable>())
             {
                 this.hasCollision = true;
             }
-            
+
             if (entity.contains<Worm>())
             {
                 this.hasWorm = true;
             }
-            
+
             if (entity.contains<Name>())
             {
                 this.hasName = true;
                 this.name = entity.get<Name>().name;
             }
-            
+
+            if (entity.contains<Stats>())
+            {
+                HasStats = true;
+                Stats stats = entity.get<Stats>();
+                Kills = stats.Kills;
+                Score = stats.Score;
+            }
+
             if (entity.contains<Shared.Components.Wall>())
             {
                 this.hasWall = true;
             }
-            
+
             if (entity.contains<Shared.Components.Invincible>())
             {
                 this.hasInvincible = true;
                 this.invincibleDuration = entity.get<Shared.Components.Invincible>().duration;
             }
-            
+
             if (entity.contains<Shared.Components.SpicePower>())
             {
                 this.hasSpicePower = true;
@@ -116,6 +123,10 @@ namespace Shared.Messages
         }
 
         public uint id { get; private set; }
+        public bool HasStats { get; private set; } = false;
+        public uint Kills { get; private set; }
+        public uint Score { get; private set; }
+
         // Appearance
         public bool hasAppearance { get; private set; } = false;
         public string texture { get; private set; }
@@ -138,7 +149,7 @@ namespace Shared.Messages
         public bool hasPosition { get; private set; } = false;
         public Vector2 position { get; private set; }
         public float orientation { get; private set; }
-        
+
         // Size
         public bool hasSize { get; private set; } = false;
         public Vector2 size { get; private set; }
@@ -151,22 +162,23 @@ namespace Shared.Messages
         // Input
         public bool hasInput { get; private set; } = false;
         public List<Components.Input.Type> inputs { get; private set; }
-        
+
         // Invincible
         public bool hasInvincible { get; private set; } = false;
         public int invincibleDuration { get; private set; }
-        
+
         // SpicePower
         public bool hasSpicePower { get; private set; } = false;
         public int spicePower { get; private set; }
 
         public override byte[] serialize()
         {
-            List<byte> data = new List<byte>();
+            List<byte> data = new();
 
             data.AddRange(base.serialize());
             data.AddRange(BitConverter.GetBytes(id));
-            
+
+            serializeStats(data);
             serializeAppearance(data);
             serializePosition(data);
             serializeSize(data);
@@ -174,7 +186,7 @@ namespace Shared.Messages
             serializeInput(data);
             data.AddRange(BitConverter.GetBytes(hasCollision));
             data.AddRange(BitConverter.GetBytes(hasWall));
-            
+
             // Worm entities
             data.AddRange(BitConverter.GetBytes(hasHead));
             data.AddRange(BitConverter.GetBytes(hasTail));
@@ -184,18 +196,19 @@ namespace Shared.Messages
             serializeInvincible(data);
             serializeSpicePower(data);
             serializeName(data); // Make sure this is the last item to serialize
-            
+
             return data.ToArray();
         }
-        
+
         public override int parse(byte[] data)
         {
             // NOTE: Add parser for the components on the WormHead, WormSegment, and WormTail entities
-            
+
             // Upgrade: Could move all of these methods to the associated components
             int offset = base.parse(data);
-            
+
             offset = parseId(data, offset);
+            offset = parseStats(data, offset);
             offset = parseAppearance(data, offset);
             offset = parsePosition(data, offset);
             offset = parseSize(data, offset);
@@ -203,7 +216,7 @@ namespace Shared.Messages
             offset = parseInput(data, offset);
             offset = parseCollision(data, offset);
             offset = parseWall(data, offset);
-            
+
             // Worm Entities
             offset = parseHead(data, offset);
             offset = parseTail(data, offset);
@@ -215,7 +228,22 @@ namespace Shared.Messages
             offset = parseName(data, offset); // Make sure this is the last item to parse
             return offset;
         }
-        
+
+        private int parseStats(byte[] data, int offset)
+        {
+            HasStats = BitConverter.ToBoolean(data, offset);
+            offset += sizeof(bool);
+            if (HasStats)
+            {
+                Kills = BitConverter.ToUInt32(data, offset);
+                offset += sizeof(int);
+                Score = BitConverter.ToUInt32(data, offset);
+                offset += sizeof(int);
+            }
+
+            return offset;
+        }
+
         private int parseSpicePower(byte[] data, int offset)
         {
             this.hasSpicePower = BitConverter.ToBoolean(data, offset);
@@ -228,7 +256,7 @@ namespace Shared.Messages
 
             return offset;
         }
-        
+
         private int parseInvincible(byte[] data, int offset)
         {
             this.hasInvincible = BitConverter.ToBoolean(data, offset);
@@ -248,7 +276,7 @@ namespace Shared.Messages
             offset += sizeof(bool);
             return offset;
         }
-        
+
         private int parseWall(byte[] data, int offset)
         {
             this.hasWall = BitConverter.ToBoolean(data, offset);
@@ -262,7 +290,7 @@ namespace Shared.Messages
             offset += sizeof(uint);
             return offset;
         }
-        
+
         private int parseTail(byte[] data, int offset)
         {
             this.hasTail = BitConverter.ToBoolean(data, offset);
@@ -405,7 +433,7 @@ namespace Shared.Messages
 
             return offset;
         }
-        
+
         private void serializeSpicePower(List<byte> data)
         {
             data.AddRange(BitConverter.GetBytes(hasSpicePower));
@@ -447,6 +475,16 @@ namespace Shared.Messages
             if (hasName)
             {
                 data.AddRange(Encoding.UTF8.GetBytes(name));
+            }
+        }
+
+        private void serializeStats(List<byte> data)
+        {
+            data.AddRange(BitConverter.GetBytes(HasStats));
+            if (HasStats)
+            {
+                data.AddRange(BitConverter.GetBytes(Score));
+                data.AddRange(BitConverter.GetBytes(Kills));
             }
         }
 
@@ -503,8 +541,6 @@ namespace Shared.Messages
                 data.AddRange(Encoding.UTF8.GetBytes(texture));
             }
         }
-
     }
-    
-    
 }
+

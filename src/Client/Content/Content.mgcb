@@ -57,6 +57,13 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/menu.spritefont
 
+#begin Fonts/roboto-small.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/roboto-small.spritefont
+
 #begin Images/background.png
 /importer:TextureImporter
 /processor:TextureProcessor

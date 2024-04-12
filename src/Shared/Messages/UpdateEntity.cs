@@ -11,6 +11,14 @@ namespace Shared.Messages
         {
             this.id = entity.id;
 
+            if (entity.contains<Stats>())
+            {
+                hasStats = true;
+                Stats stats = entity.get<Stats>();
+                Kills = stats.Kills;
+                Score = stats.Score;
+            }
+
             if (entity.contains<Position>())
             {
                 this.hasPosition = true;
@@ -22,13 +30,13 @@ namespace Shared.Messages
             {
                 this.spicePower = entity.get<SpicePower>().power;
             }
-            
+
             if (entity.contains<ParentId>())
             {
                 this.hasParent = true;
                 this.parentId = entity.get<ParentId>().id;
             }
-            
+
             if (entity.contains<ChildId>())
             {
                 this.hasChild = true;
@@ -38,17 +46,18 @@ namespace Shared.Messages
             this.updateWindow = updateWindow;
         }
 
-        public UpdateEntity(): base(Type.UpdateEntity)
-        {
-        }
+        public UpdateEntity() : base(Type.UpdateEntity) { }
 
         public uint id { get; private set; }
+        public bool hasStats { get; private set; } = false;
+        public uint Kills { get; private set; }
+        public uint Score { get; private set; }
 
         // Position
         public bool hasPosition { get; private set; } = false;
         public Vector2 position { get; private set; }
         public float orientation { get; private set; }
-        
+
         // SpicePower
         public bool hasSpicePower { get; private set; } = false;
         public int spicePower { get; private set; } = 0;
@@ -62,10 +71,17 @@ namespace Shared.Messages
 
         public override byte[] serialize()
         {
-            List<byte> data = new List<byte>();
+            List<byte> data = new();
 
             data.AddRange(base.serialize());
             data.AddRange(BitConverter.GetBytes(id));
+
+            data.AddRange(BitConverter.GetBytes(hasStats));
+            if (hasStats)
+            {
+                data.AddRange(BitConverter.GetBytes(Kills));
+                data.AddRange(BitConverter.GetBytes(Score));
+            }
 
             data.AddRange(BitConverter.GetBytes(hasPosition));
             if (hasPosition)
@@ -74,7 +90,7 @@ namespace Shared.Messages
                 data.AddRange(BitConverter.GetBytes(position.Y));
                 data.AddRange(BitConverter.GetBytes(orientation));
             }
-            
+
             data.AddRange(BitConverter.GetBytes(hasSpicePower));
             if (hasSpicePower)
             {
@@ -92,23 +108,25 @@ namespace Shared.Messages
         {
             int offset = base.parse(data);
 
-            this.id = BitConverter.ToUInt32(data, offset);
-            offset += sizeof(uint);
+            id = BitConverter.ToUInt32(data, offset); offset += sizeof(uint);
 
-            this.hasPosition = BitConverter.ToBoolean(data, offset);
-            offset += sizeof(bool);
+            hasStats = BitConverter.ToBoolean(data, offset); offset += sizeof(bool);
+            if (hasStats)
+            {
+                Kills = BitConverter.ToUInt32(data, offset); offset += sizeof(uint);
+                Score = BitConverter.ToUInt32(data, offset); offset += sizeof(uint);
+            }
+
+            hasPosition = BitConverter.ToBoolean(data, offset); offset += sizeof(bool);
             if (hasPosition)
             {
-                float positionX = BitConverter.ToSingle(data, offset);
-                offset += sizeof(Single);
-                float positionY = BitConverter.ToSingle(data, offset);
-                offset += sizeof(Single);
-                this.position = new Vector2(positionX, positionY);
-                this.orientation = BitConverter.ToSingle(data, offset);
-                offset += sizeof(Single);
+                float positionX = BitConverter.ToSingle(data, offset); offset += sizeof(Single);
+                float positionY = BitConverter.ToSingle(data, offset); offset += sizeof(Single);
+                position = new Vector2(positionX, positionY);
+                orientation = BitConverter.ToSingle(data, offset); offset += sizeof(Single);
             }
-            
-            this.hasSpicePower = BitConverter.ToBoolean(data, offset);
+
+            hasSpicePower = BitConverter.ToBoolean(data, offset);
             offset += sizeof(bool);
             if (hasSpicePower)
             {
@@ -123,7 +141,7 @@ namespace Shared.Messages
 
             return offset;
         }
-        
+
         private int parseParent(byte[] data, int offset)
         {
             this.hasParent = BitConverter.ToBoolean(data, offset);
@@ -148,7 +166,7 @@ namespace Shared.Messages
             }
             return offset;
         }
-        
+
         private void serializeChild(List<byte> data)
         {
             data.AddRange(BitConverter.GetBytes(hasChild));
