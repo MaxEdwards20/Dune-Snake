@@ -39,12 +39,14 @@ namespace Client.Menu
             // Check for Escape key press to return to MainMenu
             if (newState.IsKeyDown(Keys.Escape))
             {
+                timeSinceLastEnterPress = 0; // Initialize the timer
                 return MenuStateEnum.Controls; // Immediately return to MainMenu when Escape is pressed
             }
 
             // Proceed to the next game state if the player presses Enter and enough time has passed since the last Enter press
             if (newState.IsKeyDown(Keys.Enter) && oldState.IsKeyUp(Keys.Enter) && timeSinceLastEnterPress >= enterKeyDelay)
             {
+                timeSinceLastEnterPress = 0; // Initialize the timer
                 return MenuStateEnum.Connecting; // Transition to the gameplay state
             }
             // Update the enter released state
