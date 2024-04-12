@@ -9,16 +9,15 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 ## In Progress
 - [ ] Particle system for the death of a sandworm and eating food. - Satchel
 - [ ] Sound effects on the death of worm and when food is eaten - Satchel
-- [ ] Caden: Fix the ability to exit the game and come back in. Dean talked about what we need to do in Teams.
 - [ ] Caden: Record players score, kills and highest position. Probably can be added to the `GameScores` object.
+- [ ] Caden: Game over screen with score, kills, and highest position achieved. This is an overlay on the multiplayer game behind it.
+- [ ] Caden: Leaderboard to display top 5 players and client's score in corner of game.
 
 ## Items to Develop
 
 - [ ] 3 different animated sprites for the spice 
 - [ ] Sound effects on the death of worm and when food is eaten 
-- [ ] Game over screen with score, kills, and highest position achieved. This is an overlay on the multiplayer game behind it.
 - [ ] Particle system for the death of a sandworm
-- [ ] Leaderboard to display top 5 players and client's score in corner of game.
 - [ ] Add a player status in leaderboard to show whether the player is currently invincible.
 
 ## Done
