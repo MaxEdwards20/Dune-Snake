@@ -9,7 +9,7 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 ## In Progress
 - [ ] Particle system for the death of a sandworm and eating food. - Satchel
 - [ ] Sound effects on the death of worm and when food is eaten - Satchel
-- [ ] Caden: Record players score, kills and highest position. Probably can be added to the `GameScores` object.
+- [ ] Caden: Record players score, kills and highest position.
 - [ ] Caden: Game over screen with score, kills, and highest position achieved. This is an overlay on the multiplayer game behind it.
 - [ ] Caden: Leaderboard to display top 5 players and client's score in corner of game.
 
@@ -45,6 +45,8 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 - [x] Satchel: Create Name View
 - [x] Satchel: Create Connection View
 - [x] Satchel: Port Particle System
+- [x] Caden: Fixed camera/renderer for more accurate collisions
+- [x] Caden: Added basic HUD for kills and score
 
 ## Debugging
 
