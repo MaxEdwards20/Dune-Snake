@@ -25,13 +25,22 @@ namespace Client.Menu
         {
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
             {
+                resetValues();
                 return MenuStateEnum.MainMenu; // Or another state if cancelling connection attempt
             }
             if (isConnected)
             {
+                resetValues();
                 return MenuStateEnum.GamePlay; // Transition to GamePlay upon successful connection
             }
             return MenuStateEnum.Connecting; // Stay on Connecting view if not yet connected
+        }
+        
+        private void resetValues()
+        {
+            connectingMessage = "Connecting to Server";
+            isConnected = false;
+            elapsedTimeSinceLastAttempt = 1500;
         }
 
         public override void update(GameTime gameTime)

@@ -83,6 +83,11 @@ namespace Client.Menu
             {
                 MessageQueueClient.instance.sendMessage(new Shared.Messages.Disconnect());
                 MessageQueueClient.shutdown();
+                ContentManager m_contentManager = null;
+                m_isKeyboardRegistered = false;
+                GameModel m_gameModel = null;
+                Controls m_controls = null;
+                StringBuilder playerName = null;
             }
             catch (SocketException e)
             {

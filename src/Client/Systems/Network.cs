@@ -223,13 +223,11 @@ namespace Client.Systems
                     var q = entity.get<AnchorQueue>();
                     entity.remove<ParentId>();
                     entity.add(new ParentId(message.parentId));
-                    // NOTE: This would trigger an update of everyone's anchor points
                 }
                 if (entity.contains<ChildId>() && message.hasChild)
                 {
                     entity.remove<ChildId>();
                     entity.add(new ChildId(message.childId));
-                    // NOTE: This would trigger an update of everyone's anchor points
                 }
             }
 
