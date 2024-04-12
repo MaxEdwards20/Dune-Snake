@@ -164,15 +164,17 @@ public class WormMovement : Shared.Systems.System
     
     private static void changeDirection(List<Entity> worm, float radians)
     {
-        if (worm == null || worm.Count == 0) 
-            return;
+            if (worm == null || worm.Count == 0) 
+                return;
 
             // Assuming the first entity in the list is the head
             var head = worm[0];
             var headPosition = head.get<Position>();
-
-            // Adjust the head's orientation by the specified radians
-            if (headPosition.orientation == radians) return;
+            
+            // Adjust the head's orientation by the specified radians and that is it not 180
+            var oppositeDirction = (radians + MathHelper.Pi) % (2 * Math.PI);
+            var headIsOppositeDirection = Math.Abs(headPosition.orientation - oppositeDirction) < 0.1;
+            if (headPosition.orientation == radians || headIsOppositeDirection) return;
             headPosition.orientation = radians;
 
             // Normalize the orientation to ensure it stays within a valid range (e.g., 0 to 2*PI)
