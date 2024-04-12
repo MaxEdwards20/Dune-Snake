@@ -17,7 +17,7 @@ public class Network : Shared.Systems.System
     private DisconnectHandler m_disconnectHandler;
     private HashSet<uint> m_reportThese = new HashSet<uint>();
     private TimeSpan m_lastGlobalUpdateTime = new TimeSpan(m_globalUpdateFrequency);
-    private static int m_globalUpdateFrequency = 300;
+    private static int m_globalUpdateFrequency = 1000;
 
     /// <summary>
     /// Primary activity in the constructor is to setup the command map
@@ -54,22 +54,9 @@ public class Network : Shared.Systems.System
         });
     }
 
-    // Have to implement this because it is abstract in the base class
     public override void update(TimeSpan elapsedTime)
     {
-        m_lastGlobalUpdateTime -= elapsedTime;
-        if (m_lastGlobalUpdateTime.TotalMilliseconds < 0)
-        {
-            Console.WriteLine("Global Worm Location Update");
-            m_lastGlobalUpdateTime = new TimeSpan(m_globalUpdateFrequency);
-            foreach (var entity in m_entities.Values)
-            {
-                if (entity.contains<Shared.Components.Worm>())
-                {
-                    m_reportThese.Add(entity.id);
-                }
-            }
-        }
+
     }
 
     /// <summary>
@@ -89,7 +76,7 @@ public class Network : Shared.Systems.System
                 }
             }
         }
-
+        
         // Send updated game state updates back out to connected clients
         updateClients(elapsedTime);
     }

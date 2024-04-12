@@ -8,7 +8,7 @@ namespace Shared.Entities;
 public class WormTail
 {
     
-    public static readonly int size = 80;
+    public static readonly int size = 150;
     public static readonly  float moveRate = 0.3f;
     public static readonly  float rotateRate = (float) Math.PI / 1000;
     public static Entity create(Vector2 position, uint parent)

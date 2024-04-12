@@ -103,20 +103,9 @@ public class WormMovement : Shared.Systems.System
         var frameTotalMovement = movement.moveRate * (float)elapsedTime.TotalMilliseconds;
         var orientation = headPosition.orientation;
         float LOCATION_THRESHOLD = movement.moveRate * 20;
-        const float MIN_SEGMENT_SPACING = 30f;
-        const float IDEAL_SEGMENT_SPACING = 40f;
+        const float MIN_SEGMENT_SPACING = 40f;
+        const float IDEAL_SEGMENT_SPACING = 50f;
         
-        // Check how close the head is to its child
-        if (head.contains<ChildId>())
-        {
-            var child = m_entities[head.get<ChildId>().id];
-            var childPosition = child.get<Position>();
-            var distanceToChild = Vector2.Distance(headPosition.position, childPosition.position);
-            if (distanceToChild >= IDEAL_SEGMENT_SPACING)
-            {
-                // frameTotalMovement *= 0.1f;
-            }
-        }
         
         // Move the head
         var direction = new Vector2((float)Math.Cos(orientation), (float)Math.Sin(orientation));
