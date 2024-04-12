@@ -30,6 +30,7 @@ public class GameModel
     private Controls m_controls;
     private GraphicsDeviceManager m_graphics;
     private SpriteFont m_font;
+    private SpriteFont m_fontSmall;
     private Texture2D m_sand;
     private String m_playerName;
     private PlayerData m_playerData;
@@ -70,6 +71,7 @@ public class GameModel
     public bool initialize(ContentManager contentManager, Controls controls, GraphicsDeviceManager graphics)
     {
         m_font = contentManager.Load<SpriteFont>("Fonts/menu");
+        m_fontSmall = contentManager.Load<SpriteFont>("Fonts/roboto-small");
         m_sand = contentManager.Load<Texture2D>("Textures/SandTile");
 
         m_contentManager = contentManager;
@@ -77,7 +79,7 @@ public class GameModel
         m_systemInterpolation = new Systems.Interpolation();
         m_systemCamera = new Systems.Camera(new Vector2(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight));
 
-        m_renderer = new Systems.Renderer(m_systemCamera, graphics, m_font, m_sand);
+        m_renderer = new Systems.Renderer(m_systemCamera, graphics, m_font, m_fontSmall, m_sand);
         m_systemGrowthHandler = new Shared.Systems.GrowthHandler();
         m_systemWormMovement = new Shared.Systems.WormMovement();
         m_systemNetwork = new Systems.Network(m_playerName);
@@ -183,6 +185,11 @@ public class GameModel
         if (message.hasName)
         {
             entity.add(new Name(message.name));
+        }
+
+        if (message.HasStats)
+        {
+            entity.add(new Stats(message.Score, message.Kills));
         }
 
         return entity;

@@ -37,11 +37,5 @@ namespace Client.Menu {
             dummyTexture.SetData(new Color[] { color });
             spriteBatch.Draw(dummyTexture, rectangle, color);
         }
-        
-        public static void DrawPlayerName(SpriteFont font, string name, Vector2 position, Color color, SpriteBatch spriteBatch) {
-            // We need to downsize the font for the player name
-            CustomDrawString(font, name, position, color, spriteBatch, false, false, false, scale:0.4f);
-        }
-
     }
 }

@@ -13,14 +13,10 @@ public class Camera : Shared.Systems.System
     private float m_zoom = 0.6f;
     public float Zoom { get { return m_zoom; } }
 
-    public Camera(Vector2 viewportSize) :
-        base(
-            typeof(Shared.Components.Position),
-            typeof(Shared.Components.Movement),
-            typeof(Shared.Components.Input),
-            typeof(Shared.Components.Size)
-        )
-    { m_viewport.Size = viewportSize.ToPoint(); }
+    public Camera(Vector2 viewportSize) : base(typeof(Shared.Components.Input))
+    {
+        m_viewport.Size = viewportSize.ToPoint();
+    }
 
     public override void update(TimeSpan elapsedTime)
     {
@@ -37,7 +33,7 @@ public class Camera : Shared.Systems.System
         Vector2 pos = player.get<Shared.Components.Position>().position;
         Vector2 size = player.get<Shared.Components.Size>().size;
 
-        m_viewport.Location = pos.ToPoint() - (size / 2).ToPoint();
+        m_viewport.Location = pos.ToPoint();
 
         // TODO: Change zoom depending on factors (player size, player death, etc.)
     }
