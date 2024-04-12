@@ -13,7 +13,7 @@ public class WormHead
     {
         Entity entity = new Entity();
         entity.add(new Position(position));
-        entity.add(new Appearance("Textures/circleHead"));
+        entity.add(new Appearance("Textures/sandworm_head"));
         entity.add(new Size(new Vector2(size, size)));
         entity.add(new Movement(moveRate, rotateRate));
         entity.add(new Collidable());
