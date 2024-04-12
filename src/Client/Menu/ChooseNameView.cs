@@ -51,6 +51,7 @@ namespace Client.Menu
                     {
                         
                         // Transition to the next state (e.g., HowToPlay)
+                        
                         return MenuStateEnum.HowToPlay;
                     }
                     else
