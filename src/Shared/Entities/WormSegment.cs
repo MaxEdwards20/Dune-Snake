@@ -6,7 +6,7 @@ namespace Shared.Entities;
 
 public class WormSegment
 {
-    static readonly int size = 80; 
+    static readonly int size = 150; 
     static readonly  float moveRate = 0.3f;
     static readonly  float rotateRate = (float) Math.PI / 1000;
     public static Entity create(Vector2 position, uint parent)
