@@ -106,6 +106,8 @@ public class GameModel
     /// </summary>
     private void removeEntity(uint id)
     {
+        if (!m_entities.ContainsKey(id))
+            return;
         m_entities.Remove(id);
         m_systemNetwork.remove(id);
         m_systemCollisionDetection.remove(id);

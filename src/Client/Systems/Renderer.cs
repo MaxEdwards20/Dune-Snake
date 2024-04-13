@@ -134,7 +134,7 @@ public class Renderer : Shared.Systems.System
         if (entity.contains<Invincible>())
         {
             var invincible = entity.get<Invincible>();
-            color = invincible.duration < 1000 ? Color.Coral : Colors.displayColor;
+            color = Color.Coral;
         }
 
         if (entity.contains<SpicePower>() && !entity.contains<Worm>())

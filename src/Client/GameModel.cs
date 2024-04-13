@@ -224,6 +224,8 @@ public class GameModel
     private void removeEntity(uint id)
     {
         // NOTE: Update the systems we use here
+        if (!m_entities.ContainsKey(id))
+            return;
         m_entities.Remove(id);
         m_systemKeyboardInput.remove(id);
         m_systemGrowthHandler.remove(id);

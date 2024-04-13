@@ -198,11 +198,17 @@ public class WormMovement : Shared.Systems.System
     
     public static List<Entity> getWormFromHead(Entity head, Dictionary<uint, Entity> entities)
     {
-        var snakeEntities = new List<Entity>();
+        // make sure we are at the head
+        while (head.contains<ParentId>() && entities.ContainsKey(head.get<ParentId>().id))
+        {
+            head = entities[head.get<ParentId>().id];
+        }
+
+        var worm = new List<Entity>();
         var current = head;
         while (current != null)
         {
-            snakeEntities.Add(current);
+            worm.Add(current);
             if (current.contains<ChildId>() && entities.ContainsKey(current.get<ChildId>().id))
             {
                 current = entities[current.get<ChildId>().id];
@@ -212,8 +218,8 @@ public class WormMovement : Shared.Systems.System
                 current = null;
             }
         }
-        Debug.Assert(snakeEntities[0].contains<Head>(), "The first entity in the list should be the head");
-        return snakeEntities;
+        Debug.Assert(worm[0].contains<Head>(), "The first entity in the list should be the head");
+        return worm;
     }
     
     public static List<Entity> getSnakeFromTail(Entity tail, Dictionary<uint, Entity> entities)
