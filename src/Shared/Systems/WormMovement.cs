@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Shared.Components;
 using Shared.Entities;
@@ -211,6 +212,7 @@ public class WormMovement : Shared.Systems.System
                 current = null;
             }
         }
+        Debug.Assert(snakeEntities[0].contains<Head>(), "The first entity in the list should be the head");
         return snakeEntities;
     }
     

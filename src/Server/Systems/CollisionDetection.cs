@@ -249,6 +249,8 @@ public class CollisionDetection : Shared.Systems.System
 
     private void WormKill(Entity head)
     {
+        if (!head.contains<Stats>()) return;
+        
         Stats stats = head.get<Stats>();
         stats.Kills++;
         stats.Score += 100;
@@ -257,8 +259,6 @@ public class CollisionDetection : Shared.Systems.System
 
     private void handleWormHitWall(List<Entity> worm, Entity wall)
     {
-
-
         // There was a collision let everyone know about it
         MessageQueueServer.instance.broadcastMessage(new Collision(worm[0].id, wall.id,
             Collision.CollisionType.HeadToWall, wall.get<Position>()));
