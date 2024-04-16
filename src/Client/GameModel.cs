@@ -13,6 +13,7 @@ using Shared.Components;
 using Shared.Entities;
 using Shared.Messages;
 using Shared.Systems;
+using Microsoft.Xna.Framework.Audio;
 
 namespace Client;
 
@@ -34,7 +35,10 @@ public class GameModel
     private Texture2D m_sand;
     private String m_playerName;
     private PlayerData m_playerData;
-
+    private SoundEffect m_deathSound;
+    private SoundEffect m_eatSpiceSound;
+    private SoundEffectInstance m_deathSoundInstance;
+    private SoundEffectInstance m_eatSpiceSoundInstance;
     public GameModel(StringBuilder playerName)
     {
         m_playerName = playerName.ToString();
@@ -74,6 +78,12 @@ public class GameModel
         m_fontSmall = contentManager.Load<SpriteFont>("Fonts/roboto-small");
         m_sand = contentManager.Load<Texture2D>("Textures/SandTile");
 
+        m_deathSound = contentManager.Load<SoundEffect>("Audio/death");
+        // m_eatSpiceSound = contentManager.Load<SoundEffect>("Audio/eatSpice");
+
+        m_deathSoundInstance = m_deathSound.CreateInstance();
+        // m_eatSpiceSoundInstance = m_eatSpiceSound.CreateInstance();
+
         m_contentManager = contentManager;
         m_entities = new Dictionary<uint, Entity>();
         m_systemInterpolation = new Systems.Interpolation();
@@ -89,6 +99,8 @@ public class GameModel
         m_systemNetwork.registerCollisionHandler(handleCollision);
         m_systemNetwork.registerNewAnchorPointHandler(handleNewAnchorPoint);
         m_controls = controls;
+
+
 
         m_systemKeyboardInput = new Systems.KeyboardInput(new List<Tuple<Shared.Components.Input.Type, Keys>>
         { }, m_controls);
@@ -277,14 +289,27 @@ public class GameModel
 
             if (message.collisionType == Collision.CollisionType.HeadToSpice)
             {
+                // play eat sound
+                // m_eatSpiceSound.Play();
+
                 // TODO: Spice particle effect collision flag
             }
 
-            if (message.collisionType == Collision.CollisionType.HeadToWall)
+            else if (message.collisionType == Collision.CollisionType.HeadToWall)
             {
+                // play death sound
+                m_deathSoundInstance.Play();
+
                 // TODO: Wall particle effect collision flag
             }
+
+            else {
+                // play death sound
+                m_deathSoundInstance.Play();
+            }
+
             
+
             // We hit another worm
 
             // Grab the entities
