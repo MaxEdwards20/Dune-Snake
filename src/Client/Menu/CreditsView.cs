@@ -9,7 +9,7 @@ namespace Client.Menu
     public class AboutView : GameStateView
     {
         private SpriteFont m_font;
-        private const string MESSAGE = "Created by Caden, Max, and Satchel in 2024. Enjoy!";
+        private const string MESSAGE = "Created by\nCaden, Max, and Satchel.\n2024 - CS 5410\nEnjoy!";
         private bool isKeyboardRegistered = false;
         private MenuStateEnum newState = MenuStateEnum.Credits;
         public override void loadContent(ContentManager contentManager)
@@ -38,7 +38,7 @@ namespace Client.Menu
         public override void render(GameTime gameTime)
         {
             m_spriteBatch.Begin();
-            Drawing.CustomDrawString(m_font, MESSAGE, new Vector2(m_graphics.PreferredBackBufferWidth / 2, m_graphics.PreferredBackBufferHeight / 2), Colors.displayColor ,m_spriteBatch);
+            Drawing.CustomDrawString(m_font, MESSAGE, new Vector2(m_graphics.PreferredBackBufferWidth / 2, m_graphics.PreferredBackBufferHeight / 2), Colors.displayColor ,m_spriteBatch, boxed:true);
             m_spriteBatch.End();
         }
 

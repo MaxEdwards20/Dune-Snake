@@ -133,7 +133,6 @@ public class Renderer : Shared.Systems.System
 
         if (entity.contains<Invincible>())
         {
-            var invincible = entity.get<Invincible>();
             color = Color.Coral;
         }
 

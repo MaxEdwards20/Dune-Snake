@@ -74,7 +74,7 @@ namespace Client.Menu
             // Background Rectangle
             var recPosition = new Vector2(m_graphics.PreferredBackBufferWidth / 5 - 20,
                 m_graphics.PreferredBackBufferHeight / 4 - 50);
-            Drawing.DrawBlurredRectangle(m_spriteBatch, recPosition, new Vector2(700, 400), 5, 0.6f);
+            Drawing.DrawBlurredRectangle(m_spriteBatch, recPosition, new Vector2(700, 400), 5, 0.9f);
 
 
             // Title

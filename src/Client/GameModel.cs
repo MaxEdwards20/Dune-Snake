@@ -157,6 +157,12 @@ public class GameModel
         }
 
         // Worm parts
+        
+        if (message.hasWorm)
+        {
+            entity.add(new Worm());
+            entity.add(new AnchorQueue()); // We implicitly need this because every worm part has it
+        }
 
         if (message.hasHead)
         {
@@ -176,12 +182,6 @@ public class GameModel
         if (message.hasChild)
         {
             entity.add(new ChildId(message.childId));
-        }
-
-        if (message.hasWorm)
-        {
-            entity.add(new Worm());
-            entity.add(new AnchorQueue()); // We implicitly need this because every worm part has it
         }
         
         if (message.hasInvincible)
