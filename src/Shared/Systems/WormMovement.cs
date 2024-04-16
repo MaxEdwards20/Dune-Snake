@@ -134,7 +134,6 @@ public class WormMovement : Shared.Systems.System
         var head = snake[0];
         var movement = head.get<Movement>();
         var headPosition = head.get<Position>();
-        var frameTotalMovement = movement.moveRate * (float)elapsedTime.TotalMilliseconds;
         var orientation = headPosition.orientation;
         float LOCATION_THRESHOLD = movement.moveRate * 20;
         const float MIN_SEGMENT_SPACING = 40f;
@@ -144,7 +143,7 @@ public class WormMovement : Shared.Systems.System
         // Move the head
         var direction = new Vector2((float)Math.Cos(orientation), (float)Math.Sin(orientation));
         direction.Normalize();
-        headPosition.position += direction * frameTotalMovement;
+        headPosition.position += direction * movement.moveRate * (float)elapsedTime.TotalMilliseconds;;
         
         // Move the rest of the worm
         for (int i = 1; i < snake.Count; i++)
@@ -154,35 +153,43 @@ public class WormMovement : Shared.Systems.System
             var currentPosition = entity.get<Position>();
             var parent = snake[i - 1];
             var parentPosition = parent.get<Position>();
+            var entityFrameMovement = movement.moveRate * (float)elapsedTime.TotalMilliseconds;
 
             // Default moving towards parent position
             var target = new Position(parentPosition.position, parentPosition.orientation);
 
-            if (queueComponent.m_anchorPositions.Count != 0)
+            while (queueComponent.m_anchorPositions.Count > 0 && entityFrameMovement > 0)
             {
-                // queueComponent.m_anchorPositions.Enqueue(new Position(parentPosition.position, parentPosition.orientation));
                 target = queueComponent.m_anchorPositions.Peek();
-            }
-            var distanceToTarget = Vector2.Distance(currentPosition.position, target.position);
-            var distanceToParent = Vector2.Distance(currentPosition.position, parentPosition.position);
-            // Move towards that target
-            if (distanceToTarget < frameTotalMovement)
-            {
-                currentPosition.position = target.position;
-                currentPosition.orientation = target.orientation;
-                if (queueComponent.m_anchorPositions.Count > 0)
+                var distanceToTarget = Vector2.Distance(currentPosition.position, target.position);
+                
+                // Move towards the target
+                if (distanceToTarget > entityFrameMovement)
                 {
+                    var directionToTarget = target.position - currentPosition.position;
+                    directionToTarget.Normalize();
+                    currentPosition.position += directionToTarget * entityFrameMovement;
+                    entityFrameMovement = 0;
+                }
+                else
+                {
+                    // Move to the target
+                    currentPosition.position = target.position;
+                    entityFrameMovement -= distanceToTarget;
                     queueComponent.m_anchorPositions.Dequeue();
                 }
             }
-            else if (distanceToTarget >= MIN_SEGMENT_SPACING || distanceToParent > IDEAL_SEGMENT_SPACING)
+            if (entityFrameMovement > 0)
             {
-                var directionToTarget = target.position - currentPosition.position;
-                directionToTarget.Normalize();
-                currentPosition.position += directionToTarget * frameTotalMovement;
-
-                // Update the orientation to match the direction we're moving
-                // currentPosition.orientation = (float)Math.Atan2(directionToTarget.Y, directionToTarget.X);
+                target = new Position(parentPosition.position, parentPosition.orientation);
+                var distanceToTarget = Vector2.Distance(currentPosition.position, target.position);
+                // We want to move towards the parent but not so close we are on top of it
+                if (distanceToTarget > IDEAL_SEGMENT_SPACING)
+                {
+                    var directionToParent = parentPosition.position - currentPosition.position;
+                    directionToParent.Normalize();
+                    currentPosition.position += directionToParent * entityFrameMovement;
+                }
             }
         }
     }
