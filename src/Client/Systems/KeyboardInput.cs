@@ -38,19 +38,19 @@ namespace Client.Systems
                 var inputs = new List<Input.Type>();
                 var worm = WormMovement.getWormFromHead(entity.Value, m_entities);
                 // Start with the combinations
-                if (keyPressed(m_controls.SnakeLeft.key) && keyPressed(m_controls.SnakeUp.key))
+                if (keyNewlyPressed(m_controls.SnakeLeft.key) && keyNewlyPressed(m_controls.SnakeUp.key))
                 {
                    inputs.Add(Input.Type.PointUpLeft);
                     Shared.Systems.WormMovement.upLeft(worm);
-                } else if (keyPressed(m_controls.SnakeRight.key) && keyPressed(m_controls.SnakeUp.key))
+                } else if (keyNewlyPressed(m_controls.SnakeRight.key) && keyNewlyPressed(m_controls.SnakeUp.key))
                 {
                     inputs.Add(Input.Type.PointUpRight);
                     Shared.Systems.WormMovement.upRight(worm);
-                } else if (keyPressed(m_controls.SnakeLeft.key) && keyPressed(m_controls.SnakeDown.key))
+                } else if (keyNewlyPressed(m_controls.SnakeLeft.key) && keyNewlyPressed(m_controls.SnakeDown.key))
                 {
                     inputs.Add(Input.Type.PointDownLeft);
                     Shared.Systems.WormMovement.downLeft(worm);
-                } else if (keyPressed(m_controls.SnakeRight.key) && keyPressed(m_controls.SnakeDown.key))
+                } else if (keyNewlyPressed(m_controls.SnakeRight.key) && keyNewlyPressed(m_controls.SnakeDown.key))
                 {
                     inputs.Add(Input.Type.PointDownRight);
                     Shared.Systems.WormMovement.downRight(worm);

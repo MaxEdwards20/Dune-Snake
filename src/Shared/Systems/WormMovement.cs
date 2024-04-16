@@ -51,20 +51,20 @@ public class WormMovement : Shared.Systems.System
     }
 
     // Core 4 directions
-    private static double RIGHT_Radians = 0;
-    private static double UP_Radians = -MathHelper.PiOver2;
-    private static double DOWN_Radians = MathHelper.PiOver2;
-    private static double LEFT_Radians = MathHelper.Pi;
+    private static float RIGHT_Radians = 0;
+    private static float UP_Radians = -MathHelper.PiOver2;
+    private static float DOWN_Radians = MathHelper.PiOver2;
+    private static float LEFT_Radians = MathHelper.Pi;
     // Diagonal 4 directions
-    private static double UP_RIGHT_Radians = -MathHelper.PiOver4;
-    private static double UP_LEFT_Radians = -3 * MathHelper.PiOver4;
-    private static double DOWN_RIGHT_Radians = MathHelper.PiOver4;
-    private static double DOWN_LEFT_Radians = 3 * MathHelper.PiOver4;
+    private static float UP_RIGHT_Radians = -MathHelper.PiOver4;
+    private static float UP_LEFT_Radians = -3 * MathHelper.PiOver4;
+    private static float DOWN_RIGHT_Radians = MathHelper.PiOver4;
+    private static float DOWN_LEFT_Radians = 3 * MathHelper.PiOver4;
     
     
     public static void up(List<Entity> snake)
     {
-        if (snake[0].get<Position>().orientation != DOWN_Radians)
+        if (!isWithinAngleThreshold(snake[0].get<Position>().orientation, DOWN_Radians))
         {
             changeDirection(snake, UP_Radians);
         }
@@ -72,7 +72,7 @@ public class WormMovement : Shared.Systems.System
     
     public static void down(List<Entity> snake)
     {
-        if (snake[0].get<Position>().orientation != UP_Radians)
+        if (!isWithinAngleThreshold(snake[0].get<Position>().orientation, UP_Radians))
         {
             changeDirection(snake, DOWN_Radians);
         }
@@ -80,7 +80,7 @@ public class WormMovement : Shared.Systems.System
     
     public static void left(List<Entity> snake, TimeSpan elapsedTime)
     {
-        if (snake[0].get<Position>().orientation != RIGHT_Radians)
+        if (!isWithinAngleThreshold(snake[0].get<Position>().orientation, RIGHT_Radians))
         {
             changeDirection(snake, LEFT_Radians);
         }
@@ -88,14 +88,16 @@ public class WormMovement : Shared.Systems.System
     
     public static void right(List<Entity> snake, TimeSpan elapsedTime)
     {
-        if (snake[0].get<Position>().orientation != LEFT_Radians)
+        if (!isWithinAngleThreshold(snake[0].get<Position>().orientation, LEFT_Radians))
         {
             changeDirection(snake, RIGHT_Radians);
         }
     }
     public static void upLeft(List<Entity> snake)
     {
-        if (snake[0].get<Position>().orientation != DOWN_RIGHT_Radians)
+        Console.WriteLine("Head Orientation: " + snake[0].get<Position>().orientation);
+        Console.WriteLine("Within Angle for Up Left: " + isWithinAngleThreshold(snake[0].get<Position>().orientation, DOWN_RIGHT_Radians));
+        if (!isWithinAngleThreshold( snake[0].get<Position>().orientation, DOWN_RIGHT_Radians))
         {
             changeDirection(snake, UP_LEFT_Radians);
         }
@@ -103,7 +105,7 @@ public class WormMovement : Shared.Systems.System
     
     public static void upRight(List<Entity> snake)
     {
-        if (snake[0].get<Position>().orientation != DOWN_LEFT_Radians)
+        if (!isWithinAngleThreshold(snake[0].get<Position>().orientation, DOWN_LEFT_Radians))
         {
             changeDirection(snake, UP_RIGHT_Radians);
         }
@@ -111,7 +113,7 @@ public class WormMovement : Shared.Systems.System
     
     public static void downLeft(List<Entity> snake)
     {
-        if (snake[0].get<Position>().orientation != UP_RIGHT_Radians)
+        if (!isWithinAngleThreshold(snake[0].get<Position>().orientation, UP_RIGHT_Radians))
         {
             changeDirection(snake, DOWN_LEFT_Radians);
         }
@@ -119,18 +121,13 @@ public class WormMovement : Shared.Systems.System
     
     public static void downRight(List<Entity> snake)
     {
-        if (snake[0].get<Position>().orientation != UP_LEFT_Radians)
+        if (!isWithinAngleThreshold(snake[0].get<Position>().orientation, UP_LEFT_Radians))
         {
             changeDirection(snake, DOWN_RIGHT_Radians);
         }
     }
-    
-    
-    
-    
 
-
-   private void applyThrust(Entity wormHead, TimeSpan elapsedTime)
+    private void applyThrust(Entity wormHead, TimeSpan elapsedTime)
     {
         // Setup variables
         var snake = getWormFromHead(wormHead, m_entities);
@@ -166,40 +163,53 @@ public class WormMovement : Shared.Systems.System
                 // queueComponent.m_anchorPositions.Enqueue(new Position(parentPosition.position, parentPosition.orientation));
                 target = queueComponent.m_anchorPositions.Peek();
             }
-            // Move towards that target
             var distanceToTarget = Vector2.Distance(currentPosition.position, target.position);
             var distanceToParent = Vector2.Distance(currentPosition.position, parentPosition.position);
-            if (distanceToTarget >= MIN_SEGMENT_SPACING || distanceToParent >= IDEAL_SEGMENT_SPACING)
+            // Move towards that target
+            if (distanceToTarget < frameTotalMovement)
+            {
+                currentPosition.position = target.position;
+                currentPosition.orientation = target.orientation;
+                if (queueComponent.m_anchorPositions.Count > 0)
+                {
+                    queueComponent.m_anchorPositions.Dequeue();
+                }
+            }
+            else if (distanceToTarget >= MIN_SEGMENT_SPACING || distanceToParent > IDEAL_SEGMENT_SPACING)
             {
                 var directionToTarget = target.position - currentPosition.position;
                 directionToTarget.Normalize();
                 currentPosition.position += directionToTarget * frameTotalMovement;
 
                 // Update the orientation to match the direction we're moving
-                currentPosition.orientation = (float)Math.Atan2(directionToTarget.Y, directionToTarget.X);
-
-                // Check if we have hit the target
-                if (Vector2.Distance(currentPosition.position, target.position) <= LOCATION_THRESHOLD && queueComponent.m_anchorPositions.Count > 0)
-                {
-                    // Remove the target from the queue
-                    queueComponent.m_anchorPositions.Dequeue();
-                }
+                // currentPosition.orientation = (float)Math.Atan2(directionToTarget.Y, directionToTarget.X);
             }
         }
     }
     
-    private static void changeDirection(List<Entity> worm, double radians)
+    private static bool isWithinAngleThreshold(float radians, float targetRadians, float threshold = MathHelper.PiOver4/2)
     {
-            if (worm == null || worm.Count == 0 || worm[0].get<Position>().orientation == radians) 
+        // We need to normalize the angles to ensure they are within the same range and both positive
+        radians = (radians + MathHelper.TwoPi) % MathHelper.TwoPi;
+        targetRadians = (targetRadians + MathHelper.TwoPi) % MathHelper.TwoPi;
+        var diff = Math.Abs(radians - targetRadians);
+        // If the difference is greater than PI, we need to use the complementary angle
+        if (diff > MathHelper.Pi)
+        {
+            diff = MathHelper.TwoPi - diff;
+        }
+        return diff < threshold;
+    }
+    
+    private static void changeDirection(List<Entity> worm, float radians)
+    {
+            if (worm == null || worm.Count == 0 || isWithinAngleThreshold(worm[0].get<Position>().orientation, radians)) 
                 return;
 
             // Assuming the first entity in the list is the head
             var head = worm[0];
             var headPosition = head.get<Position>();
-            
-            // Normalize the orientation to ensure it stays within a valid range (e.g., 0 to 2*PI)
-            // This step is important if your system expects orientations within a specific range
-            headPosition.orientation = (float)(radians % MathHelper.TwoPi);
+            headPosition.orientation = radians;
 
             // For each segment, add the current head position to its queue for following
             // Skip the head itself, start with the first segment following the head
