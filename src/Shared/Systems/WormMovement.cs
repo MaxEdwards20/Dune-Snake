@@ -95,8 +95,6 @@ public class WormMovement : Shared.Systems.System
     }
     public static void upLeft(List<Entity> snake)
     {
-        Console.WriteLine("Head Orientation: " + snake[0].get<Position>().orientation);
-        Console.WriteLine("Within Angle for Up Left: " + isWithinAngleThreshold(snake[0].get<Position>().orientation, DOWN_RIGHT_Radians));
         if (!isWithinAngleThreshold( snake[0].get<Position>().orientation, DOWN_RIGHT_Radians))
         {
             changeDirection(snake, UP_LEFT_Radians);
