@@ -79,10 +79,10 @@ public class GameModel
         m_sand = contentManager.Load<Texture2D>("Textures/SandTile");
 
         m_deathSound = contentManager.Load<SoundEffect>("Audio/death");
-        // m_eatSpiceSound = contentManager.Load<SoundEffect>("Audio/eatSpice");
+        m_eatSpiceSound = contentManager.Load<SoundEffect>("Audio/eatSpice");
 
         m_deathSoundInstance = m_deathSound.CreateInstance();
-        // m_eatSpiceSoundInstance = m_eatSpiceSound.CreateInstance();
+        m_eatSpiceSoundInstance = m_eatSpiceSound.CreateInstance();
 
         m_contentManager = contentManager;
         m_entities = new Dictionary<uint, Entity>();
@@ -290,7 +290,7 @@ public class GameModel
             if (message.collisionType == Collision.CollisionType.HeadToSpice)
             {
                 // play eat sound
-                // m_eatSpiceSound.Play();
+                m_eatSpiceSound.Play();
 
                 // TODO: Spice particle effect collision flag
             }
@@ -303,7 +303,7 @@ public class GameModel
                 // TODO: Wall particle effect collision flag
             }
 
-            else {
+            else{
                 // play death sound
                 m_deathSoundInstance.Play();
             }
