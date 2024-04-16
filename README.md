@@ -8,7 +8,6 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 
 ## In Progress
 - [ ] Particle system for the death of a sandworm and eating food. - Satchel
-- [ ] Sound effects on the death of worm and when food is eaten - Satchel
 - [ ] Caden: Record players score, kills and highest position.
 - [ ] Caden: Game over screen with score, kills, and highest position achieved. This is an overlay on the multiplayer game behind it.
 - [ ] Caden: Leaderboard to display top 5 players and client's score in corner of game.
@@ -16,9 +15,8 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 ## Items to Develop
 
 - [ ] 3 different animated sprites for the spice 
-- [ ] Sound effects on the death of worm and when food is eaten 
 - [ ] Particle system for the death of a sandworm
-- [ ] Add a player status in leaderboard to show whether the player is currently invincible.
+- [ ] Add a player status in the leaderboard to show whether the player is currently invincible.
 
 ## Done
 
@@ -27,15 +25,15 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 - [x] Max: The new player should join as an invincible entity. Add this functionality and a system to update it after 3 seconds to be removed from the entity.
 - [x] Max: On collision, sandworm breaks apart and is available as food for other snakes
 - [x] Max: Grow the worm on eating food.
-- [x] Satchel: Loading Screen while joining game
+- [x] Satchel: Loading Screen while joining the game
 - [x] Caden: Spice generation when we spawn
 - [x] Caden: Periodic spice generation throughout the game
 - [x] Max: Collision Detection system.
-- [x] Max: Keyboard support for left, right, up, down, diagonal up left and diagonal up right. Also add these to the wormMovement system.
+- [x] Max: Keyboard support for the left, right, up, down, diagonal up left and diagonal up right. Also, add these to the wormMovement system.
 - [x] Max: Snake Movement with the queue system
 - [x] Max: Upgrade our movement system to reduce the lag in rotation
 - [x] Max: Add name support for the player
-- [x] Max: Setup Snake Movement in the screen
+- [x] Max: Setup Snake Movement on the screen
 - [x] Max: Decide how to build the snake. Tons of entities? Or one entity with a list of positions?
 - [x] Max: Setup basic menuing
 - [x] Caden: Camera movement
@@ -47,6 +45,7 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 - [x] Satchel: Port Particle System
 - [x] Caden: Fixed camera/renderer for more accurate collisions
 - [x] Caden: Added basic HUD for kills and score
+- [x] Satchel: Sound effects on the death of worm and when food is eaten 
 
 ## Debugging
 

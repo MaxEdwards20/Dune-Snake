@@ -96,7 +96,7 @@ namespace Client
             selectSound = Content.Load<SoundEffect>("Audio/menuSelect");
 
             // Load background
-            m_background = Content.Load<Texture2D>("Images/MenuBackground");
+            m_background = Content.Load<Texture2D>("Images/desert_background");
             // Give all game states a chance to load their content
             foreach (var item in m_states)
             {
