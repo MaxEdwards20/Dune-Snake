@@ -6,6 +6,7 @@ using Shared.Components;
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Client.Components;
 using Client.Menu;
 using Shared.Systems;
@@ -97,29 +98,65 @@ public class Renderer : Shared.Systems.System
         {
             if (head.contains<Input>())
             {
-                Stats stats = head.get<Stats>();
-                Drawing.CustomDrawString(
-                    m_font,
-                    "Score: " + stats.Score.ToString(),
-                    new Vector2(0, 0),
-                    Color.White,
-                    spriteBatch,
-                    centered: false,
-                    boxed: true
-                    );
-
-                Drawing.CustomDrawString(
-                    m_font,
-                    "Kills: " + stats.Kills.ToString(),
-                    new Vector2(0, m_graphics.PreferredBackBufferHeight * 0.10f),
-                    Color.White,
-                    spriteBatch,
-                    centered: false,
-                    boxed: true
-                    );
+                drawStats(spriteBatch, head);
             }
         }
+        drawLeaderboard(spriteBatch, heads);
         spriteBatch.End();
+    }
+
+    private void drawLeaderboard(SpriteBatch spriteBatch, List<Entity> heads)
+    {
+        int numToDisplay = 3;
+        var scoresToDisplay = new List<(uint, string)>();
+        // First we need to create the scores to display by goin through each head and grabbing its score
+        foreach (Entity head in heads.Take(numToDisplay))
+        {
+            Stats stats = head.get<Stats>();
+            scoresToDisplay.Add((stats.Score, head.get<Name>().name));
+        }
+        // Then we sort the scores by the first element of each tuple, the score
+        scoresToDisplay.Sort((a, b) => b.Item1.CompareTo(a.Item1));
+        Drawing.DrawBlurredRectangle(spriteBatch, new Vector2(m_graphics.PreferredBackBufferWidth - 350, 0), new Vector2(350, scoresToDisplay.Count * 50 + 100), 7);
+        Drawing.CustomDrawString(m_font, "Leaderboard", new Vector2(m_graphics.PreferredBackBufferWidth - 300, 0), Color.White, spriteBatch, centered: false);
+        // Then we draw the scores
+        for (int i = 0; i < scoresToDisplay.Count; i++)
+        {
+            Drawing.CustomDrawString(
+                m_font,
+                scoresToDisplay[i].Item2 + ": " + scoresToDisplay[i].Item1.ToString(),
+                new Vector2(m_graphics.PreferredBackBufferWidth - 300, i * 50 + 75),
+                Color.White,
+                spriteBatch,
+                centered: false, 
+                scale:.7f
+            );
+        }
+        
+    }
+
+    private void drawStats(SpriteBatch spriteBatch, Entity head)
+    {
+        Stats stats = head.get<Stats>();
+        Drawing.CustomDrawString(
+            m_font,
+            "Score: " + stats.Score.ToString(),
+            new Vector2(0, 0),
+            Color.White,
+            spriteBatch,
+            centered: false,
+            boxed: true
+        );
+
+        Drawing.CustomDrawString(
+            m_font,
+            "Kills: " + stats.Kills.ToString(),
+            new Vector2(0, m_graphics.PreferredBackBufferHeight * 0.10f),
+            Color.White,
+            spriteBatch,
+            centered: false,
+            boxed: true
+        );
     }
 
     private void renderEntity(TimeSpan elapsedTime, SpriteBatch spriteBatch, Entity entity)

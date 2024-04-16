@@ -9,8 +9,8 @@ namespace Client.Menu
     public class HelpView : GameStateView
     {
         private SpriteFont m_font;
-        private const string MESSAGE = "Eat food to grow.\nAvoid other sandworms until\nyou are large enough to consume them.\nUse the arrow keys to move\nand press escape to return to the main menu.\nGood Luck!";
-        private bool isKeyboardRegistered = false;
+        
+        private const string MESSAGE = "Eat food to grow.\nAvoid other sandworms until\nyou are large enough to consume them.\nUse the arrow keys to move\nand press escape to return to the main menu.\nGood Luck!";        private bool isKeyboardRegistered = false;
         private MenuStateEnum newState = MenuStateEnum.Help;
 
         public override void loadContent(ContentManager contentManager)

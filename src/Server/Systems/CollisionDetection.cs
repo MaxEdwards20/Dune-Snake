@@ -161,11 +161,11 @@ public class CollisionDetection : Shared.Systems.System
             Collision.CollisionType.HeadToSpice, head.get<Position>()));
         // Remove the spice
         m_entsToRemove.Add(spice);
-        head.get<Stats>().Score++;
+        var spicePower = spice.get<SpicePower>();
+        head.get<Stats>().Score += (uint) spicePower.power;
 
         // Add power to the worm head
         var headPower = head.get<SpicePower>();
-        var spicePower = spice.get<SpicePower>();
         headPower.addPower(spicePower.power);
         // Now we check if the head has grown enough to add a new segment
         if (headPower.power >= POWER_TO_GROW)
