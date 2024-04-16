@@ -51,15 +51,15 @@ public class WormMovement : Shared.Systems.System
     }
 
     // Core 4 directions
-    private static float RIGHT_Radians = 0;
-    private static float UP_Radians = -MathHelper.PiOver2;
-    private static float DOWN_Radians = MathHelper.PiOver2;
-    private static float LEFT_Radians = MathHelper.Pi;
+    private static double RIGHT_Radians = 0;
+    private static double UP_Radians = -MathHelper.PiOver2;
+    private static double DOWN_Radians = MathHelper.PiOver2;
+    private static double LEFT_Radians = MathHelper.Pi;
     // Diagonal 4 directions
-    private static float UP_RIGHT_Radians = -MathHelper.PiOver4;
-    private static float UP_LEFT_Radians = -3 * MathHelper.PiOver4;
-    private static float DOWN_RIGHT_Radians = MathHelper.PiOver4;
-    private static float DOWN_LEFT_Radians = 3 * MathHelper.PiOver4;
+    private static double UP_RIGHT_Radians = -MathHelper.PiOver4;
+    private static double UP_LEFT_Radians = -3 * MathHelper.PiOver4;
+    private static double DOWN_RIGHT_Radians = MathHelper.PiOver4;
+    private static double DOWN_LEFT_Radians = 3 * MathHelper.PiOver4;
     
     
     public static void up(List<Entity> snake)
@@ -130,7 +130,7 @@ public class WormMovement : Shared.Systems.System
     
 
 
-    private void applyThrust(Entity wormHead, TimeSpan elapsedTime)
+   private void applyThrust(Entity wormHead, TimeSpan elapsedTime)
     {
         // Setup variables
         var snake = getWormFromHead(wormHead, m_entities);
@@ -140,8 +140,9 @@ public class WormMovement : Shared.Systems.System
         var frameTotalMovement = movement.moveRate * (float)elapsedTime.TotalMilliseconds;
         var orientation = headPosition.orientation;
         float LOCATION_THRESHOLD = movement.moveRate * 20;
-        // const float MIN_SEGMENT_SPACING = 40f;
-        // const float IDEAL_SEGMENT_SPACING = 50f;
+        const float MIN_SEGMENT_SPACING = 40f;
+        const float IDEAL_SEGMENT_SPACING = 50f;
+
 
         // Move the head
         var direction = new Vector2((float)Math.Cos(orientation), (float)Math.Sin(orientation));
@@ -156,25 +157,38 @@ public class WormMovement : Shared.Systems.System
             var currentPosition = entity.get<Position>();
             var parent = snake[i - 1];
             var parentPosition = parent.get<Position>();
+
+            // Default moving towards parent position
             var target = new Position(parentPosition.position, parentPosition.orientation);
-            if (queueComponent.m_anchorPositions.Count > 0)
+
+            if (queueComponent.m_anchorPositions.Count != 0)
             {
+                // queueComponent.m_anchorPositions.Enqueue(new Position(parentPosition.position, parentPosition.orientation));
                 target = queueComponent.m_anchorPositions.Peek();
             }
             // Move towards that target
             var distanceToTarget = Vector2.Distance(currentPosition.position, target.position);
-            var directionToTarget = target.position - currentPosition.position;
-            directionToTarget.Normalize();
-            currentPosition.position += directionToTarget * frameTotalMovement;
-            // If we are close enough to the target, remove it from the queue
-            if (distanceToTarget <= LOCATION_THRESHOLD && queueComponent.m_anchorPositions.Count > 0)
+            var distanceToParent = Vector2.Distance(currentPosition.position, parentPosition.position);
+            if (distanceToTarget >= MIN_SEGMENT_SPACING || distanceToParent >= IDEAL_SEGMENT_SPACING)
             {
-                queueComponent.m_anchorPositions.Dequeue();
+                var directionToTarget = target.position - currentPosition.position;
+                directionToTarget.Normalize();
+                currentPosition.position += directionToTarget * frameTotalMovement;
+
+                // Update the orientation to match the direction we're moving
+                currentPosition.orientation = (float)Math.Atan2(directionToTarget.Y, directionToTarget.X);
+
+                // Check if we have hit the target
+                if (Vector2.Distance(currentPosition.position, target.position) <= LOCATION_THRESHOLD && queueComponent.m_anchorPositions.Count > 0)
+                {
+                    // Remove the target from the queue
+                    queueComponent.m_anchorPositions.Dequeue();
+                }
             }
         }
     }
     
-    private static void changeDirection(List<Entity> worm, float radians)
+    private static void changeDirection(List<Entity> worm, double radians)
     {
             if (worm == null || worm.Count == 0 || worm[0].get<Position>().orientation == radians) 
                 return;
@@ -185,7 +199,7 @@ public class WormMovement : Shared.Systems.System
             
             // Normalize the orientation to ensure it stays within a valid range (e.g., 0 to 2*PI)
             // This step is important if your system expects orientations within a specific range
-            headPosition.orientation = (radians % MathHelper.TwoPi);
+            headPosition.orientation = (float)(radians % MathHelper.TwoPi);
 
             // For each segment, add the current head position to its queue for following
             // Skip the head itself, start with the first segment following the head

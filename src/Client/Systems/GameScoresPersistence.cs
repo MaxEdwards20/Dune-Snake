@@ -1,9 +1,12 @@
+using System.IO;
 using System.IO.IsolatedStorage;
 using System.Runtime.Serialization.Json;
+using System.Threading.Tasks;
 using Shared.Components;
 using Shared.Entities;
+using Client.Components;
 
-namespace Shared.Systems;
+namespace Client.Systems;
 
 public class GameScoresPersistence
 {
