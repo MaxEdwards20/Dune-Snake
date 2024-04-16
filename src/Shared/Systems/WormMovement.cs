@@ -51,48 +51,85 @@ public class WormMovement : Shared.Systems.System
         return heads;
     }
 
+    // Core 4 directions
+    private static float RIGHT_Radians = 0;
     private static float UP_Radians = -MathHelper.PiOver2;
     private static float DOWN_Radians = MathHelper.PiOver2;
+    private static float LEFT_Radians = MathHelper.Pi;
+    // Diagonal 4 directions
+    private static float UP_RIGHT_Radians = -MathHelper.PiOver4;
+    private static float UP_LEFT_Radians = -3 * MathHelper.PiOver4;
+    private static float DOWN_RIGHT_Radians = MathHelper.PiOver4;
+    private static float DOWN_LEFT_Radians = 3 * MathHelper.PiOver4;
     
-    public static void upLeft(List<Entity> snake)
-    {
-        changeDirection(snake, UP_Radians - MathHelper.PiOver4);
-    }
-    
-    public static void upRight(List<Entity> snake)
-    {
-        changeDirection(snake, UP_Radians + MathHelper.PiOver4);
-    }
-    
-    public static void downRight(List<Entity> snake)
-    {
-        changeDirection(snake, DOWN_Radians - MathHelper.PiOver4);
-    }
-
-    public static void downLeft(List<Entity> snake)
-    {
-        changeDirection(snake, DOWN_Radians + MathHelper.PiOver4);
-    }
-    
-    public static void left(List<Entity> snake, TimeSpan elapsedTime)
-    {
-        changeDirection(snake, MathHelper.Pi);
-    }
     
     public static void up(List<Entity> snake)
     {
-        changeDirection(snake, UP_Radians);
+        if (snake[0].get<Position>().orientation != DOWN_Radians)
+        {
+            changeDirection(snake, UP_Radians);
+        }
     }
     
     public static void down(List<Entity> snake)
     {
-        changeDirection(snake, DOWN_Radians);
+        if (snake[0].get<Position>().orientation != UP_Radians)
+        {
+            changeDirection(snake, DOWN_Radians);
+        }
     }
-
+    
+    public static void left(List<Entity> snake, TimeSpan elapsedTime)
+    {
+        if (snake[0].get<Position>().orientation != RIGHT_Radians)
+        {
+            changeDirection(snake, LEFT_Radians);
+        }
+    }
+    
     public static void right(List<Entity> snake, TimeSpan elapsedTime)
     {
-        changeDirection(snake, MathHelper.TwoPi);
+        if (snake[0].get<Position>().orientation != LEFT_Radians)
+        {
+            changeDirection(snake, RIGHT_Radians);
+        }
     }
+    public static void upLeft(List<Entity> snake)
+    {
+        if (snake[0].get<Position>().orientation != DOWN_RIGHT_Radians)
+        {
+            changeDirection(snake, UP_LEFT_Radians);
+        }
+    }
+    
+    public static void upRight(List<Entity> snake)
+    {
+        if (snake[0].get<Position>().orientation != DOWN_LEFT_Radians)
+        {
+            changeDirection(snake, UP_RIGHT_Radians);
+        }
+    }
+    
+    public static void downLeft(List<Entity> snake)
+    {
+        if (snake[0].get<Position>().orientation != UP_RIGHT_Radians)
+        {
+            changeDirection(snake, DOWN_LEFT_Radians);
+        }
+    }
+    
+    public static void downRight(List<Entity> snake)
+    {
+        if (snake[0].get<Position>().orientation != UP_LEFT_Radians)
+        {
+            changeDirection(snake, DOWN_RIGHT_Radians);
+        }
+    }
+    
+    
+    
+    
+
 
     private void applyThrust(Entity wormHead, TimeSpan elapsedTime)
     {
@@ -154,23 +191,16 @@ public class WormMovement : Shared.Systems.System
     
     private static void changeDirection(List<Entity> worm, float radians)
     {
-            if (worm == null || worm.Count == 0) 
+            if (worm == null || worm.Count == 0 || worm[0].get<Position>().orientation == radians) 
                 return;
 
             // Assuming the first entity in the list is the head
             var head = worm[0];
             var headPosition = head.get<Position>();
             
-            // Adjust the head's orientation by the specified radians and that is it not 180
-            var oppositeDirction = (radians + MathHelper.Pi) % (2 * Math.PI);
-            var headIsOppositeDirection = Math.Abs(headPosition.orientation - oppositeDirction) < 0.1;
-            if (headPosition.orientation == radians || headIsOppositeDirection) return;
-            headPosition.orientation = radians;
-
             // Normalize the orientation to ensure it stays within a valid range (e.g., 0 to 2*PI)
             // This step is important if your system expects orientations within a specific range
-            headPosition.orientation = (float)(headPosition.orientation % (2 * Math.PI));
-            if (headPosition.orientation < 0) headPosition.orientation += (float)(2 * Math.PI);
+            headPosition.orientation = (radians % MathHelper.TwoPi);
 
             // For each segment, add the current head position to its queue for following
             // Skip the head itself, start with the first segment following the head
