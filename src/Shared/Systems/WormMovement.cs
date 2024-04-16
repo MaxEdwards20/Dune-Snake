@@ -34,7 +34,6 @@ public class WormMovement : Shared.Systems.System
                 }
             }
         }
-        
     }
 
     private List<Entity> getHeads()
@@ -141,10 +140,9 @@ public class WormMovement : Shared.Systems.System
         var frameTotalMovement = movement.moveRate * (float)elapsedTime.TotalMilliseconds;
         var orientation = headPosition.orientation;
         float LOCATION_THRESHOLD = movement.moveRate * 20;
-        const float MIN_SEGMENT_SPACING = 40f;
-        const float IDEAL_SEGMENT_SPACING = 50f;
-        
-        
+        // const float MIN_SEGMENT_SPACING = 40f;
+        // const float IDEAL_SEGMENT_SPACING = 50f;
+
         // Move the head
         var direction = new Vector2((float)Math.Cos(orientation), (float)Math.Sin(orientation));
         direction.Normalize();
@@ -158,33 +156,20 @@ public class WormMovement : Shared.Systems.System
             var currentPosition = entity.get<Position>();
             var parent = snake[i - 1];
             var parentPosition = parent.get<Position>();
-            
-            // Default moving towards parent position
             var target = new Position(parentPosition.position, parentPosition.orientation);
-
-            if (queueComponent.m_anchorPositions.Count != 0)
+            if (queueComponent.m_anchorPositions.Count > 0)
             {
-                // queueComponent.m_anchorPositions.Enqueue(new Position(parentPosition.position, parentPosition.orientation));
                 target = queueComponent.m_anchorPositions.Peek();
             }
             // Move towards that target
             var distanceToTarget = Vector2.Distance(currentPosition.position, target.position);
-            var distanceToParent = Vector2.Distance(currentPosition.position, parentPosition.position);
-            if (distanceToTarget >= MIN_SEGMENT_SPACING || distanceToParent >= IDEAL_SEGMENT_SPACING)
+            var directionToTarget = target.position - currentPosition.position;
+            directionToTarget.Normalize();
+            currentPosition.position += directionToTarget * frameTotalMovement;
+            // If we are close enough to the target, remove it from the queue
+            if (distanceToTarget <= LOCATION_THRESHOLD && queueComponent.m_anchorPositions.Count > 0)
             {
-                var directionToTarget = target.position - currentPosition.position;
-                directionToTarget.Normalize();
-                currentPosition.position += directionToTarget * frameTotalMovement;
-
-                // Update the orientation to match the direction we're moving
-                currentPosition.orientation = (float)Math.Atan2(directionToTarget.Y, directionToTarget.X);
-
-                // Check if we have hit the target
-                if (Vector2.Distance(currentPosition.position, target.position) <= LOCATION_THRESHOLD && queueComponent.m_anchorPositions.Count > 0)
-                {
-                    // Remove the target from the queue
-                    queueComponent.m_anchorPositions.Dequeue();
-                }
+                queueComponent.m_anchorPositions.Dequeue();
             }
         }
     }
