@@ -8,7 +8,7 @@ public class PlayerData
     [DataMember(Name = "score")] public int score { get; private set; }
     [DataMember(Name = "playerName")] public string playerName { get; private set; }
 
-    public PlayerData(DateTime date, int score, string name)
+    public PlayerData(int score, string name)
     {
         this.score = score;
         this.playerName = name;

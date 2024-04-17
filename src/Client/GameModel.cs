@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Client.Components;
+using Client.Systems;
 using Shared.Components;
 using Shared.Entities;
 using Shared.Messages;
@@ -34,11 +35,13 @@ public class GameModel
     private SpriteFont m_fontSmall;
     private Texture2D m_sand;
     private String m_playerName;
+    private ScoreSystem m_systemScore;
     private PlayerData m_playerData;
     private SoundEffect m_deathSound;
     private SoundEffect m_eatSpiceSound;
     private SoundEffectInstance m_deathSoundInstance;
     private SoundEffectInstance m_eatSpiceSoundInstance;
+
     public GameModel(StringBuilder playerName)
     {
         m_playerName = playerName.ToString();
@@ -55,7 +58,6 @@ public class GameModel
         m_systemWormMovement.update(elapsedTime);
         m_systemInterpolation.update(elapsedTime);
         m_systemCamera.update(elapsedTime);
-        // m_systemScore.update(elapsedTime); // TODO
     }
 
     /// <summary>
@@ -99,9 +101,10 @@ public class GameModel
         m_systemNetwork.registerCollisionHandler(handleCollision);
         m_systemNetwork.registerNewAnchorPointHandler(handleNewAnchorPoint);
         m_controls = controls;
-
-
-
+        
+        m_systemScore = new ScoreSystem();
+        m_playerData = new PlayerData(0, m_playerName);
+        
         m_systemKeyboardInput = new Systems.KeyboardInput(new List<Tuple<Shared.Components.Input.Type, Keys>>
         { }, m_controls);
 
@@ -139,6 +142,11 @@ public class GameModel
         if (message.hasMovement)
         {
             entity.add(new Shared.Components.Movement(message.moveRate, message.rotateRate));
+        }
+
+        if (message.hasClientId)
+        {
+            entity.add(new Shared.Components.ClientId(message.clientId));
         }
 
         if (message.hasInput)
@@ -238,6 +246,7 @@ public class GameModel
         // NOTE: Update the systems we use here
         if (!m_entities.ContainsKey(id))
             return;
+        m_systemScore.SaveScore(m_entities[id]); // We call this every time
         m_entities.Remove(id);
         m_systemKeyboardInput.remove(id);
         m_systemGrowthHandler.remove(id);
@@ -246,6 +255,7 @@ public class GameModel
         m_renderer.remove(id);
         m_systemInterpolation.remove(id);
         m_systemCamera.remove(id);
+        
     }
 
     private void handleNewEntity(Shared.Messages.NewEntity message)

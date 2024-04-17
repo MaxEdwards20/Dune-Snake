@@ -17,18 +17,16 @@ namespace Client.Menu
     {
         private SpriteFont m_font;
         private const int numDisplayScores = 5;
-        private string MESSAGE;
         private MenuStateEnum newState = MenuStateEnum.HighScores;
         private bool isKeyboardRegistered = false;
         private bool isLoadedScores = false;
         private GameScores highScores;
-        private GameScoresPersistence gameScoresPersistence = new GameScoresPersistence();
+        private ScoreSystem scoreSystem = new ScoreSystem();
 
         public override void loadContent(ContentManager contentManager)
         {
             m_font = contentManager.Load<SpriteFont>("Fonts/menu");
             highScores = new GameScores();
-            MESSAGE = "Your Top " + numDisplayScores + " Scores";
         }
 
         public override MenuStateEnum processInput(GameTime gameTime)
@@ -55,7 +53,7 @@ namespace Client.Menu
         {
             if (!isLoadedScores)
             {
-                highScores = gameScoresPersistence.LoadScores();
+                highScores = scoreSystem.LoadScores();
                 highScores.sortScores();
                 isLoadedScores = true;
             }
@@ -64,9 +62,25 @@ namespace Client.Menu
         public override void render(GameTime gameTime)
         {
             m_spriteBatch.Begin();
-            Drawing.CustomDrawString(m_font, MESSAGE, new Vector2(m_graphics.PreferredBackBufferWidth / 2, m_graphics.PreferredBackBufferHeight / 4), Colors.displayColor ,m_spriteBatch);
+            var halfWidth = m_graphics.PreferredBackBufferWidth / 2;
+            var halfHeight = m_graphics.PreferredBackBufferHeight / 2;
+            var message = "High Scores";
+            Drawing.DrawBlurredRectangle(m_spriteBatch, new Vector2(halfWidth - 200, halfHeight - 225), new Vector2(400, 450), 5);
+            Drawing.CustomDrawString(m_font, message, new Vector2(m_graphics.PreferredBackBufferWidth / 2, m_graphics.PreferredBackBufferHeight / 4), Colors.displayColor ,m_spriteBatch);
+            float y = -100;
+            if (highScores.scores == null || highScores.scores.Count == 0)
+            {
+                Drawing.CustomDrawString(m_font, "No Scores Yet", new Vector2(halfWidth, halfHeight), Colors.displayColor, m_spriteBatch);
+            }
+            else
+            {
+                foreach (var score in highScores.scores.Take(numDisplayScores))
+                {
+                    y += 50;
+                    Drawing.CustomDrawString(m_font, score.score.ToString(), new Vector2(halfWidth, halfHeight + y), Colors.displayColor, m_spriteBatch);
+                }
+            }
             m_spriteBatch.End();
-            renderScores();
         }
         
         public override void RegisterCommands()
@@ -78,27 +92,6 @@ namespace Client.Menu
         private void Escape(GameTime gameTime, float scale)
         {
             newState = MenuStateEnum.MainMenu;
-        }
-
-        private void renderScores() { 
-            m_spriteBatch.Begin();
-            var halfWidth = m_graphics.PreferredBackBufferWidth / 2;
-            var halfHeight = m_graphics.PreferredBackBufferHeight / 2;
-            float y = -100;
-            if (highScores.scores == null || highScores.scores.Count == 0)
-            {
-                Drawing.CustomDrawString(m_font, "No Scores Yet", new Vector2(halfWidth, halfHeight), Colors.displayColor, m_spriteBatch);
-            }
-            else
-            {
-                foreach (var score in highScores.scores.Take(numDisplayScores))
-                {
-                    y += 100;
-                    Drawing.CustomDrawString(m_font, score.score.ToString(), new Vector2(halfWidth, halfHeight + y), Colors.displayColor, m_spriteBatch);
-                }
-            }
-
-            m_spriteBatch.End();
         }
     }
 }
