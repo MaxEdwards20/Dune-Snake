@@ -191,7 +191,7 @@ public class CollisionDetection : Shared.Systems.System
         var headChild = head.get<ChildId>();
         newSegment.add(new ChildId(headChild.id)); // now the new segment is between the head and the previous child segment
         // now we update this previous child segment to point to the new segment
-        var oldChild = m_entities[headChild.id];
+        var oldChild = worm[1];
         oldChild.remove<ParentId>();
         oldChild.add(new ParentId(newSegment.id));
 
