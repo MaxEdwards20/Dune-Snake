@@ -84,9 +84,7 @@ public class GameModel
         {
             deathParticleSystem.update(gameTime);
         }
-
-
-
+        
     }
 
     /// <summary>
@@ -214,6 +212,12 @@ public class GameModel
         }
 
         // Worm parts
+        
+        if (message.hasWorm)
+        {
+            entity.add(new Worm());
+            entity.add(new AnchorQueue()); // We implicitly need this because every worm part has it
+        }
 
         if (message.hasHead)
         {
@@ -233,12 +237,6 @@ public class GameModel
         if (message.hasChild)
         {
             entity.add(new ChildId(message.childId));
-        }
-
-        if (message.hasWorm)
-        {
-            entity.add(new Worm());
-            entity.add(new AnchorQueue()); // We implicitly need this because every worm part has it
         }
 
         if (message.hasInvincible)
@@ -348,7 +346,7 @@ public class GameModel
         }
         return null;
     }
-    
+
     private void handleCollision(Shared.Messages.Collision message)
     {
         // Check where our current client is and see if the collision is relevant
@@ -357,6 +355,7 @@ public class GameModel
         {
             return;
         }
+
         // We need to know if the collision occurred on the screen of the client
         if (m_entities.ContainsKey(message.senderId) && m_entities.ContainsKey(message.receiverId))
         {
@@ -365,12 +364,14 @@ public class GameModel
             var entity2 = m_entities[message.receiverId];
             // Check the position
             var position = message.position;
-            
+
             // Check for sound on the player
-            if (message.collisionType == Collision.CollisionType.ReceiverDies && player == entity1 || message.collisionType == Collision.CollisionType.SenderDies && player == entity2)
+            if (message.collisionType == Collision.CollisionType.ReceiverDies && player == entity1 ||
+                message.collisionType == Collision.CollisionType.SenderDies && player == entity2)
             {
                 m_deathSoundInstance.Play();
             }
+
             if (message.collisionType == Collision.CollisionType.HeadToSpice && player == entity1)
             {
                 m_eatSpiceSoundInstance.Play();
@@ -393,8 +394,7 @@ public class GameModel
 
                 // TODO: Wall particle effect collision flag
             }
-
-        
+        }
     }
 }
 
