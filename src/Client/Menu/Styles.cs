@@ -14,7 +14,7 @@ namespace Client.Menu {
                 position = new Vector2(position.X - font.MeasureString(message).X / 2, position.Y - font.MeasureString(message).Y / 2);  
             }
             if (boxed) { 
-                DrawBlurredRectangle(spriteBatch, position, font.MeasureString(message), 5, 0.6f);
+                DrawBlurredRectangle(spriteBatch, position, font.MeasureString(message), 5);
             }
             if (shaded) { 
                 for (int i = 1; i < 3; i++) {
@@ -24,7 +24,7 @@ namespace Client.Menu {
             spriteBatch.DrawString(font, message, position, color, 0, Vector2.Zero, scale, SpriteEffects.None, 0);
         }
 
-        public static void DrawBlurredRectangle(SpriteBatch spriteBatch, Vector2 position, Vector2 size, int blurRadius, float transparency = 0.8f)
+        public static void DrawBlurredRectangle(SpriteBatch spriteBatch, Vector2 position, Vector2 size, int blurRadius, float transparency = 0.85f)
         {
             Rectangle blurredRect = new Rectangle((int)(position.X - blurRadius), (int)(position.Y - blurRadius), (int)size.X + blurRadius * 2, (int)size.Y + blurRadius * 2);
             Color color = Color.Black * transparency; // Adjust the color and transparency as needed

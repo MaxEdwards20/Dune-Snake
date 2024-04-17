@@ -196,6 +196,12 @@ public class GameModel
         }
 
         // Worm parts
+        
+        if (message.hasWorm)
+        {
+            entity.add(new Worm());
+            entity.add(new AnchorQueue()); // We implicitly need this because every worm part has it
+        }
 
         if (message.hasHead)
         {
@@ -215,12 +221,6 @@ public class GameModel
         if (message.hasChild)
         {
             entity.add(new ChildId(message.childId));
-        }
-
-        if (message.hasWorm)
-        {
-            entity.add(new Worm());
-            entity.add(new AnchorQueue()); // We implicitly need this because every worm part has it
         }
         
         if (message.hasInvincible)
@@ -317,63 +317,63 @@ public class GameModel
     }
     
     private void handleCollision(Shared.Messages.Collision message)
+{
+    // We need to know if the collision occurred on the screen of the client
+    if (m_entities.ContainsKey(message.entity1Id) && m_entities.ContainsKey(message.entity2Id))
     {
-        // We need to know if the collision occurred on the screen of the client
-        if (m_entities.ContainsKey(message.entity1Id) && m_entities.ContainsKey(message.entity2Id))
+        // Check where our current client is and see if the collision is relevant
+        var player = m_entities.Values.ToArray()[0];
+        // TODO: Implement the check for the client's screen here. If it is in the screen then we will handle the collision
+        
+
+        if (message.collisionType == Collision.CollisionType.HeadToSpice)
         {
-            // Check where our current client is and see if the collision is relevant
-            var player = m_entities.Values.ToArray()[0];
-            // TODO: Implement the check for the client's screen here. If it is in the screen then we will handle the collision
-            
+            // play eat sound
+            m_eatSpiceSound.Play();
+            Vector2 foodPosition = new Vector2(message.position.X, message.position.Y);
+            eatParticleSystem.FoodEaten(foodPosition);
 
-            if (message.collisionType == Collision.CollisionType.HeadToSpice)
-            {
-                // play eat sound
-                m_eatSpiceSound.Play();
-                Vector2 foodPosition = new Vector2(message.position.X, message.position.Y);
-                eatParticleSystem.FoodEaten(foodPosition);
-
-                // TODO: Spice particle effect collision flag
-            }
-
-            else if (message.collisionType == Collision.CollisionType.HeadToWall)
-            {
-                // play death sound
-                m_deathSoundInstance.Play();
-
-
-                Vector2 deathPosition = new Vector2(message.position.X, message.position.Y);
-
-                deathParticleSystem.SnakeDeath(deathPosition);
-
-                // TODO: Wall particle effect collision flag
-            }
-
-            else{
-                // play death sound
-                m_deathSoundInstance.Play();
-                Vector2 deathPosition = new Vector2(message.position.X, message.position.Y);
-
-                deathParticleSystem.SnakeDeath(deathPosition);
-            }
-
-            
-
-            // We hit another worm
-
-            // Grab the entities
-            var entity1 = m_entities[message.entity1Id];
-            var entity2 = m_entities[message.entity2Id];
-            // Check the position
-            var position = message.position;
-            
-
-            
-            // If it is relevant, we either send a boolean flag to the particle system and collision handling or we call those here. 
-            
-            // TODO: Implement this
-            
+            // TODO: Spice particle effect collision flag
         }
+
+        else if (message.collisionType == Collision.CollisionType.HeadToWall)
+        {
+            // play death sound
+            m_deathSoundInstance.Play();
+
+
+            Vector2 deathPosition = new Vector2(message.position.X, message.position.Y);
+
+            deathParticleSystem.SnakeDeath(deathPosition);
+
+            // TODO: Wall particle effect collision flag
+        }
+
+        else{
+            // play death sound
+            m_deathSoundInstance.Play();
+            Vector2 deathPosition = new Vector2(message.position.X, message.position.Y);
+
+            deathParticleSystem.SnakeDeath(deathPosition);
+        }
+
+        
+
+        // We hit another worm
+
+        // Grab the entities
+        var entity1 = m_entities[message.entity1Id];
+        var entity2 = m_entities[message.entity2Id];
+        // Check the position
+        var position = message.position;
+        
+
+        
+        // If it is relevant, we either send a boolean flag to the particle system and collision handling or we call those here. 
+        
+        // TODO: Implement this
+        
     }
+}
 }
 

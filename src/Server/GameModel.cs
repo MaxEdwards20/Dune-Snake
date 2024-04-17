@@ -76,9 +76,20 @@ public class GameModel
     private void handleDisconnect(int clientId)
     {
         m_clients.Remove(clientId);
-        Message message = new RemoveEntity(m_clientToEntityId[clientId]);
-        MessageQueueServer.instance.broadcastMessage(message);
-        removeEntity(m_clientToEntityId[clientId]);
+        if (m_entities.ContainsKey(m_clientToEntityId[clientId]))
+        {
+            var head = m_entities[m_clientToEntityId[clientId]];
+            var worm = WormMovement.getWormFromHead(head, m_entities);
+            foreach (var ent in worm)
+            {
+                MessageQueueServer.instance.broadcastMessage(new RemoveEntity(ent.id));
+                var deadWormSpice = DeadWormSpice.create(ent.get<Position>().position);
+                addEntity(deadWormSpice);
+                MessageQueueServer.instance.broadcastMessage(new NewEntity(deadWormSpice));
+                removeEntity(ent.id);
+            }
+        }
+
         m_clientToEntityId.Remove(clientId);
     }
 

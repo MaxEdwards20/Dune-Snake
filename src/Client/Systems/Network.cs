@@ -97,7 +97,6 @@ namespace Client.Systems
                     }
                 }
             }
-
             // After processing all the messages, perform server reconciliation by
             // resimulating the inputs from any sent messages not yet acknowledged by the server.
             
@@ -106,7 +105,7 @@ namespace Client.Systems
             while (sent.Count > 0)
             {
                 var message = (Shared.Messages.Input)sent.Dequeue();
-                if (message.type == Shared.Messages.Type.Input)
+                if (message.type == Shared.Messages.Type.Input && m_entities.ContainsKey(message.entityId))
                 {
                     var entity = m_entities[message.entityId];
                     Debug.Assert(entity.contains<Head>());

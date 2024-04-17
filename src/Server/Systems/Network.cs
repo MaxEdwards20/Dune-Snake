@@ -147,6 +147,7 @@ public class Network : Shared.Systems.System
         }
         if (update)
         {
+            // m_reportThese.Add(message.entityId);
             foreach (var e in worm)
             {
                 m_reportThese.Add(e.id);

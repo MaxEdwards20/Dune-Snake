@@ -161,11 +161,11 @@ public class CollisionDetection : Shared.Systems.System
             Collision.CollisionType.HeadToSpice, head.get<Position>()));
         // Remove the spice
         m_entsToRemove.Add(spice);
-        head.get<Stats>().Score++;
+        var spicePower = spice.get<SpicePower>();
+        head.get<Stats>().Score += (uint) spicePower.power;
 
         // Add power to the worm head
         var headPower = head.get<SpicePower>();
-        var spicePower = spice.get<SpicePower>();
         headPower.addPower(spicePower.power);
         // Now we check if the head has grown enough to add a new segment
         if (headPower.power >= POWER_TO_GROW)
@@ -191,7 +191,7 @@ public class CollisionDetection : Shared.Systems.System
         var headChild = head.get<ChildId>();
         newSegment.add(new ChildId(headChild.id)); // now the new segment is between the head and the previous child segment
         // now we update this previous child segment to point to the new segment
-        var oldChild = m_entities[headChild.id];
+        var oldChild = worm[1];
         oldChild.remove<ParentId>();
         oldChild.add(new ParentId(newSegment.id));
 
@@ -212,18 +212,18 @@ public class CollisionDetection : Shared.Systems.System
         // Check if we hit head on head
         if (otherWormPart.contains<Head>())
         {
-            // Let everyone know about the collision
-            MessageQueueServer.instance.broadcastMessage(new Collision(worm[0].id, otherWormPart.id,
-                Collision.CollisionType.HeadToHead, worm[0].get<Position>()));
+
 
             // The longer worm survives
             List<Entity> otherWorm = WormMovement.getWormFromHead(otherWormPart, m_entities);
             if (worm.Count > otherWorm.Count)
             {
                 WormKill(head);
-
                 // Other worm dies
                 handleRemoveWormAndGenerateSpice(otherWorm);
+                // Let everyone know about the collision
+                MessageQueueServer.instance.broadcastMessage(new Collision(worm[0].id, otherWormPart.id,
+                    Collision.CollisionType.ReceiverDies, worm[0].get<Position>()));
             }
             else
             {
@@ -232,13 +232,15 @@ public class CollisionDetection : Shared.Systems.System
 
                 // This worm dies
                 handleRemoveWormAndGenerateSpice(worm);
+                MessageQueueServer.instance.broadcastMessage(new Collision(worm[0].id, otherWormPart.id,
+                    Collision.CollisionType.SenderDies, worm[0].get<Position>()));
             }
         }
         else // Hit the side of other worm, so this worm dies
         {
             // Let everyone know about the collision
             MessageQueueServer.instance.broadcastMessage(new Collision(worm[0].id, otherWormPart.id,
-                Collision.CollisionType.HeadToBody, worm[0].get<Position>()));
+                Collision.CollisionType.SenderDies, worm[0].get<Position>()));
 
             Entity otherHead = WormMovement.getHead(otherWormPart, m_entities);
             WormKill(otherHead);
