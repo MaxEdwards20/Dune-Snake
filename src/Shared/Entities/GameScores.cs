@@ -22,7 +22,7 @@ public class GameScores {
     
     public void addScore(int score, string name) {
         var today = System.DateTime.Now;
-        scores.Add(new PlayerData(today, score, name));
+        scores.Add(new PlayerData(score, name));
     }
     
     public void clearScores() {

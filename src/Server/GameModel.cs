@@ -189,7 +189,7 @@ public class GameModel
         var bodySize = 80;
 
         // Create the head
-        Entity segment = WormHead.create(headStartLocation, name);
+        Entity segment = WormHead.create(headStartLocation, name, clientId);
         segment.add(new Invincible());
         m_clientToEntityId[clientId] = segment.id; // Associate the client with the head of the worm
 
@@ -198,11 +198,11 @@ public class GameModel
         var numToCreate = 5;
         for (int i = 0; i < numToCreate; i++)
         {
-            segment = WormSegment.create(segmentStartLocation,  parent.id);
+            segment = WormSegment.create(segmentStartLocation,  parent.id, clientId);
             segment.add(new Invincible());
             if (i == numToCreate - 1)
             {
-                segment = WormTail.create(segmentStartLocation,  parent.id);
+                segment = WormTail.create(segmentStartLocation,  parent.id, clientId);
             }
             parent.add(new ChildId(segment.id));
             addEntity(parent);
@@ -213,7 +213,7 @@ public class GameModel
         addEntity(segment);
         MessageQueueServer.instance.sendMessage(clientId, new NewEntity(segment));
 
-        // Step 4: Let all other clients know about this new player 
+        // Step 4: Let all other clients know about this new player and the worm entities
         while (segment != null)
         {
             // Don't need to send the input component to other clients

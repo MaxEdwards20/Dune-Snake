@@ -29,15 +29,17 @@ namespace Client.Systems
         private NewAnchorPointHandler m_newAnchorPointHandler;
         private uint m_lastMessageId = 0;
         private HashSet<uint> m_updatedEntities = new HashSet<uint>();
+        private PlayerData m_playerData;
         
 
         /// <summary>
         /// Primary activity in the constructor is to setup the command map
         // that maps from message types to their handlers.
         /// </summary>
-        public Network(String playerName) :
+        public Network(String playerName, PlayerData playerData) :
             base(typeof(Shared.Components.Position))
         {
+            m_playerData = playerData;
             registerHandler(Shared.Messages.Type.ConnectAck, (TimeSpan elapsedTime, Message message) =>
             {
                 handleConnectAck(elapsedTime, (ConnectAck)message, playerName);
@@ -50,7 +52,7 @@ namespace Client.Systems
 
             registerHandler(Shared.Messages.Type.UpdateEntity, (TimeSpan elapsedTime, Message message) =>
             {
-                handleUpdateEntity(elapsedTime, (UpdateEntity)message);
+                handleUpdateEntity(elapsedTime, (UpdateEntity)message, m_playerData);
             });
 
             registerHandler(Shared.Messages.Type.RemoveEntity, (TimeSpan elapsedTime, Message message) =>
@@ -77,7 +79,7 @@ namespace Client.Systems
         /// Have our own version of render, because we need a list of messages to work with, and
         /// messages aren't entities.
         /// </summary>
-        public void update(TimeSpan elapsedTime, Queue<Message> messages)
+        public void update(TimeSpan elapsedTime, Queue<Message> messages, PlayerData playerData)
         {
             m_updatedEntities.Clear();
 
@@ -187,7 +189,7 @@ namespace Client.Systems
         /// actually has the entity, and if it does, updates the components
         /// that are in common between the message and the entity.
         /// </summary>
-        private void handleUpdateEntity(TimeSpan elapsedTime, UpdateEntity message)
+        private void handleUpdateEntity(TimeSpan elapsedTime, UpdateEntity message, PlayerData playerData)
         {
             if (m_entities.ContainsKey(message.id))
             {
@@ -233,6 +235,10 @@ namespace Client.Systems
                     Stats stats = entity.get<Stats>();
                     stats.Kills = message.Kills;
                     stats.Score = message.Score;
+                    if (entity.contains<Name>() && entity.get<Name>().name == m_playerData.playerName)
+                    {
+                        playerData.score = (int) message.Score;
+                    }
                 }
             }
         }

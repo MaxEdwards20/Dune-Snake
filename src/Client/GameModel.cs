@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Client.Components;
+using Client.Systems;
 using Shared.Components;
 using Shared.Entities;
 using Shared.Messages;
@@ -34,11 +35,14 @@ public class GameModel
     private SpriteFont m_fontSmall;
     private Texture2D m_sand;
     private String m_playerName;
+    private ScoreSystem m_systemScore;
     private PlayerData m_playerData;
     private SoundEffect m_deathSound;
     private SoundEffect m_eatSpiceSound;
     private SoundEffectInstance m_deathSoundInstance;
     private SoundEffectInstance m_eatSpiceSoundInstance;
+    private int clientId;
+
     public GameModel(StringBuilder playerName)
     {
         m_playerName = playerName.ToString();
@@ -49,13 +53,12 @@ public class GameModel
     /// </summary>
     public void update(TimeSpan elapsedTime)
     {
-        m_systemNetwork.update(elapsedTime, MessageQueueClient.instance.getMessages());
+        m_systemNetwork.update(elapsedTime, MessageQueueClient.instance.getMessages(), m_playerData);
         m_systemKeyboardInput.update(elapsedTime);
         m_systemGrowthHandler.update(elapsedTime);
         m_systemWormMovement.update(elapsedTime);
         m_systemInterpolation.update(elapsedTime);
         m_systemCamera.update(elapsedTime);
-        // m_systemScore.update(elapsedTime); // TODO
     }
 
     /// <summary>
@@ -64,7 +67,7 @@ public class GameModel
 
     public void render(TimeSpan elapsedTime, SpriteBatch spriteBatch)
     {
-        m_renderer.render(elapsedTime, spriteBatch);
+        m_renderer.render(elapsedTime, spriteBatch, m_playerData);
     }
 
     /// <summary>
@@ -85,23 +88,25 @@ public class GameModel
         m_eatSpiceSoundInstance = m_eatSpiceSound.CreateInstance();
 
         m_contentManager = contentManager;
+        m_systemScore = new ScoreSystem();
+        m_playerData = new PlayerData(0, m_playerName);
         m_entities = new Dictionary<uint, Entity>();
         m_systemInterpolation = new Systems.Interpolation();
-        m_systemCamera = new Systems.Camera(new Vector2(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight));
+        m_systemCamera = new Systems.Camera(new Vector2(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight), m_playerData);
 
         m_renderer = new Systems.Renderer(m_systemCamera, graphics, m_font, m_fontSmall, m_sand);
         m_systemGrowthHandler = new Shared.Systems.GrowthHandler();
         m_systemWormMovement = new Shared.Systems.WormMovement();
-        m_systemNetwork = new Systems.Network(m_playerName);
+        m_systemNetwork = new Systems.Network(m_playerName, m_playerData);
 
         m_systemNetwork.registerNewEntityHandler(handleNewEntity);
         m_systemNetwork.registerRemoveEntityHandler(handleRemoveEntity);
         m_systemNetwork.registerCollisionHandler(handleCollision);
         m_systemNetwork.registerNewAnchorPointHandler(handleNewAnchorPoint);
         m_controls = controls;
-
-
-
+        
+        
+        
         m_systemKeyboardInput = new Systems.KeyboardInput(new List<Tuple<Shared.Components.Input.Type, Keys>>
         { }, m_controls);
 
@@ -139,6 +144,11 @@ public class GameModel
         if (message.hasMovement)
         {
             entity.add(new Shared.Components.Movement(message.moveRate, message.rotateRate));
+        }
+
+        if (message.hasClientId)
+        {
+            entity.add(new Shared.Components.ClientId(message.clientId));
         }
 
         if (message.hasInput)
@@ -238,6 +248,7 @@ public class GameModel
         // NOTE: Update the systems we use here
         if (!m_entities.ContainsKey(id))
             return;
+        m_systemScore.SaveScore(m_entities[id]); // We call this every time
         m_entities.Remove(id);
         m_systemKeyboardInput.remove(id);
         m_systemGrowthHandler.remove(id);
@@ -246,6 +257,7 @@ public class GameModel
         m_renderer.remove(id);
         m_systemInterpolation.remove(id);
         m_systemCamera.remove(id);
+        
     }
 
     private void handleNewEntity(Shared.Messages.NewEntity message)
@@ -277,14 +289,29 @@ public class GameModel
         }
     }
     
+    private Entity getPlayer()
+    {
+        foreach (var e in m_entities.Values)
+        {
+            if (e.contains<Name>() && e.get<Name>().name == m_playerName)
+            {
+                return e;
+            }
+        }
+        return null;
+    }
+    
     private void handleCollision(Shared.Messages.Collision message)
     {
+        // Check where our current client is and see if the collision is relevant
+        var player = getPlayer();
+        if (player == null)
+        {
+            return;
+        }
         // We need to know if the collision occurred on the screen of the client
         if (m_entities.ContainsKey(message.senderId) && m_entities.ContainsKey(message.receiverId))
         {
-            // Check where our current client is and see if the collision is relevant
-            var player = m_entities.Values.ToArray()[0];
-            // TODO: Implement the check for the client's screen here. If it is in the screen then we will handle the collision
             // Grab the entities
             var entity1 = m_entities[message.senderId];
             var entity2 = m_entities[message.receiverId];
@@ -313,16 +340,10 @@ public class GameModel
                 // TODO: Wall particle effect collision flag
             }
 
-           
-
-            
 
             // We hit another worm
 
 
-            
-
-            
             // If it is relevant, we either send a boolean flag to the particle system and collision handling or we call those here. 
             
             // TODO: Implement this
