@@ -28,7 +28,6 @@ namespace Client.Menu
 
         public override MenuStateEnum processInput(GameTime gameTime)
         {
-            
             KeyboardState newState = Keyboard.GetState(); // Get the new state
             
             // Simple example for input handling
@@ -49,9 +48,7 @@ namespace Client.Menu
                     }
                     else if (key == Keys.Enter && playerName.Length > 0) // Confirm with Enter key
                     {
-                        
                         // Transition to the next state (e.g., HowToPlay)
-                        
                         return MenuStateEnum.HowToPlay;
                     }
                     else
@@ -64,9 +61,7 @@ namespace Client.Menu
                     }
                 }
             }
-
             oldState = newState; // Set the old state to the new state for the next frame
-
             return MenuStateEnum.ChooseName;
         }
 
@@ -82,11 +77,8 @@ namespace Client.Menu
                 (m_graphics.PreferredBackBufferHeight) / 2);
 
             // Draw "Enter Your Name" text
-
             Drawing.CustomDrawString(font, enterNameText, textPosition, Colors.displayColor, m_spriteBatch, true, true, scale:.8f);
-            // m_spriteBatch.DrawString(font, enterNameText, textPosition, Colors.displayColor);
-
-
+            
             // Draw "Press Enter to proceed" below the name text if a name has been entered
             if (playerName.Length > 0)
             {
@@ -94,10 +86,8 @@ namespace Client.Menu
                 Vector2 proceedTextSize = font.MeasureString(proceedText);
                 Vector2 proceedTextPosition = new Vector2(
                     textPosition.X,
-                    textPosition.Y + 90); // 20 pixels below the name text
-
-                Drawing.CustomDrawString(font, proceedText, proceedTextPosition, Colors.displayColor, m_spriteBatch, true, false, scale:.6f);
-                // m_spriteBatch.DrawString(font, proceedText, proceedTextPosition, Colors.displayColor);
+                    textPosition.Y + 100);
+                Drawing.CustomDrawString(font, proceedText, proceedTextPosition, Colors.displayColor, m_spriteBatch, true, true, scale:.6f);
             }
 
             m_spriteBatch.End();
@@ -113,7 +103,6 @@ namespace Client.Menu
             {
                 return (char)key;
             }
-
             return '\0'; // Return a null character for keys that don't map directly
         }
 
@@ -121,7 +110,6 @@ namespace Client.Menu
         {
 
         }
-
         
 
         public override void update(GameTime gameTime)

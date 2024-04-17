@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Client.Components;
 using Client.Menu;
+using CS5410;
+using Microsoft.Xna.Framework.Content;
 using Shared.Systems;
 
 namespace Client.Systems;
@@ -21,8 +23,10 @@ public class Renderer : Shared.Systems.System
     private SpriteFont m_fontSmall;
     private Texture2D m_sand;
     private List<Rectangle> m_backgroundTiles = new();
+    private ParticleSystemRenderer deathRenderer;
+    private ParticleSystemRenderer eatRenderer;
 
-    public Renderer(Systems.Camera camera, GraphicsDeviceManager graphics, SpriteFont font, SpriteFont fontSmall, Texture2D sand) :
+    public Renderer(Systems.Camera camera, GraphicsDeviceManager graphics, SpriteFont font, SpriteFont fontSmall, Texture2D sand, ContentManager contentManager) :
         base(
            typeof(Position), typeof(Sprite)
         )
@@ -32,15 +36,23 @@ public class Renderer : Shared.Systems.System
         m_font = font;
         m_fontSmall = fontSmall;
         m_sand = sand;
+        deathRenderer = new ParticleSystemRenderer("Textures/particle");
+        eatRenderer = new ParticleSystemRenderer("Textures/particle");
+        
+        
+        eatRenderer.LoadContent(contentManager);
+        deathRenderer.LoadContent(contentManager);
 
         for (int i = 0; i < 6; i++)
             for (int j = 0; j < 6; j++)
                 m_backgroundTiles.Add(new Rectangle(-100 + i * 500, -100 + j * 500, 500, 500));
     }
 
-    public override void update(TimeSpan elapsedTime) { }
+    public override void update(TimeSpan elapsedTime)
+    {
+    }
 
-    public void render(TimeSpan elapsedTime, SpriteBatch spriteBatch, PlayerData playerData)
+    public void render(TimeSpan elapsedTime, SpriteBatch spriteBatch, PlayerData playerData, ParticleSystem eatParticles, ParticleSystem deathParticles)
     {
         // Setup variables
         float scale = m_camera.Zoom;
@@ -55,16 +67,17 @@ public class Renderer : Shared.Systems.System
 
         // Begin drawing
         spriteBatch.Begin(transformMatrix: matrix);
-
         drawBackgroundTiles(spriteBatch);
-
         var heads = new List<Entity>();
         var nonWorms = new List<Entity>();
         sortEntities(heads, nonWorms);
         foreach (Entity entity in nonWorms)
             renderEntity(elapsedTime, spriteBatch, entity);
         drawWorms(elapsedTime, spriteBatch, heads);
+        eatRenderer.draw(spriteBatch, eatParticles );
+        deathRenderer.draw(spriteBatch, deathParticles);
         spriteBatch.End();
+        
         // Need to do a spritebatch without matrix transform for HUD
         spriteBatch.Begin();
         var isGameOver = true;
