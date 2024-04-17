@@ -96,9 +96,6 @@ namespace Client.Menu
                     }
                 }
             }
-            
-            // TODO: Add a pill toggle to change whether we are in keyboard or mouse mode
-            
         }
         public override void render(GameTime gameTime)
         {

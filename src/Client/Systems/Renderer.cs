@@ -12,6 +12,7 @@ using Client.Menu;
 using CS5410;
 using Microsoft.Xna.Framework.Content;
 using Shared.Systems;
+using Wall = Shared.Entities.Wall;
 
 namespace Client.Systems;
 
@@ -69,9 +70,12 @@ public class Renderer : Shared.Systems.System
         spriteBatch.Begin(transformMatrix: matrix);
         drawBackgroundTiles(spriteBatch);
         var heads = new List<Entity>();
-        var nonWorms = new List<Entity>();
-        sortEntities(heads, nonWorms);
-        foreach (Entity entity in nonWorms)
+        var walls = new List<Entity>();
+        var spice = new List<Entity>();
+        sortEntities(heads, spice, walls);
+        foreach (Entity entity in spice)
+            renderEntity(elapsedTime, spriteBatch, entity);
+        foreach (Entity entity in walls)
             renderEntity(elapsedTime, spriteBatch, entity);
         drawWorms(elapsedTime, spriteBatch, heads);
         eatRenderer.draw(spriteBatch, eatParticles );
@@ -119,7 +123,7 @@ public class Renderer : Shared.Systems.System
         }
     }
 
-    private void sortEntities(List<Entity> heads, List<Entity> others)
+    private void sortEntities(List<Entity> heads, List<Entity> others, List<Entity> walls)
     {
         foreach (Entity entity in m_entities.Values)
         {
@@ -127,6 +131,8 @@ public class Renderer : Shared.Systems.System
                 heads.Add(entity);
             else if (entity.contains<Worm>())
                 continue;
+            else if (entity.contains<Shared.Components.Wall>())
+                walls.Add(entity);
             else
                 others.Add(entity);
         }
@@ -220,10 +226,10 @@ public class Renderer : Shared.Systems.System
         if (entity.contains<SpicePower>() && !entity.contains<Worm>())
         {
             var spicePower = entity.get<SpicePower>();
-            if (spicePower.power > 6)
-                color = Color.Aqua;
-            else if (spicePower.power > 3)
-                color = Color.Green;
+            if (spicePower.power > 7)
+                color = Color.DarkBlue;
+            else if (spicePower.power > 4)
+                color = Color.LightBlue;
         }
 
         // Build a rectangle centered at position, with width/height of size
