@@ -43,10 +43,10 @@ public class GameModel
     private SoundEffectInstance m_deathSoundInstance;
     private SoundEffectInstance m_eatSpiceSoundInstance;
 
-    private ParticleSystem deathParticleSystem;
-    private ParticleSystem eatParticleSystem;
-    private ParticleSystemRenderer deathRenderer;
-    private ParticleSystemRenderer eatRenderer;
+    private ParticleSystem eatParticleSystem = new ParticleSystem(new Vector2(0, 0), 4, 1, 0.2f, 0.1f, 500, 150);
+    private ParticleSystem deathParticleSystem = new ParticleSystem(new Vector2(0, 0), 10, 5, 0.5f, 0.25f, 1500, 500);
+
+
     private bool collisionIsOn;
     private bool spiceEaten;
 
@@ -69,12 +69,8 @@ public class GameModel
         m_systemWormMovement.update(elapsedTime);
         m_systemInterpolation.update(elapsedTime);
         m_systemCamera.update(elapsedTime);
-
-     
-
         GameTime gameTime = new GameTime(totalGameTime: TimeSpan.Zero, elapsedGameTime: elapsedTime);
-
-
+        
         if (eatParticleSystem != null)
         {
             eatParticleSystem.update(gameTime);
@@ -93,17 +89,7 @@ public class GameModel
 
     public void render(TimeSpan elapsedTime, SpriteBatch spriteBatch)
     {
-
-        spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive);
-
-        eatRenderer.draw(spriteBatch, eatParticleSystem);
-        deathRenderer.draw(spriteBatch, deathParticleSystem);
-
-
-        spriteBatch.End();
-
-        m_renderer.render(elapsedTime, spriteBatch, m_playerData);
-
+        m_renderer.render(elapsedTime, spriteBatch, m_playerData, eatParticleSystem, deathParticleSystem);
     }
 
     /// <summary>
@@ -122,15 +108,7 @@ public class GameModel
 
         m_deathSoundInstance = m_deathSound.CreateInstance();
         m_eatSpiceSoundInstance = m_eatSpiceSound.CreateInstance();
-
-        eatRenderer = new ParticleSystemRenderer("Textures/particle");
-        deathRenderer = new ParticleSystemRenderer("Textures/particle");
-
-        eatParticleSystem = new ParticleSystem(new Vector2(0, 0), 2, 1, 0.2f, 0.1f, 300, 150);
-        deathParticleSystem = new ParticleSystem(new Vector2(0, 0), 4, 2, 0.5f, 0.25f, 1000, 500);
-
-        eatRenderer.LoadContent(contentManager);
-        deathRenderer.LoadContent(contentManager);
+        
 
         m_contentManager = contentManager;
         m_systemScore = new ScoreSystem();
@@ -139,7 +117,7 @@ public class GameModel
         m_systemInterpolation = new Systems.Interpolation();
         m_systemCamera = new Systems.Camera(new Vector2(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight), m_playerData);
 
-        m_renderer = new Systems.Renderer(m_systemCamera, graphics, m_font, m_fontSmall, m_sand);
+        m_renderer = new Systems.Renderer(m_systemCamera, graphics, m_font, m_fontSmall, m_sand, m_contentManager);
         m_systemGrowthHandler = new Shared.Systems.GrowthHandler();
         m_systemWormMovement = new Shared.Systems.WormMovement();
         m_systemNetwork = new Systems.Network(m_playerName, m_playerData);
@@ -149,8 +127,6 @@ public class GameModel
         m_systemNetwork.registerCollisionHandler(handleCollision);
         m_systemNetwork.registerNewAnchorPointHandler(handleNewAnchorPoint);
         m_controls = controls;
-        
-        
         
         m_systemKeyboardInput = new Systems.KeyboardInput(new List<Tuple<Shared.Components.Input.Type, Keys>>
         { }, m_controls);
@@ -362,38 +338,39 @@ public class GameModel
             // Grab the entities
             var entity1 = m_entities[message.senderId];
             var entity2 = m_entities[message.receiverId];
-            // Check the position
-            var position = message.position;
 
             // Check for sound on the player
-            if (message.collisionType == Collision.CollisionType.ReceiverDies && player == entity1 ||
-                message.collisionType == Collision.CollisionType.SenderDies && player == entity2)
-            {
-                m_deathSoundInstance.Play();
-            }
-
-            if (message.collisionType == Collision.CollisionType.HeadToSpice && player == entity1)
-            {
-                m_eatSpiceSoundInstance.Play();
-            }
-
-
+            handleCollisionSounds(message, player, entity1, entity2);
+            
             if (message.collisionType == Collision.CollisionType.HeadToSpice)
             {
                 Vector2 foodPosition = new Vector2(message.position.X, message.position.Y);
                 eatParticleSystem.FoodEaten(foodPosition);
-
-                // TODO: Spice particle effect collision flag
-            }
-
-            else if (message.collisionType == Collision.CollisionType.HeadToWall)
+            } else if (message.collisionType == Collision.CollisionType.HeadToWall || message.collisionType == Collision.CollisionType.SenderDies)
             {
                 Vector2 deathPosition = new Vector2(message.position.X, message.position.Y);
+                var worm = WormMovement.getWormFromHead(entity1, m_entities);
+                deathParticleSystem.SnakeDeath(deathPosition, worm);
+            } else if (message.collisionType == Collision.CollisionType.ReceiverDies)
+            {
+                Vector2 deathPosition = new Vector2(message.position.X, message.position.Y);
+                var worm = WormMovement.getWormFromHead(entity2, m_entities);
+                deathParticleSystem.SnakeDeath(deathPosition, worm);
+            } 
+        }
+    }
 
-                deathParticleSystem.SnakeDeath(deathPosition);
+    private void handleCollisionSounds(Collision message, Entity player, Entity entity1, Entity entity2)
+    {
+        if (message.collisionType == Collision.CollisionType.ReceiverDies && player == entity1 ||
+            message.collisionType == Collision.CollisionType.SenderDies && player == entity2)
+        {
+            m_deathSoundInstance.Play();
+        }
 
-                // TODO: Wall particle effect collision flag
-            }
+        if (message.collisionType == Collision.CollisionType.HeadToSpice && player == entity1)
+        {
+            m_eatSpiceSoundInstance.Play();
         }
     }
 }
