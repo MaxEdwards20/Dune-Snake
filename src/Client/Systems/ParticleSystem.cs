@@ -77,6 +77,29 @@ namespace CS5410
                 m_particles.Add(particle.name, particle);
             }
         }
+        
+        public void SnakeKilled(Vector2 snakePosition)
+        {
+            Color[] particleColors = { Color.Red, Color.DarkRed, Color.Maroon };
+            for (int i = 0; i < 200; i++) // More particles for death to emphasize the event
+            {
+                float size = (float)m_random.nextGaussian(m_sizeMean, m_sizeStdDev);
+                Color initialColor = particleColors[m_random.Next(particleColors.Length)];
+                Vector2 direction = m_random.nextCircleVector() * 2; // More spread
+
+                var particle = new Particle(
+                    snakePosition,
+                    direction, // Greater spread
+                    (float)m_random.nextGaussian(m_speedMean, m_speedStDev), // Normal speed
+                    new Vector2(size, size),
+                    TimeSpan.FromMilliseconds(m_random.nextGaussian(m_lifetimeMean, m_lifetimeStdDev)), // Normal lifetime
+                    initialColor
+                );
+                m_particles.Add(particle.name, particle);
+            }
+        }
+        
+        
 
 
 

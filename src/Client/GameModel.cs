@@ -325,13 +325,6 @@ public class GameModel
 
     private void handleCollision(Shared.Messages.Collision message)
     {
-        // Check where our current client is and see if the collision is relevant
-        var player = getPlayer();
-        if (player == null)
-        {
-            return;
-        }
-
         // We need to know if the collision occurred on the screen of the client
         if (m_entities.ContainsKey(message.senderId) && m_entities.ContainsKey(message.receiverId))
         {
@@ -340,7 +333,7 @@ public class GameModel
             var entity2 = m_entities[message.receiverId];
 
             // Check for sound on the player
-            handleCollisionSounds(message, player, entity1, entity2);
+            handleCollisionSounds(message, entity1, entity2);
             
             if (message.collisionType == Collision.CollisionType.HeadToSpice)
             {
@@ -356,12 +349,19 @@ public class GameModel
                 Vector2 deathPosition = new Vector2(message.position.X, message.position.Y);
                 var worm = WormMovement.getWormFromHead(entity2, m_entities);
                 deathParticleSystem.SnakeDeath(deathPosition, worm);
+                deathParticleSystem.SnakeKilled(deathPosition);
             } 
         }
     }
 
-    private void handleCollisionSounds(Collision message, Entity player, Entity entity1, Entity entity2)
+    private void handleCollisionSounds(Collision message,  Entity entity1, Entity entity2)
     {
+        // Check where our current client is and see if the collision is relevant
+        var player = getPlayer();
+        if (player == null)
+        {
+            return;
+        }
         if (message.collisionType == Collision.CollisionType.ReceiverDies && player == entity1 ||
             message.collisionType == Collision.CollisionType.SenderDies && player == entity2)
         {

@@ -226,10 +226,10 @@ public class Renderer : Shared.Systems.System
         if (entity.contains<SpicePower>() && !entity.contains<Worm>())
         {
             var spicePower = entity.get<SpicePower>();
-            if (spicePower.power > 6)
-                color = Color.Aqua;
-            else if (spicePower.power > 3)
-                color = Color.Green;
+            if (spicePower.power > 7)
+                color = Color.DarkBlue;
+            else if (spicePower.power > 4)
+                color = Color.LightBlue;
         }
 
         // Build a rectangle centered at position, with width/height of size
