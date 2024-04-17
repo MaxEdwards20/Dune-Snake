@@ -280,43 +280,46 @@ public class GameModel
     private void handleCollision(Shared.Messages.Collision message)
     {
         // We need to know if the collision occurred on the screen of the client
-        if (m_entities.ContainsKey(message.entity1Id) && m_entities.ContainsKey(message.entity2Id))
+        if (m_entities.ContainsKey(message.senderId) && m_entities.ContainsKey(message.receiverId))
         {
             // Check where our current client is and see if the collision is relevant
             var player = m_entities.Values.ToArray()[0];
             // TODO: Implement the check for the client's screen here. If it is in the screen then we will handle the collision
+            // Grab the entities
+            var entity1 = m_entities[message.senderId];
+            var entity2 = m_entities[message.receiverId];
+            // Check the position
+            var position = message.position;
             
+            // Check for sound on the player
+            if (message.collisionType == Collision.CollisionType.ReceiverDies && player == entity1 || message.collisionType == Collision.CollisionType.SenderDies && player == entity2)
+            {
+                m_deathSoundInstance.Play();
+            }
+            if (message.collisionType == Collision.CollisionType.HeadToSpice && player == entity1)
+            {
+                m_eatSpiceSoundInstance.Play();
+            }
 
             if (message.collisionType == Collision.CollisionType.HeadToSpice)
             {
-                // play eat sound
-                m_eatSpiceSound.Play();
 
                 // TODO: Spice particle effect collision flag
             }
 
             else if (message.collisionType == Collision.CollisionType.HeadToWall)
             {
-                // play death sound
-                m_deathSoundInstance.Play();
-
+                
                 // TODO: Wall particle effect collision flag
             }
 
-            else{
-                // play death sound
-                m_deathSoundInstance.Play();
-            }
+           
 
             
 
             // We hit another worm
 
-            // Grab the entities
-            var entity1 = m_entities[message.entity1Id];
-            var entity2 = m_entities[message.entity2Id];
-            // Check the position
-            var position = message.position;
+
             
 
             

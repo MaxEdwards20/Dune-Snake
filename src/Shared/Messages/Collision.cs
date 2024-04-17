@@ -5,26 +5,25 @@ namespace Shared.Messages;
 
 public class Collision : Message
 {
-    public uint entity1Id { get; private set; }
-    public uint entity2Id { get; private set; }
+    public uint senderId { get; private set; }
+    public uint receiverId { get; private set; }
     public CollisionType collisionType { get; private set; }
-    
     public bool hasPosition { get; private set; }
     public Vector2 position { get; private set; }
     public float orientation { get; private set; }
     
     public enum CollisionType
     {
-        HeadToHead,
-        HeadToBody,
+        SenderDies,
+        ReceiverDies,
         HeadToWall,
         HeadToSpice
     }
     
     public Collision(uint id, uint id2, CollisionType type, Position position) : base(Type.Collision)
     {
-        entity1Id = id;
-        entity2Id = id2;
+        senderId = id;
+        receiverId = id2;
         collisionType = type;
         this.position = position.position;
         orientation = position.orientation;
@@ -35,8 +34,8 @@ public class Collision : Message
     {
         List<byte> data = new();
         data.AddRange(base.serialize());
-        data.AddRange(BitConverter.GetBytes(entity1Id));
-        data.AddRange(BitConverter.GetBytes(entity2Id));
+        data.AddRange(BitConverter.GetBytes(senderId));
+        data.AddRange(BitConverter.GetBytes(receiverId));
         data.AddRange(BitConverter.GetBytes((int)collisionType));
         serializePosition(data);
         return data.ToArray();
@@ -45,9 +44,9 @@ public class Collision : Message
     public override int parse(byte[] data)
     {
         int offset = base.parse(data);
-        entity1Id = BitConverter.ToUInt32(data, offset);
+        senderId = BitConverter.ToUInt32(data, offset);
         offset += sizeof(uint);
-        entity2Id = BitConverter.ToUInt32(data, offset);
+        receiverId = BitConverter.ToUInt32(data, offset);
         offset += sizeof(uint);
         collisionType = (CollisionType)BitConverter.ToInt32(data, offset);
         offset += sizeof(int);
