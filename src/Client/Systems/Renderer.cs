@@ -40,7 +40,7 @@ public class Renderer : Shared.Systems.System
 
     public override void update(TimeSpan elapsedTime) { }
 
-    public void render(TimeSpan elapsedTime, SpriteBatch spriteBatch)
+    public void render(TimeSpan elapsedTime, SpriteBatch spriteBatch, PlayerData playerData)
     {
         // Setup variables
         float scale = m_camera.Zoom;
@@ -79,18 +79,21 @@ public class Renderer : Shared.Systems.System
 
         if (isGameOver)
         {
-            drawGameOverScreen(spriteBatch);
+            drawGameOverScreen(spriteBatch, playerData);
         }
 
         drawLeaderboard(spriteBatch, heads);
         spriteBatch.End();
     }
     
-    private void drawGameOverScreen(SpriteBatch spriteBatch)
+    private void drawGameOverScreen(SpriteBatch spriteBatch, PlayerData playerData)
     {
-        Drawing.DrawBlurredRectangle(spriteBatch, new Vector2(m_graphics.PreferredBackBufferWidth / 2 - 200, m_graphics.PreferredBackBufferHeight / 2 - 100), new Vector2(400, 200), 7, transparency:0.6f);
-        Drawing.CustomDrawString(m_font, "Game Over", new Vector2(m_graphics.PreferredBackBufferWidth / 2, m_graphics.PreferredBackBufferHeight / 2), Color.White, spriteBatch, centered: true);
-        Drawing.CustomDrawString(m_fontSmall, "Press Escape to return to the menu", new Vector2(m_graphics.PreferredBackBufferWidth / 2, m_graphics.PreferredBackBufferHeight / 2 + 50), Color.White, spriteBatch, centered: true);
+        Drawing.DrawBlurredRectangle(spriteBatch, new Vector2(m_graphics.PreferredBackBufferWidth / 2 - 200, m_graphics.PreferredBackBufferHeight / 2 - 150), new Vector2(400, 300), 7, transparency:0.6f);
+        Drawing.CustomDrawString(m_font, "Game Over", new Vector2(m_graphics.PreferredBackBufferWidth / 2, m_graphics.PreferredBackBufferHeight / 2 - 100), Color.White, spriteBatch, centered: true);
+        Drawing.CustomDrawString(m_font, "Final Score: " + playerData.score, new Vector2(m_graphics.PreferredBackBufferWidth / 2, m_graphics.PreferredBackBufferHeight / 2 - 50), Color.White, spriteBatch, centered: true);
+        Drawing.CustomDrawString(m_font, "Highest Rank: " + playerData.highestPosition, new Vector2(m_graphics.PreferredBackBufferWidth / 2, m_graphics.PreferredBackBufferHeight / 2 ), Color.White, spriteBatch, centered: true);
+        Drawing.CustomDrawString(m_font, "Kills: " + playerData.kills, new Vector2(m_graphics.PreferredBackBufferWidth / 2, m_graphics.PreferredBackBufferHeight / 2 + 50), Color.White, spriteBatch, centered: true);
+        Drawing.CustomDrawString(m_fontSmall, "Press Escape to Return to Menu", new Vector2(m_graphics.PreferredBackBufferWidth / 2, m_graphics.PreferredBackBufferHeight / 2 + 100), Color.White, spriteBatch, centered: true, boxed: true);
     }
 
     private void drawWorms(TimeSpan elapsedTime, SpriteBatch spriteBatch, List<Entity> heads)
@@ -133,7 +136,7 @@ public class Renderer : Shared.Systems.System
 
     private void drawLeaderboard(SpriteBatch spriteBatch, List<Entity> heads)
     {
-        int numToDisplay = 3;
+        int numToDisplay = 5;
         var scoresToDisplay = new List<(uint, string)>();
         // First we need to create the scores to display by goin through each head and grabbing its score
         foreach (Entity head in heads.Take(numToDisplay))
@@ -143,6 +146,8 @@ public class Renderer : Shared.Systems.System
         }
         // Then we sort the scores by the first element of each tuple, the score
         scoresToDisplay.Sort((a, b) => b.Item1.CompareTo(a.Item1));
+        
+        
         Drawing.DrawBlurredRectangle(spriteBatch, new Vector2(m_graphics.PreferredBackBufferWidth - 350, 0), new Vector2(350, scoresToDisplay.Count * 50 + 100), 7);
         Drawing.CustomDrawString(m_font, "Leaderboard", new Vector2(m_graphics.PreferredBackBufferWidth - 300, 0), Color.White, spriteBatch, centered: false);
         // Then we draw the scores

@@ -8,15 +8,32 @@ using Client.Components;
 
 namespace Client.Systems;
 
-public class GameScoresPersistence
+public class ScoreSystem
 {
     private bool saving = false;
     private bool loading = false;
     
     private GameScores m_loadedState = new GameScores();
 
+    public void SaveScore(Entity entity)
+    {
+        if (entity.contains<Stats>())
+        {
+            var scores = entity.get<Stats>();
+            var name = entity.get<Name>();
+            var gameScores = m_loadedState;
+            gameScores.addScore((int)scores.Score, name.name);
+            gameScores.sortScores();
+            SaveScores(gameScores);
+        }
+    }
 
-    public void SaveScores(GameScores gameScores)
+    public ScoreSystem()
+    {
+        LoadScores();
+    }
+
+    private void SaveScores(GameScores gameScores)
     {
         if (!saving)
         {

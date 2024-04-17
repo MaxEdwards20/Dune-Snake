@@ -5,10 +5,34 @@ namespace Shared.Entities;
 [DataContract(Name = "GameScore")]
 public class PlayerData
 {
-    [DataMember(Name = "score")] public int score { get; private set; }
+    public int clientId { get; set; }
+
+    public int highestPosition { get; private set; } = 1;
+    
+    public int kills { get; private set; }
+    [DataMember(Name = "score")] public int score { get; set; }
     [DataMember(Name = "playerName")] public string playerName { get; private set; }
 
-    public PlayerData(DateTime date, int score, string name)
+    public void addKill()
+    {
+        kills++;
+    }
+    
+    public void setKills(int kills)
+    {
+        this.kills = kills;
+    }
+    
+    public void addPosition(int position)
+    {
+        if (position < highestPosition)
+        {
+            highestPosition = position;
+        }
+    }
+
+
+    public PlayerData(int score, string name)
     {
         this.score = score;
         this.playerName = name;

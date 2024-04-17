@@ -187,7 +187,7 @@ public class CollisionDetection : Shared.Systems.System
         var headRotation = head.get<Position>().orientation;
         headPos.X += (float)Math.Cos(headRotation) * headSize;
         headPos.Y += (float)Math.Sin(headRotation) * headSize;
-        var newSegment = WormSegment.create(segmentPos, head.id);
+        var newSegment = WormSegment.create(segmentPos, head.id, head.get<ClientId>().m_id);
         var headChild = head.get<ChildId>();
         newSegment.add(new ChildId(headChild.id)); // now the new segment is between the head and the previous child segment
         // now we update this previous child segment to point to the new segment

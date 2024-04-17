@@ -7,19 +7,15 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 <!-- ## Project Description -->
 
 ## In Progress
-- [ ] Particle system for the death of a sandworm and eating food. - Satchel
-- [ ] Caden: Record players score, kills and highest position.
-- [ ] Caden: Game over screen with score, kills, and highest position achieved. This is an overlay on the multiplayer game behind it.
-- [ ] Caden: Leaderboard to display top 5 players and client's score in corner of game.
+- [ ] Satchel: Particle system for the death of a sandworm and eating food.
+- [ ] Satchel: 3 different animated sprites for the spice 
 
 ## Items to Develop
 
-- [ ] 3 different animated sprites for the spice 
-- [ ] Particle system for the death of a sandworm
-- [ ] Add a player status in the leaderboard to show whether the player is currently invincible.
-
 ## Done
-
+- [x] Max: Record players score, kills and highest position.
+- [x] Max: Game over screen with score, kills, and highest position achieved. This is an overlay on the multiplayer game behind it.
+- [x] Max: Leaderboard to display top 5 players and client's score in corner of game.
 - [x] Max: Sync the anchor points across clients.
 - [x] Max: Collision message and its wiring for the client to then render its own effects.
 - [x] Max: The new player should join as an invincible entity. Add this functionality and a system to update it after 3 seconds to be removed from the entity.

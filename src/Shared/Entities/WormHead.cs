@@ -10,13 +10,14 @@ public class WormHead
     static readonly float moveRate = 0.3f;
     static readonly float rotateRate = (float)Math.PI / 1000;
 
-    public static Entity create(Vector2 position, string name)
+    public static Entity create(Vector2 position, string name, int clientId)
     {
         Entity entity = new();
         entity.add(new Position(position));
         entity.add(new Appearance("Textures/sandworm_head"));
         entity.add(new Size(new Vector2(size, size)));
         entity.add(new Movement(moveRate, rotateRate));
+        entity.add(new ClientId(clientId));
         entity.add(new Collidable());
         entity.add(new SpicePower(0));
         entity.add(new Head());

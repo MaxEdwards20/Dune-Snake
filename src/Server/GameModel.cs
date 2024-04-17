@@ -159,10 +159,11 @@ public class GameModel
     {
         // We want to create wall entities around the entire map. 5000x5000 is the size of the map
         // We'll create a wall every 100 units
+        
         for (int i = 0; i < mapSize / 100; i++)
         {
             // Top wall
-            Entity wall = Shared.Entities.Wall.create(new Vector2(i * wallSize, 0), wallSize);
+            Entity wall = Shared.Entities.Wall.create(new Vector2(i * wallSize, 0 - wallSize), wallSize);
             addEntity(wall);
 
             // Bottom wall
@@ -170,13 +171,17 @@ public class GameModel
             addEntity(wall);
 
             // Left wall
-            wall = Shared.Entities.Wall.create(new Vector2(0, i * wallSize), wallSize);
+            wall = Shared.Entities.Wall.create(new Vector2(0 - wallSize, i * wallSize), wallSize);
             addEntity(wall);
 
             // Right wall
             wall = Shared.Entities.Wall.create(new Vector2(mapSize - wallSize, i * wallSize), wallSize);
             addEntity(wall);
         }
+        
+        // Create one more left wall
+        Entity wall2 = Shared.Entities.Wall.create(new Vector2(0 - wallSize, 0 - wallSize), wallSize);
+        addEntity(wall2);
     }
 
     private void createNewWorm(int clientId, string name)
@@ -189,7 +194,7 @@ public class GameModel
         var bodySize = 80;
 
         // Create the head
-        Entity segment = WormHead.create(headStartLocation, name);
+        Entity segment = WormHead.create(headStartLocation, name, clientId);
         segment.add(new Invincible());
         m_clientToEntityId[clientId] = segment.id; // Associate the client with the head of the worm
 
@@ -198,11 +203,11 @@ public class GameModel
         var numToCreate = 5;
         for (int i = 0; i < numToCreate; i++)
         {
-            segment = WormSegment.create(segmentStartLocation,  parent.id);
+            segment = WormSegment.create(segmentStartLocation,  parent.id, clientId);
             segment.add(new Invincible());
             if (i == numToCreate - 1)
             {
-                segment = WormTail.create(segmentStartLocation,  parent.id);
+                segment = WormTail.create(segmentStartLocation,  parent.id, clientId);
             }
             parent.add(new ChildId(segment.id));
             addEntity(parent);
@@ -213,7 +218,7 @@ public class GameModel
         addEntity(segment);
         MessageQueueServer.instance.sendMessage(clientId, new NewEntity(segment));
 
-        // Step 4: Let all other clients know about this new player 
+        // Step 4: Let all other clients know about this new player and the worm entities
         while (segment != null)
         {
             // Don't need to send the input component to other clients

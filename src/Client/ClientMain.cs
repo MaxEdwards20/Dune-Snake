@@ -66,7 +66,7 @@ namespace Client
                 { MenuStateEnum.Help, new HelpView() },
                 { MenuStateEnum.Credits, new AboutView() },
                 { MenuStateEnum.ChooseName, new ChooseNameView(playerName)},
-                { MenuStateEnum.HowToPlay, new HowToPlayView() },
+                { MenuStateEnum.HowToPlay, new HowToPlayView(playerName) },
                 { MenuStateEnum.Connecting, new ConnectingView() }
 
             };

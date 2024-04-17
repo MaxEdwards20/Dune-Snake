@@ -41,6 +41,12 @@ namespace Shared.Messages
                 this.moveRate = entity.get<Movement>().moveRate;
                 this.rotateRate = entity.get<Movement>().rotateRate;
             }
+            
+            if (entity.contains<ClientId>())
+            {
+                this.hasClientId = true;
+                this.clientId = entity.get<ClientId>().m_id;
+            }
 
             if (entity.contains<Components.Input>())
             {
@@ -130,6 +136,9 @@ namespace Shared.Messages
         // Appearance
         public bool hasAppearance { get; private set; } = false;
         public string texture { get; private set; }
+        
+        public bool hasClientId { get; private set; } = false;
+        public int clientId { get; private set; }
         public bool hasCollision { get; private set; } = false;
         public bool hasWall { get; private set; } = false;
 
@@ -184,6 +193,7 @@ namespace Shared.Messages
             serializeSize(data);
             serializeMovement(data);
             serializeInput(data);
+            serializeClientId(data);
             data.AddRange(BitConverter.GetBytes(hasCollision));
             data.AddRange(BitConverter.GetBytes(hasWall));
 
@@ -200,6 +210,15 @@ namespace Shared.Messages
             return data.ToArray();
         }
 
+        private void serializeClientId(List<byte> data)
+        {
+            data.AddRange(BitConverter.GetBytes(hasClientId));
+            if (hasClientId)
+            {
+                data.AddRange(BitConverter.GetBytes(clientId));
+            }
+        }
+
         public override int parse(byte[] data)
         {
             // NOTE: Add parser for the components on the WormHead, WormSegment, and WormTail entities
@@ -214,6 +233,7 @@ namespace Shared.Messages
             offset = parseSize(data, offset);
             offset = parseMovement(data, offset);
             offset = parseInput(data, offset);
+            offset = parseClientId(data, offset);
             offset = parseCollision(data, offset);
             offset = parseWall(data, offset);
 
@@ -226,6 +246,19 @@ namespace Shared.Messages
             offset = parseInvincible(data, offset);
             offset = parseSpicePower(data, offset);
             offset = parseName(data, offset); // Make sure this is the last item to parse
+            return offset;
+        }
+        
+        private int parseClientId(byte[] data, int offset)
+        {
+            this.hasClientId = BitConverter.ToBoolean(data, offset);
+            offset += sizeof(bool);
+            if (hasClientId)
+            {
+                this.clientId = BitConverter.ToInt32(data, offset);
+                offset += sizeof(int);
+            }
+
             return offset;
         }
 
