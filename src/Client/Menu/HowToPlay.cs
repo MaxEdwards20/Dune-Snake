@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Text;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -20,8 +21,14 @@ namespace Client.Menu
         private bool isKeyboardRegistered = false;
         private double enterKeyDelay = 500; // 500 milliseconds delay
         private double timeSinceLastEnterPress;
+        private StringBuilder playerName = new StringBuilder();
 
         // ... other members ...
+
+        public HowToPlayView(StringBuilder playerName)
+        {
+            this.playerName = playerName;
+        }
 
         public override void loadContent(ContentManager contentManager)
         {
@@ -40,7 +47,8 @@ namespace Client.Menu
             if (newState.IsKeyDown(Keys.Escape))
             {
                 timeSinceLastEnterPress = 0; // Initialize the timer
-                return MenuStateEnum.Controls; // Immediately return to MainMenu when Escape is pressed
+                playerName.Clear(); // Clear the player name
+                return MenuStateEnum.ChooseName; // Immediately return to MainMenu when Escape is pressed
             }
 
             // Proceed to the next game state if the player presses Enter and enough time has passed since the last Enter press
