@@ -47,8 +47,7 @@ namespace Client.Menu
             if (newState.IsKeyDown(Keys.Escape))
             {
                 timeSinceLastEnterPress = 0; // Initialize the timer
-                playerName.Clear(); // Clear the player name
-                return MenuStateEnum.ChooseName; // Immediately return to MainMenu when Escape is pressed
+                return MenuStateEnum.ChooseName; 
             }
 
             // Proceed to the next game state if the player presses Enter and enough time has passed since the last Enter press

@@ -1,4 +1,5 @@
-﻿using Client.IO;
+﻿using System;
+using Client.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -14,6 +15,7 @@ namespace Client.Menu
         private SpriteFont font;
         private KeyboardState oldState;
         private GameModel m_gameModel;
+        private TimeSpan m_escapeKeyCooldown = TimeSpan.FromMilliseconds(200);
 
         public ChooseNameView(StringBuilder name)
         {
@@ -28,6 +30,7 @@ namespace Client.Menu
 
         public override MenuStateEnum processInput(GameTime gameTime)
         {
+            
             KeyboardState newState = Keyboard.GetState(); // Get the new state
             
             // Simple example for input handling
@@ -36,8 +39,14 @@ namespace Client.Menu
                 // Check for Escape key press to return to MainMenu
                 if (newState.IsKeyDown(Keys.Escape))
                 {
-                    playerName.Clear(); // Clear the player name when Escape is pressed
-                    return MenuStateEnum.MainMenu; // Immediately return to MainMenu when Escape is pressed
+                    m_escapeKeyCooldown -= gameTime.ElapsedGameTime;
+                    if (m_escapeKeyCooldown <= TimeSpan.Zero)
+                    {
+                        m_escapeKeyCooldown = TimeSpan.FromMilliseconds(200);
+                        playerName.Clear(); // Clear the player name when Escape is pressed
+                        oldState = newState;
+                        return MenuStateEnum.MainMenu; // Immediately return to MainMenu when Escape is pressed
+                    }
                 }
                 
                 if (!oldState.IsKeyDown(key)) // Only take action if the key was not pressed before
@@ -49,6 +58,7 @@ namespace Client.Menu
                     else if (key == Keys.Enter && playerName.Length > 0) // Confirm with Enter key
                     {
                         // Transition to the next state (e.g., HowToPlay)
+                        oldState = newState;
                         return MenuStateEnum.HowToPlay;
                     }
                     else
