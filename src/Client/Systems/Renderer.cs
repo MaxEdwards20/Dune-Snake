@@ -42,6 +42,7 @@ public class Renderer : Shared.Systems.System
 
     public void render(TimeSpan elapsedTime, SpriteBatch spriteBatch)
     {
+        // Setup variables
         float scale = m_camera.Zoom;
         Matrix matrix = Matrix.Identity;
         Vector2 offset = -m_camera.Viewport.Location.ToVector2()
@@ -52,8 +53,71 @@ public class Renderer : Shared.Systems.System
         matrix *= Matrix.CreateTranslation(new Vector3(offset, 0));
         matrix *= Matrix.CreateScale(scaleX, scaleY, 1);
 
+        // Begin drawing
         spriteBatch.Begin(transformMatrix: matrix);
 
+        drawBackgroundTiles(spriteBatch);
+
+        var heads = new List<Entity>();
+        var nonWorms = new List<Entity>();
+        sortEntities(heads, nonWorms);
+        foreach (Entity entity in nonWorms)
+            renderEntity(elapsedTime, spriteBatch, entity);
+        drawWorms(elapsedTime, spriteBatch, heads);
+        spriteBatch.End();
+        // Need to do a spritebatch without matrix transform for HUD
+        spriteBatch.Begin();
+        var isGameOver = true;
+        foreach (Entity head in heads)
+        {
+            if (head.contains<Input>())
+            {
+                isGameOver = false;
+                drawStats(spriteBatch, head);
+            }
+        }
+
+        if (isGameOver)
+        {
+            drawGameOverScreen(spriteBatch);
+        }
+
+        drawLeaderboard(spriteBatch, heads);
+        spriteBatch.End();
+    }
+    
+    private void drawGameOverScreen(SpriteBatch spriteBatch)
+    {
+        Drawing.DrawBlurredRectangle(spriteBatch, new Vector2(m_graphics.PreferredBackBufferWidth / 2 - 200, m_graphics.PreferredBackBufferHeight / 2 - 100), new Vector2(400, 200), 7, transparency:0.6f);
+        Drawing.CustomDrawString(m_font, "Game Over", new Vector2(m_graphics.PreferredBackBufferWidth / 2, m_graphics.PreferredBackBufferHeight / 2), Color.White, spriteBatch, centered: true);
+        Drawing.CustomDrawString(m_fontSmall, "Press Escape to return to the menu", new Vector2(m_graphics.PreferredBackBufferWidth / 2, m_graphics.PreferredBackBufferHeight / 2 + 50), Color.White, spriteBatch, centered: true);
+    }
+
+    private void drawWorms(TimeSpan elapsedTime, SpriteBatch spriteBatch, List<Entity> heads)
+    {
+        foreach (Entity head in heads)
+        {
+            var worm = WormMovement.getWormFromHead(head, m_entities);
+            for (int i = worm.Count - 1; i >= 0; i--)
+                renderEntity(elapsedTime, spriteBatch, worm[i]);
+        }
+    }
+
+    private void sortEntities(List<Entity> heads, List<Entity> others)
+    {
+        foreach (Entity entity in m_entities.Values)
+        {
+            if (entity.contains<Head>())
+                heads.Add(entity);
+            else if (entity.contains<Worm>())
+                continue;
+            else
+                others.Add(entity);
+        }
+    }
+
+    private void drawBackgroundTiles(SpriteBatch spriteBatch)
+    {
         foreach (Rectangle rect in m_backgroundTiles)
             spriteBatch.Draw(
                 m_sand,
@@ -65,44 +129,6 @@ public class Renderer : Shared.Systems.System
                 SpriteEffects.None,
                 0
             );
-
-        var heads = new List<Entity>();
-        var others = new List<Entity>();
-
-        foreach (Entity entity in m_entities.Values)
-        {
-            if (entity.contains<Head>())
-                heads.Add(entity);
-            else if (entity.contains<Worm>())
-                continue;
-            else
-                others.Add(entity);
-        }
-
-        foreach (Entity entity in others)
-            renderEntity(elapsedTime, spriteBatch, entity);
-
-        // We want to sort bodies by their position in the worm
-
-        foreach (Entity head in heads)
-        {
-            var worm = WormMovement.getWormFromHead(head, m_entities);
-            for (int i = worm.Count - 1; i >= 0; i--)
-                renderEntity(elapsedTime, spriteBatch, worm[i]);
-        }
-        spriteBatch.End();
-
-        // Need to do a spritebatch without matrix transform for HUD
-        spriteBatch.Begin();
-        foreach (Entity head in heads)
-        {
-            if (head.contains<Input>())
-            {
-                drawStats(spriteBatch, head);
-            }
-        }
-        drawLeaderboard(spriteBatch, heads);
-        spriteBatch.End();
     }
 
     private void drawLeaderboard(SpriteBatch spriteBatch, List<Entity> heads)
