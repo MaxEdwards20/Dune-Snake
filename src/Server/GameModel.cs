@@ -213,7 +213,7 @@ public class GameModel
         addEntity(segment);
         MessageQueueServer.instance.sendMessage(clientId, new NewEntity(segment));
 
-        // Step 4: Let all other clients know about this new player 
+        // Step 4: Let all other clients know about this new player and the worm entities
         while (segment != null)
         {
             // Don't need to send the input component to other clients

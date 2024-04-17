@@ -40,7 +40,7 @@ public class Renderer : Shared.Systems.System
 
     public override void update(TimeSpan elapsedTime) { }
 
-    public void render(TimeSpan elapsedTime, SpriteBatch spriteBatch)
+    public void render(TimeSpan elapsedTime, SpriteBatch spriteBatch, PlayerData playerData)
     {
         // Setup variables
         float scale = m_camera.Zoom;
@@ -79,18 +79,18 @@ public class Renderer : Shared.Systems.System
 
         if (isGameOver)
         {
-            drawGameOverScreen(spriteBatch);
+            drawGameOverScreen(spriteBatch, playerData);
         }
 
         drawLeaderboard(spriteBatch, heads);
         spriteBatch.End();
     }
     
-    private void drawGameOverScreen(SpriteBatch spriteBatch)
+    private void drawGameOverScreen(SpriteBatch spriteBatch, PlayerData playerData)
     {
-        Drawing.DrawBlurredRectangle(spriteBatch, new Vector2(m_graphics.PreferredBackBufferWidth / 2 - 200, m_graphics.PreferredBackBufferHeight / 2 - 100), new Vector2(400, 200), 7, transparency:0.6f);
-        Drawing.CustomDrawString(m_font, "Game Over", new Vector2(m_graphics.PreferredBackBufferWidth / 2, m_graphics.PreferredBackBufferHeight / 2), Color.White, spriteBatch, centered: true);
-        Drawing.CustomDrawString(m_fontSmall, "Press Escape to return to the menu", new Vector2(m_graphics.PreferredBackBufferWidth / 2, m_graphics.PreferredBackBufferHeight / 2 + 50), Color.White, spriteBatch, centered: true);
+        Drawing.DrawBlurredRectangle(spriteBatch, new Vector2(m_graphics.PreferredBackBufferWidth / 2 - 200, m_graphics.PreferredBackBufferHeight / 2 - 150), new Vector2(400, 300), 7, transparency:0.6f);
+        Drawing.CustomDrawString(m_font, "Game Over\nFinal Score: " + playerData.score, new Vector2(m_graphics.PreferredBackBufferWidth / 2, m_graphics.PreferredBackBufferHeight / 2), Color.White, spriteBatch, centered: true);
+        Drawing.CustomDrawString(m_fontSmall, "Press Escape to Return to Menu", new Vector2(m_graphics.PreferredBackBufferWidth / 2, m_graphics.PreferredBackBufferHeight / 2 + 100), Color.White, spriteBatch, centered: true, boxed: true);
     }
 
     private void drawWorms(TimeSpan elapsedTime, SpriteBatch spriteBatch, List<Entity> heads)

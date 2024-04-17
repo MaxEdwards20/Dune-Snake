@@ -77,7 +77,7 @@ namespace Client.Menu
                 foreach (var score in highScores.scores.Take(numDisplayScores))
                 {
                     y += 50;
-                    Drawing.CustomDrawString(m_font, score.score.ToString(), new Vector2(halfWidth, halfHeight + y), Colors.displayColor, m_spriteBatch);
+                    Drawing.CustomDrawString(m_font, score.score+ " " + score.playerName, new Vector2(halfWidth, halfHeight + y), Colors.displayColor, m_spriteBatch);
                 }
             }
             m_spriteBatch.End();

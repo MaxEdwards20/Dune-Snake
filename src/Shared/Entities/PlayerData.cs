@@ -5,7 +5,8 @@ namespace Shared.Entities;
 [DataContract(Name = "GameScore")]
 public class PlayerData
 {
-    [DataMember(Name = "score")] public int score { get; private set; }
+    public int clientId { get; set; }
+    [DataMember(Name = "score")] public int score { get; set; }
     [DataMember(Name = "playerName")] public string playerName { get; private set; }
 
     public PlayerData(int score, string name)
