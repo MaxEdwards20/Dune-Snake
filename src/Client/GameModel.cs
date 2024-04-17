@@ -15,6 +15,7 @@ using Shared.Entities;
 using Shared.Messages;
 using Shared.Systems;
 using Microsoft.Xna.Framework.Audio;
+using CS5410;
 
 namespace Client;
 
@@ -41,7 +42,16 @@ public class GameModel
     private SoundEffect m_eatSpiceSound;
     private SoundEffectInstance m_deathSoundInstance;
     private SoundEffectInstance m_eatSpiceSoundInstance;
+
+    private ParticleSystem deathParticleSystem;
+    private ParticleSystem eatParticleSystem;
+    private ParticleSystemRenderer deathRenderer;
+    private ParticleSystemRenderer eatRenderer;
+    private bool collisionIsOn;
+    private bool spiceEaten;
+
     private int clientId;
+
 
     public GameModel(StringBuilder playerName)
     {
@@ -59,6 +69,22 @@ public class GameModel
         m_systemWormMovement.update(elapsedTime);
         m_systemInterpolation.update(elapsedTime);
         m_systemCamera.update(elapsedTime);
+
+     
+
+        GameTime gameTime = new GameTime(totalGameTime: TimeSpan.Zero, elapsedGameTime: elapsedTime);
+
+
+        if (eatParticleSystem != null)
+        {
+            eatParticleSystem.update(gameTime);
+        }
+
+        if (deathParticleSystem != null)
+        {
+            deathParticleSystem.update(gameTime);
+        }
+        
     }
 
     /// <summary>
@@ -67,7 +93,17 @@ public class GameModel
 
     public void render(TimeSpan elapsedTime, SpriteBatch spriteBatch)
     {
+
+        spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive);
+
+        eatRenderer.draw(spriteBatch, eatParticleSystem);
+        deathRenderer.draw(spriteBatch, deathParticleSystem);
+
+
+        spriteBatch.End();
+
         m_renderer.render(elapsedTime, spriteBatch, m_playerData);
+
     }
 
     /// <summary>
@@ -86,6 +122,15 @@ public class GameModel
 
         m_deathSoundInstance = m_deathSound.CreateInstance();
         m_eatSpiceSoundInstance = m_eatSpiceSound.CreateInstance();
+
+        eatRenderer = new ParticleSystemRenderer("Textures/particle");
+        deathRenderer = new ParticleSystemRenderer("Textures/particle");
+
+        eatParticleSystem = new ParticleSystem(new Vector2(0, 0), 2, 1, 0.2f, 0.1f, 300, 150);
+        deathParticleSystem = new ParticleSystem(new Vector2(0, 0), 4, 2, 0.5f, 0.25f, 1000, 500);
+
+        eatRenderer.LoadContent(contentManager);
+        deathRenderer.LoadContent(contentManager);
 
         m_contentManager = contentManager;
         m_systemScore = new ScoreSystem();
@@ -160,7 +205,7 @@ public class GameModel
         {
             entity.add(new Collidable());
         }
-        
+
         if (message.hasWall)
         {
             entity.add(new Shared.Components.Wall());
@@ -193,12 +238,12 @@ public class GameModel
         {
             entity.add(new ChildId(message.childId));
         }
-        
+
         if (message.hasInvincible)
         {
             entity.add(new Invincible(message.invincibleDuration));
         }
-        
+
         if (message.hasSpicePower)
         {
             entity.add(new SpicePower(message.spicePower));
@@ -274,8 +319,8 @@ public class GameModel
     {
         removeEntity(message.id);
     }
-    
-    
+
+
     private void handleNewAnchorPoint(Shared.Messages.NewAnchorPoint message)
     {
         if (m_entities.ContainsKey(message.wormHeadId) && !m_entities.Values.ToArray()[0].id.Equals(message.wormHeadId))
@@ -284,10 +329,11 @@ public class GameModel
             var worm = WormMovement.getWormFromHead(wormHead, m_entities);
             foreach (var segment in worm.Skip(1))
             {
-                segment.get<AnchorQueue>().m_anchorPositions.Enqueue( new Position(message.position, message.orientation));
+                segment.get<AnchorQueue>().m_anchorPositions.Enqueue(new Position(message.position, message.orientation));
             }
         }
     }
+
     
     private Entity getPlayer()
     {
@@ -300,7 +346,7 @@ public class GameModel
         }
         return null;
     }
-    
+
     private void handleCollision(Shared.Messages.Collision message)
     {
         // Check where our current client is and see if the collision is relevant
@@ -309,6 +355,7 @@ public class GameModel
         {
             return;
         }
+
         // We need to know if the collision occurred on the screen of the client
         if (m_entities.ContainsKey(message.senderId) && m_entities.ContainsKey(message.receiverId))
         {
@@ -317,37 +364,36 @@ public class GameModel
             var entity2 = m_entities[message.receiverId];
             // Check the position
             var position = message.position;
-            
+
             // Check for sound on the player
-            if (message.collisionType == Collision.CollisionType.ReceiverDies && player == entity1 || message.collisionType == Collision.CollisionType.SenderDies && player == entity2)
+            if (message.collisionType == Collision.CollisionType.ReceiverDies && player == entity1 ||
+                message.collisionType == Collision.CollisionType.SenderDies && player == entity2)
             {
                 m_deathSoundInstance.Play();
             }
+
             if (message.collisionType == Collision.CollisionType.HeadToSpice && player == entity1)
             {
                 m_eatSpiceSoundInstance.Play();
             }
 
+
             if (message.collisionType == Collision.CollisionType.HeadToSpice)
             {
+                Vector2 foodPosition = new Vector2(message.position.X, message.position.Y);
+                eatParticleSystem.FoodEaten(foodPosition);
 
                 // TODO: Spice particle effect collision flag
             }
 
             else if (message.collisionType == Collision.CollisionType.HeadToWall)
             {
-                
+                Vector2 deathPosition = new Vector2(message.position.X, message.position.Y);
+
+                deathParticleSystem.SnakeDeath(deathPosition);
+
                 // TODO: Wall particle effect collision flag
             }
-
-
-            // We hit another worm
-
-
-            // If it is relevant, we either send a boolean flag to the particle system and collision handling or we call those here. 
-            
-            // TODO: Implement this
-            
         }
     }
 }
