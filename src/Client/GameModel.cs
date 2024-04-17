@@ -14,6 +14,7 @@ using Shared.Entities;
 using Shared.Messages;
 using Shared.Systems;
 using Microsoft.Xna.Framework.Audio;
+using CS5410;
 
 namespace Client;
 
@@ -39,6 +40,13 @@ public class GameModel
     private SoundEffect m_eatSpiceSound;
     private SoundEffectInstance m_deathSoundInstance;
     private SoundEffectInstance m_eatSpiceSoundInstance;
+    private ParticleSystem deathParticleSystem;
+    private ParticleSystem eatParticleSystem;
+    private ParticleSystemRenderer deathRenderer;
+    private ParticleSystemRenderer eatRenderer;
+    private bool collisionIsOn;
+    private bool spiceEaten;
+
     public GameModel(StringBuilder playerName)
     {
         m_playerName = playerName.ToString();
@@ -56,6 +64,20 @@ public class GameModel
         m_systemInterpolation.update(elapsedTime);
         m_systemCamera.update(elapsedTime);
         // m_systemScore.update(elapsedTime); // TODO
+
+        GameTime gameTime = new GameTime(totalGameTime: TimeSpan.Zero, elapsedGameTime: elapsedTime);
+
+
+        if (eatParticleSystem != null)
+        {
+            eatParticleSystem.update(gameTime);
+        }
+
+        if (deathParticleSystem != null)
+        {
+            deathParticleSystem.update(gameTime);
+        }
+
     }
 
     /// <summary>
@@ -64,6 +86,14 @@ public class GameModel
 
     public void render(TimeSpan elapsedTime, SpriteBatch spriteBatch)
     {
+        spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive);
+
+        eatRenderer.draw(spriteBatch, eatParticleSystem);
+        deathRenderer.draw(spriteBatch, deathParticleSystem);
+
+
+        spriteBatch.End();
+        
         m_renderer.render(elapsedTime, spriteBatch);
     }
 
@@ -83,6 +113,15 @@ public class GameModel
 
         m_deathSoundInstance = m_deathSound.CreateInstance();
         m_eatSpiceSoundInstance = m_eatSpiceSound.CreateInstance();
+
+        eatRenderer = new ParticleSystemRenderer("Textures/particle");
+        deathRenderer = new ParticleSystemRenderer("Textures/particle");
+
+        eatParticleSystem = new ParticleSystem(new Vector2(0, 0), 2, 1, 0.2f, 0.1f, 300, 150);
+        deathParticleSystem = new ParticleSystem(new Vector2(0, 0), 4, 2, 0.5f, 0.25f, 1000, 500);
+
+        eatRenderer.LoadContent(contentManager);
+        deathRenderer.LoadContent(contentManager);
 
         m_contentManager = contentManager;
         m_entities = new Dictionary<uint, Entity>();
@@ -291,6 +330,8 @@ public class GameModel
             {
                 // play eat sound
                 m_eatSpiceSound.Play();
+                Vector2 foodPosition = new Vector2(message.position.X, message.position.Y);
+                eatParticleSystem.FoodEaten(foodPosition);
 
                 // TODO: Spice particle effect collision flag
             }
@@ -300,12 +341,20 @@ public class GameModel
                 // play death sound
                 m_deathSoundInstance.Play();
 
+
+                Vector2 deathPosition = new Vector2(message.position.X, message.position.Y);
+
+                deathParticleSystem.SnakeDeath(deathPosition);
+
                 // TODO: Wall particle effect collision flag
             }
 
             else{
                 // play death sound
                 m_deathSoundInstance.Play();
+                Vector2 deathPosition = new Vector2(message.position.X, message.position.Y);
+
+                deathParticleSystem.SnakeDeath(deathPosition);
             }
 
             
