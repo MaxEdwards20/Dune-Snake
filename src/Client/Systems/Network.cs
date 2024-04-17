@@ -238,6 +238,18 @@ namespace Client.Systems
                     if (entity.contains<Name>() && entity.get<Name>().name == m_playerData.playerName)
                     {
                         playerData.score = (int) message.Score;
+                        playerData.setKills((int)message.Kills);
+                        // Update the highest position based on all of the entities
+                        List<Entity> heads = new();
+                        foreach (var ent in m_entities.Values)
+                        {
+                            if (ent.contains<Head>())
+                            {
+                                heads.Add(ent);
+                            }
+                        }
+                        heads.Sort((a, b) => a.get<Stats>().Score.CompareTo(b.get<Stats>().Score));
+                        playerData.addPosition(heads.IndexOf(entity) + 1);
                     }
                 }
             }

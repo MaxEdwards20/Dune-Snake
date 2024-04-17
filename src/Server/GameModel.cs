@@ -159,10 +159,11 @@ public class GameModel
     {
         // We want to create wall entities around the entire map. 5000x5000 is the size of the map
         // We'll create a wall every 100 units
+        
         for (int i = 0; i < mapSize / 100; i++)
         {
             // Top wall
-            Entity wall = Shared.Entities.Wall.create(new Vector2(i * wallSize, 0), wallSize);
+            Entity wall = Shared.Entities.Wall.create(new Vector2(i * wallSize, 0 - wallSize), wallSize);
             addEntity(wall);
 
             // Bottom wall
@@ -170,13 +171,17 @@ public class GameModel
             addEntity(wall);
 
             // Left wall
-            wall = Shared.Entities.Wall.create(new Vector2(0, i * wallSize), wallSize);
+            wall = Shared.Entities.Wall.create(new Vector2(0 - wallSize, i * wallSize), wallSize);
             addEntity(wall);
 
             // Right wall
             wall = Shared.Entities.Wall.create(new Vector2(mapSize - wallSize, i * wallSize), wallSize);
             addEntity(wall);
         }
+        
+        // Create one more left wall
+        Entity wall2 = Shared.Entities.Wall.create(new Vector2(0 - wallSize, 0 - wallSize), wallSize);
+        addEntity(wall2);
     }
 
     private void createNewWorm(int clientId, string name)
