@@ -70,7 +70,7 @@ public class Camera : Shared.Systems.System
                 }
 
                 Vector2 cameraOffset = targetPos - m_viewport.Location.ToVector2();
-                float interpolationSpeed = 0.1f;
+                float interpolationSpeed = 0.05f;
                 Vector2 interpolatedPos = m_viewport.Location.ToVector2() + cameraOffset * interpolationSpeed;
                 m_viewport.Location = interpolatedPos.ToPoint();
 
