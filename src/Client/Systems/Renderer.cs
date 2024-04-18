@@ -192,16 +192,18 @@ public class Renderer : Shared.Systems.System
         // Then we sort the scores by the first element of each tuple, the score
         scoresToDisplay.Sort((a, b) => b.Item1.CompareTo(a.Item1));
         
-        
-        Drawing.DrawBlurredRectangle(spriteBatch, new Vector2(m_graphics.PreferredBackBufferWidth - 350, 0), new Vector2(350, scoresToDisplay.Count * 50 + 100), 7);
-        Drawing.CustomDrawString(m_font, "Leaderboard", new Vector2(m_graphics.PreferredBackBufferWidth - 300, 0), Color.White, spriteBatch, centered: false);
+        var leaderBoardLocation = new Vector2(m_graphics.PreferredBackBufferWidth *3 / 4, 0);
+        if (m_graphics.PreferredBackBufferWidth < 1000)
+            leaderBoardLocation = new Vector2(m_graphics.PreferredBackBufferWidth * 3 / 5, 0);
+        Drawing.DrawBlurredRectangle(spriteBatch, leaderBoardLocation, new Vector2(m_graphics.PreferredBackBufferWidth * 3/ 4, scoresToDisplay.Count * 50 + 100), 7);
+        Drawing.CustomDrawString(m_font, "Leaderboard", leaderBoardLocation, Color.White, spriteBatch, centered: false);
         // Then we draw the scores
         for (int i = 0; i < scoresToDisplay.Count; i++)
         {
             Drawing.CustomDrawString(
                 m_font,
                 scoresToDisplay[i].Item2 + ": " + scoresToDisplay[i].Item1.ToString(),
-                new Vector2(m_graphics.PreferredBackBufferWidth - 300, i * 50 + 75),
+                new Vector2(leaderBoardLocation.X + 30, i * 50 + 75),
                 Color.White,
                 spriteBatch,
                 centered: false, 
