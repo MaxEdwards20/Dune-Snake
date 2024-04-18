@@ -45,7 +45,8 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 - [x] Satchel: Port Particle System
 - [x] Caden: Fixed camera/renderer for more accurate collisions
 - [x] Caden: Added basic HUD for kills and score
-- [x] Satchel: Sound effects on the death of worm and when food is eaten 
+- [x] Satchel: Sound effects on the death of worm and when food is eaten
+- [x] Bezier zoom interpolation on new game and death
 
 ## Debugging
 
