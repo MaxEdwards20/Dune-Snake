@@ -1,4 +1,4 @@
-﻿using CS5410.Input;
+﻿
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -10,12 +10,10 @@ namespace CS5410
     {
         private GraphicsDeviceManager m_graphics;
         private SpriteBatch m_spriteBatch;
-        private Objects.Bird m_littleBird;
-        private Objects.Bird m_bigBird;
+/*        private Objects.Bird m_littleBird;
+        private Objects.Bird m_bigBird;*/
         private AnimatedSprite m_bigBirdRenderer;
         private AnimatedSprite m_littleBirdRenderer;
-
-        private KeyboardInput m_inputKeyboard = new KeyboardInput();
 
         public RenderingAnimatedSprites()
         {
@@ -26,10 +24,7 @@ namespace CS5410
 
         protected override void Initialize()
         {
-            m_graphics.PreferredBackBufferWidth = 1920;
-            m_graphics.PreferredBackBufferHeight = 1080;
-
-            m_graphics.ApplyChanges();
+           
 
             base.Initialize();
         }
@@ -38,7 +33,7 @@ namespace CS5410
         {
             m_spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            m_littleBird = new Objects.Bird(
+           /* m_littleBird = new Objects.Bird(
                 new Vector2(75, 75),
                 new Vector2(150, 200),
                125 / 1000.0, // Pixels per second
@@ -60,34 +55,16 @@ namespace CS5410
                 new int[] { 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25 }
             );
 
-            //
-            // Setup input handlers
-            m_inputKeyboard.registerCommand(Keys.W, false, new InputDeviceHelper.CommandDelegate((gameTime, value) => { m_littleBird.moveForward(gameTime); } ));
-            m_inputKeyboard.registerCommand(Keys.A, false, new InputDeviceHelper.CommandDelegate((gameTime, value) => { m_littleBird.rotateLeft(gameTime); }));
-            m_inputKeyboard.registerCommand(Keys.D, false, new InputDeviceHelper.CommandDelegate((gameTime, value) => { m_littleBird.rotateRight(gameTime); }));
-
-            m_inputKeyboard.registerCommand(Keys.Up, false, new InputDeviceHelper.CommandDelegate((gameTime, value) => { m_bigBird.moveForward(gameTime); }));
-            m_inputKeyboard.registerCommand(Keys.Left, false, new InputDeviceHelper.CommandDelegate((gameTime, value) => { m_bigBird.rotateLeft(gameTime); }));
-            m_inputKeyboard.registerCommand(Keys.Right, false, new InputDeviceHelper.CommandDelegate((gameTime, value) => { m_bigBird.rotateRight(gameTime); }));
+           */
         }
 
         protected override void Update(GameTime gameTime)
         {
-            // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
-            {
-                this.Exit();
-            }
-
-            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
-            {
-                this.Exit();
-            }
+           
 
             m_littleBirdRenderer.update(gameTime);
             m_bigBirdRenderer.update(gameTime);
 
-            m_inputKeyboard.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -98,8 +75,8 @@ namespace CS5410
 
             m_spriteBatch.Begin();
 
-            m_littleBirdRenderer.draw(m_spriteBatch, m_littleBird);
-            m_bigBirdRenderer.draw(m_spriteBatch, m_bigBird);
+           /* m_littleBirdRenderer.draw(m_spriteBatch, m_littleBird);
+            m_bigBirdRenderer.draw(m_spriteBatch, m_bigBird);*/
 
             m_spriteBatch.End();
 
