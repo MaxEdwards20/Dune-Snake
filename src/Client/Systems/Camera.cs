@@ -1,8 +1,8 @@
 using Microsoft.Xna.Framework;
 using Shared.Entities;
 using System;
-using System.Diagnostics;
 using Shared.Components;
+using System.Diagnostics;
 
 namespace Client.Systems;
 
@@ -18,8 +18,11 @@ public class Camera : Shared.Systems.System
     public float Zoom { get { return m_currentZoom; } }
     private PlayerData m_playerData;
     private bool m_playing = false;
+    private bool m_newGame = true;
     private float m_bezierCurveMS = 0;
     private float m_interpTime;
+    private Vector2 m_prevDirection;
+    private float m_timeSincePrevDirection = 0;
 
     public Camera(Vector2 viewportSize, PlayerData playerData) : base(typeof(Input))
     {
@@ -46,6 +49,7 @@ public class Camera : Shared.Systems.System
 
         if (!m_playing)
         {
+            m_newGame = true;
             m_playing = true;
             m_interpTime = m_zoomInTime;
             m_bezierCurveMS = 0;
@@ -56,15 +60,52 @@ public class Camera : Shared.Systems.System
         {
             if (e.contains<Name>() && e.get<Name>().name == m_playerData.playerName)
             {
+                m_timeSincePrevDirection += (float)elapsedTime.TotalMilliseconds;
+
                 Entity player = e;
-                Vector2 pos = player.get<Position>().position;
+                Vector2 targetPos = player.get<Position>().position;
+                Vector2 direction = RadiansToVector(player.get<Position>().orientation);
 
-                // TODO: Change zoom depending on player size
+                if (m_newGame) // Dont interpolate if we just started
+                {
+                    m_newGame = false;
+                    m_viewport.Location = (targetPos + direction * 100).ToPoint();
+                    m_prevDirection = direction;
+                    break;
+                }
 
-                m_viewport.Location = pos.ToPoint();
-                return;
+                Vector2 headVec = targetPos - m_viewport.Location.ToVector2(); // position of head with respect to viewport
+
+                Vector2 targetViewportOffset = headVec + direction * 100;
+
+                float panningInterpTime = 1000f;
+                m_timeSincePrevDirection = MathHelper.Clamp(m_timeSincePrevDirection, 0, panningInterpTime);
+
+                if (direction != m_prevDirection)
+                {
+                    m_timeSincePrevDirection = 0;
+                    m_prevDirection = direction;
+                }
+
+                float t = m_timeSincePrevDirection / panningInterpTime;
+
+                Vector2 p0 = Vector2.Zero; // Starting curve position
+                Vector2 p1 = Vector2.Zero;
+                Vector2 p2 = targetViewportOffset;
+                Vector2 p3 = targetViewportOffset;
+
+                Vector2 interpolatedPos = BezierCurve.GetPoint(p0, p1, p2, p3, t);
+                m_viewport.Location += interpolatedPos.ToPoint();
+
+                break;
             }
         }
+    }
+
+    private static Vector2 RadiansToVector(float radians)
+    {
+        Vector2 directionVec = new((float)Math.Cos(radians), (float)Math.Sin(radians));
+        return Vector2.Normalize(directionVec);
     }
 
     private void BezierZoom(TimeSpan elapsedTime, bool zoomIn = true)
@@ -119,7 +160,7 @@ public static class BezierCurve
     }
 
     // Linear interpolation between two vectors
-    private static Vector2 Lerp(Vector2 a, Vector2 b, float t)
+    public static Vector2 Lerp(Vector2 a, Vector2 b, float t)
     {
         return a + (b - a) * t;
     }
