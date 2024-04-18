@@ -69,18 +69,10 @@ public class GameModel
         m_systemWormMovement.update(elapsedTime);
         m_systemInterpolation.update(elapsedTime);
         m_systemCamera.update(elapsedTime);
+        m_renderer.update(elapsedTime);
         GameTime gameTime = new GameTime(totalGameTime: TimeSpan.Zero, elapsedGameTime: elapsedTime);
-        
-        if (eatParticleSystem != null)
-        {
-            eatParticleSystem.update(gameTime);
-        }
-
-        if (deathParticleSystem != null)
-        {
-            deathParticleSystem.update(gameTime);
-        }
-        
+        eatParticleSystem.update(gameTime);
+        deathParticleSystem.update(gameTime);
     }
 
     /// <summary>
@@ -149,8 +141,32 @@ public class GameModel
 
         if (message.hasAppearance)
         {
-            Texture2D texture = m_contentManager.Load<Texture2D>(message.texture);
-            entity.add(new Components.Sprite(texture));
+            var isSpice = message.hasSpicePower && !message.hasWorm;
+            if (isSpice)
+            {
+                int row = 0;
+                if (message.spicePower > 7)
+                {
+                    row = 2;
+                } else if (message.spicePower > 5)
+                {
+                    row = 3;
+                } else if (message.spicePower > 3)
+                {
+                    row = 1;
+                } else if (message.spicePower > 1)
+                {
+                    row = 6;
+                } 
+
+                Texture2D texture = m_contentManager.Load<Texture2D>("Textures/rotating_orbs");
+                entity.add(new Components.Sprite(texture, true, row));
+            }
+            else
+            {
+                Texture2D texture = m_contentManager.Load<Texture2D>(message.texture);
+                entity.add(new Components.Sprite(texture));
+            }
         }
         if (message.hasPosition)
         {
