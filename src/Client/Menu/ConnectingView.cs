@@ -67,7 +67,8 @@ namespace Client.Menu
         private bool connectToServer()
         {
             // Attempt to connect to the server
-            return MessageQueueClient.instance.initialize("localhost", 3000);
+            return MessageQueueClient.instance.initialize("fd58:e39:96f6:1:1066:8dfb:2e75:5b45", 3000);
+            // return MessageQueueClient.instance.initialize("localhost", 3000);
         }
 
         public override void RegisterCommands()

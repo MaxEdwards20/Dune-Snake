@@ -144,24 +144,25 @@ public class GameModel
             var isSpice = message.hasSpicePower && !message.hasWorm;
             if (isSpice)
             {
-                int row = 0;
-                if (message.spicePower > 7)
-                {
-                    row = 2;
-                } else if (message.spicePower > 5)
-                {
-                    row = 3;
-                } else if (message.spicePower > 3)
-                {
-                    row = 1;
-                } else if (message.spicePower > 1)
-                {
-                    row = 6;
-                } 
-
-                Texture2D texture = m_contentManager.Load<Texture2D>("Textures/rotating_orbs");
-                entity.add(new Components.Sprite(texture, true, row));
+                createSpiceAppearance(message, entity);
             }
+            else if (message.hasHead)
+            {
+                Texture2D texture = m_contentManager.Load<Texture2D>("Textures/sandworm_head");
+                entity.add(new Components.Sprite(texture));
+            } else if (message.hasTail)
+            {
+                Texture2D texture = m_contentManager.Load<Texture2D>("Textures/sandworm_tail");
+                entity.add(new Components.Sprite(texture));
+            } else if (message.hasWorm)
+            {
+                Texture2D texture = m_contentManager.Load<Texture2D>("Textures/sandworm_body");
+                entity.add(new Components.Sprite(texture));
+            } else if (message.hasWall)
+            {
+                Texture2D texture = m_contentManager.Load<Texture2D>("Textures/wall");
+                entity.add(new Components.Sprite(texture));
+            } 
             else
             {
                 Texture2D texture = m_contentManager.Load<Texture2D>(message.texture);
@@ -252,6 +253,30 @@ public class GameModel
         }
 
         return entity;
+    }
+
+    private void createSpiceAppearance(NewEntity message, Entity entity)
+    {
+        int row = 0;
+        if (message.spicePower > 7)
+        {
+            row = 2;
+        }
+        else if (message.spicePower > 5)
+        {
+            row = 3;
+        }
+        else if (message.spicePower > 3)
+        {
+            row = 1;
+        }
+        else if (message.spicePower > 1)
+        {
+            row = 6;
+        }
+
+        Texture2D texture = m_contentManager.Load<Texture2D>("Textures/rotating_orbs");
+        entity.add(new Components.Sprite(texture, true, row));
     }
 
     /// <summary>
