@@ -51,7 +51,34 @@ public class Renderer : Shared.Systems.System
 
     public override void update(TimeSpan elapsedTime)
     {
+        foreach (var entity in m_entities.Values)
+        {
+            var sprite = entity.get<Sprite>();
+            if (!sprite.isAnimated) continue;
+            var animation = sprite;
+            animation.Timer += (float)elapsedTime.TotalMilliseconds;
+            
+            if (animation.Timer > animation.FrameSpeed)
+            {
+                animation.Timer = 0f;
+                animation.CurrentFrame++;
+
+                if (animation.CurrentFrame >= animation.FrameCount)
+                {
+                    animation.CurrentFrame = animation.IsLooping ? 0 : animation.FrameCount - 1;
+                }
+
+                // Update the sprite's source rectangle for the new frame
+                sprite.SourceRect = new Rectangle(
+                    sprite.SourceRect.Width * animation.CurrentFrame, // X position of frame
+                    sprite.SourceRect.Y,                              // Y is constant
+                    sprite.SourceRect.Width,                          // Frame width
+                    sprite.SourceRect.Height                          // Frame height
+                );
+            }
+        }
     }
+    
 
     public void render(TimeSpan elapsedTime, SpriteBatch spriteBatch, PlayerData playerData, ParticleSystem eatParticles, ParticleSystem deathParticles)
     {
@@ -66,17 +93,18 @@ public class Renderer : Shared.Systems.System
         matrix *= Matrix.CreateTranslation(new Vector3(offset, 0));
         matrix *= Matrix.CreateScale(scaleX, scaleY, 1);
 
-        // Begin drawing
-        spriteBatch.Begin(transformMatrix: matrix);
-        drawBackgroundTiles(spriteBatch);
         var heads = new List<Entity>();
         var walls = new List<Entity>();
         var spice = new List<Entity>();
-        sortEntities(heads, spice, walls);
-        foreach (Entity entity in spice)
-            renderEntity(elapsedTime, spriteBatch, entity);
-        foreach (Entity entity in walls)
-            renderEntity(elapsedTime, spriteBatch, entity);
+        var others = new List<Entity>();
+        sortEntities(heads, spice, walls, others);
+        
+        // Begin drawing
+        spriteBatch.Begin(transformMatrix: matrix);
+        drawBackgroundTiles(spriteBatch);
+        foreach (Entity entity in others) renderEntity(elapsedTime, spriteBatch, entity);
+        foreach (Entity entity in spice) renderSpice(elapsedTime, spriteBatch, entity);
+        foreach (Entity entity in walls) renderEntity(elapsedTime, spriteBatch, entity);
         drawWorms(elapsedTime, spriteBatch, heads);
         eatRenderer.draw(spriteBatch, eatParticles );
         deathRenderer.draw(spriteBatch, deathParticles);
@@ -93,18 +121,14 @@ public class Renderer : Shared.Systems.System
                 drawStats(spriteBatch, head);
             }
         }
-
-        if (isGameOver)
-        {
-            drawGameOverScreen(spriteBatch, playerData);
-        }
-
+        drawGameOverScreen(spriteBatch, playerData, isGameOver);
         drawLeaderboard(spriteBatch, heads);
         spriteBatch.End();
     }
     
-    private void drawGameOverScreen(SpriteBatch spriteBatch, PlayerData playerData)
+    private void drawGameOverScreen(SpriteBatch spriteBatch, PlayerData playerData, bool isGameOver)
     {
+        if (!isGameOver) return;
         Drawing.DrawBlurredRectangle(spriteBatch, new Vector2(m_graphics.PreferredBackBufferWidth / 2 - 200, m_graphics.PreferredBackBufferHeight / 2 - 150), new Vector2(400, 300), 7, transparency:0.6f);
         Drawing.CustomDrawString(m_font, "Game Over", new Vector2(m_graphics.PreferredBackBufferWidth / 2, m_graphics.PreferredBackBufferHeight / 2 - 100), Color.White, spriteBatch, centered: true);
         Drawing.CustomDrawString(m_font, "Final Score: " + playerData.score, new Vector2(m_graphics.PreferredBackBufferWidth / 2, m_graphics.PreferredBackBufferHeight / 2 - 50), Color.White, spriteBatch, centered: true);
@@ -123,7 +147,7 @@ public class Renderer : Shared.Systems.System
         }
     }
 
-    private void sortEntities(List<Entity> heads, List<Entity> others, List<Entity> walls)
+    private void sortEntities(List<Entity> heads, List<Entity> animatedSprites, List<Entity> walls, List<Entity> others)
     {
         foreach (Entity entity in m_entities.Values)
         {
@@ -131,6 +155,8 @@ public class Renderer : Shared.Systems.System
                 heads.Add(entity);
             else if (entity.contains<Worm>())
                 continue;
+            else if (entity.contains<Sprite>() && entity.get<Sprite>().isAnimated)
+                animatedSprites.Add(entity);
             else if (entity.contains<Shared.Components.Wall>())
                 walls.Add(entity);
             else
@@ -208,6 +234,26 @@ public class Renderer : Shared.Systems.System
             boxed: true
         );
     }
+    
+    private void renderSpice(TimeSpan elapsedTime, SpriteBatch spriteBatch, Entity entity)
+    {
+        var sprite = entity.get<Sprite>();
+        var position = entity.get<Position>().position;
+        var rotation = entity.contains<Position>() ? entity.get<Position>().orientation : 0f;
+        var scale = entity.get<SpicePower>().power / 3;
+
+        spriteBatch.Draw(
+            sprite.texture,
+            position,
+            sprite.SourceRect,          // Use the source rectangle which is set by the AnimationSystem
+            Color.White,                // Assuming white means "use texture colors"
+            rotation,
+            new Vector2(sprite.SourceRect.Width / 2, sprite.SourceRect.Height / 2),  // Origin of the rotation
+            scale,
+            SpriteEffects.None,
+            0f
+        );
+    }
 
     private void renderEntity(TimeSpan elapsedTime, SpriteBatch spriteBatch, Entity entity)
     {
@@ -222,16 +268,7 @@ public class Renderer : Shared.Systems.System
         {
             color = Color.Coral;
         }
-
-        if (entity.contains<SpicePower>() && !entity.contains<Worm>())
-        {
-            var spicePower = entity.get<SpicePower>();
-            if (spicePower.power > 7)
-                color = Color.DarkBlue;
-            else if (spicePower.power > 4)
-                color = Color.LightBlue;
-        }
-
+        
         // Build a rectangle centered at position, with width/height of size
         Rectangle rectangle = new(
             (int)position.X,
