@@ -16,7 +16,7 @@ public class Camera : Shared.Systems.System
     private const int m_zoomOutTime = 15000;
     private float m_currentZoom = m_minScale;
     public float Zoom { get { return m_currentZoom; } }
-    private PlayerData m_playerData;
+    private readonly PlayerData m_playerData;
     private bool m_playing = false;
     private bool m_newGame = true;
     private float m_bezierCurveMS = 0;
@@ -62,40 +62,17 @@ public class Camera : Shared.Systems.System
             {
                 Entity player = e;
                 Vector2 targetPos = player.get<Position>().position;
-                Vector2 direction = RadiansToVector(player.get<Position>().orientation);
 
-                int cameraAheadAmount = 75; // Distance that the camera is "ahead" of the worm head
-
-                if (m_newGame) // Dont interpolate on new game since we need to setup the first viewport location first
+                if (m_newGame)
                 {
                     m_newGame = false;
-                    m_viewport.Location = (targetPos + direction * cameraAheadAmount).ToPoint();
-                    m_prevDirection = direction;
-                    break;
+                    m_viewport.Location = targetPos.ToPoint();
                 }
 
-                Vector2 headOffset = targetPos - m_viewport.Location.ToVector2(); // position of head with respect to viewport center
-                Vector2 targetViewportOffset = headOffset + direction * cameraAheadAmount; // Viewport we want to interpolate to
-
-                if (direction != m_prevDirection)
-                {
-                    m_timeSincePrevDirection = 0;
-                    m_prevDirection = direction;
-                }
-
-                m_timeSincePrevDirection += (float)elapsedTime.TotalMilliseconds;
-
-                float interpTime = 3000f; // How long the interpolation should take
-                m_timeSincePrevDirection = m_timeSincePrevDirection > interpTime ? interpTime : m_timeSincePrevDirection;
-
-                float t = m_timeSincePrevDirection / interpTime;
-
-                // Change control points to interpolate in a somewhat circular motion
-                Vector2 p1 = direction * 15;
-                Vector2 p2 = direction * 15;
-
-                Vector2 interpOffset = BezierCurve.GetPoint(Vector2.Zero, p1, p2, targetViewportOffset, t);
-                m_viewport.Location += interpOffset.ToPoint();
+                Vector2 cameraOffset = targetPos - m_viewport.Location.ToVector2();
+                float interpolationSpeed = 0.1f;
+                Vector2 interpolatedPos = m_viewport.Location.ToVector2() + cameraOffset * interpolationSpeed;
+                m_viewport.Location = interpolatedPos.ToPoint();
 
                 break;
             }
