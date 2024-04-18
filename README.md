@@ -8,14 +8,13 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 
 ## In Progress
 
-- [ ] Satchel: 3 different animated sprites for the spice 
-
 ## Items to Develop
 - [ ] Check every requirement on Canvas and make sure we have it implemented.
 - [ ] Play through with 3 clients (probably need to turn the movement speed way down to handle it)). Make sure the scores are working and that the leaderboard is correct.
 - [ ] Stress test the system and find bugs. Fix them.
 
 ## Done
+- [x] Satchel: 3 different animated sprites for the spice 
 - [x] Satchel: Particle system for the death of a sandworm and eating food.
 - [x] Max: Record players score, kills and highest position.
 - [x] Max: Game over screen with score, kills, and highest position achieved. This is an overlay on the multiplayer game behind it.
