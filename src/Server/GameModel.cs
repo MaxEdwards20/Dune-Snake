@@ -20,7 +20,7 @@ public class GameModel
     private readonly Network m_systemNetwork = new();
     private readonly SpiceGen m_systemSpiceGen = new(mapSize - 200, 300);
     private const int wallSize = 100;
-    private const int mapSize = 3000;
+    private const int mapSize = 4000;
 
     /// <summary>
     /// This is where the server-side simulation takes place.  Messages
@@ -186,7 +186,7 @@ public class GameModel
 
     private void createNewWorm(int clientId, string name)
     {
-        var headStartLocation = getLeastDenseStartLocation();
+        var headStartLocation = getRandomStartLocation();
         var segmentStartLocation = new Vector2(headStartLocation.X - 75, headStartLocation.Y);
         var rotationRate = (float) Math.PI / 1000;
         var moveRate = 0.3f;
@@ -247,12 +247,10 @@ public class GameModel
         }
     }
 
-    private Vector2 getLeastDenseStartLocation()
+    private Vector2 getRandomStartLocation()
     {
-        // We want to start the player in the least dense area of the screen
-        // For now, we'll just start them randomly generated location
         Random random = new Random();
-        var offset = wallSize * 5;
+        var offset = wallSize * 10;
         var lowerBound = offset;
         var upperBound = mapSize - offset;
         return new Vector2(random.Next(lowerBound, upperBound), random.Next(lowerBound, upperBound));
