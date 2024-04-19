@@ -7,7 +7,7 @@ public class PlayerData
 {
     public int clientId { get; set; }
 
-    public int highestPosition { get; private set; } = 1;
+    public int highestPosition { get; private set; } = 9999;
     
     public int kills { get; private set; }
     [DataMember(Name = "score")] public int score { get; set; }
