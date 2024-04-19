@@ -44,8 +44,9 @@ public class Renderer : Shared.Systems.System
         eatRenderer.LoadContent(contentManager);
         deathRenderer.LoadContent(contentManager);
 
-        for (int i = 0; i < 6; i++)
-            for (int j = 0; j < 6; j++)
+        var numRectangles = MapSize.MAP_SIZE / 500 ; 
+        for (int i = 0; i < numRectangles; i++)
+            for (int j = 0; j < numRectangles; j++)
                 m_backgroundTiles.Add(new Rectangle(-100 + i * 500, -100 + j * 500, 500, 500));
     }
 
@@ -193,17 +194,22 @@ public class Renderer : Shared.Systems.System
         scoresToDisplay.Sort((a, b) => b.Item1.CompareTo(a.Item1));
         
         var leaderBoardLocation = new Vector2(m_graphics.PreferredBackBufferWidth *3 / 4, 0);
+        var lineOffset = 50;
         if (m_graphics.PreferredBackBufferWidth < 1000)
-            leaderBoardLocation = new Vector2(m_graphics.PreferredBackBufferWidth * 3 / 5, 0);
+        {
+            leaderBoardLocation = new Vector2(800, 0);
+            lineOffset = 20;
+        }
+
         Drawing.DrawBlurredRectangle(spriteBatch, leaderBoardLocation, new Vector2(m_graphics.PreferredBackBufferWidth * 3/ 4, scoresToDisplay.Count * 50 + 100), 7);
-        Drawing.CustomDrawString(m_font, "Leaderboard", leaderBoardLocation, Color.White, spriteBatch, centered: false);
+        Drawing.CustomDrawString(m_fontSmall, "Leaderboard", leaderBoardLocation, Color.White, spriteBatch, centered: false);
         // Then we draw the scores
         for (int i = 0; i < scoresToDisplay.Count; i++)
         {
             Drawing.CustomDrawString(
-                m_font,
+                m_fontSmall,
                 scoresToDisplay[i].Item2 + ": " + scoresToDisplay[i].Item1.ToString(),
-                new Vector2(leaderBoardLocation.X + 30, i * 50 + 75),
+                new Vector2(leaderBoardLocation.X + 30, i * lineOffset + lineOffset * 2),
                 Color.White,
                 spriteBatch,
                 centered: false, 
