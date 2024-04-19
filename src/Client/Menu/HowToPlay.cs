@@ -11,6 +11,7 @@ namespace Client.Menu
         private SpriteFont font;
 
         private string howToPlayMessage =
+            "How to Play\n\n" + 
             "Control a worm to eat spice and grow.\nUse configured keys for movement." +
             "\nAvoid walls and other players!\nTry to beat the high score!" +
             "\n(Custom controls in Main Menu)\n";
@@ -74,25 +75,12 @@ namespace Client.Menu
         public override void render(GameTime gameTime)
         {
             m_spriteBatch.Begin();
-
             // Define text scale
             Vector2 textScale = new Vector2(0.5f, 0.5f);
-            
-            // Background Rectangle
-            var recPosition = new Vector2(m_graphics.PreferredBackBufferWidth / 5 - 20,
-                m_graphics.PreferredBackBufferHeight / 4 - 50);
-            Drawing.DrawBlurredRectangle(m_spriteBatch, recPosition, new Vector2(700, 400), 5, 0.9f);
-
-
-            // Title
-            Vector2 titlePosition = new Vector2(m_graphics.PreferredBackBufferWidth / 2, m_graphics.PreferredBackBufferHeight / 4);
-
-            Vector2 titleOrigin = font.MeasureString(titleMessage) / 2;
-            Drawing.CustomDrawString(font, titleMessage, titlePosition, Colors.displayColor, m_spriteBatch, true, false, scale: 1.0f);
-            // m_spriteBatch.DrawString(font, titleMessage, titlePosition - (titleOrigin * textScale), Colors.displayColor, 0f, Vector2.Zero, textScale, SpriteEffects.None, 0f);
-            
             // How to Play Instructions
-            Vector2 instructionsPosition = new Vector2(m_graphics.PreferredBackBufferWidth / 5, m_graphics.PreferredBackBufferHeight / 2.5f);
+            Vector2 instructionsPosition = new Vector2(m_graphics.PreferredBackBufferWidth / 5, m_graphics.PreferredBackBufferHeight / 6);
+            Drawing.DrawBlurredRectangle(m_spriteBatch, instructionsPosition, new Vector2(m_graphics.PreferredBackBufferWidth * 2/3, m_graphics.PreferredBackBufferHeight * 4 / 5), 5, 0.9f);
+
             string[] lines = howToPlayMessage.Split('\n');
             foreach (string line in lines)
             {

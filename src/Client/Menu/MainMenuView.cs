@@ -65,11 +65,11 @@ namespace Client.Menu
                 renderSound = false; // reset the flag
             }
             // I split the first one's parameters on separate lines to help you see them better
-            Drawing.DrawBlurredRectangle(m_spriteBatch, new Vector2(m_graphics.PreferredBackBufferWidth / 4, 150), new Vector2(m_graphics.PreferredBackBufferWidth / 2, 500), 5 );
+            Drawing.DrawBlurredRectangle(m_spriteBatch, new Vector2(m_graphics.PreferredBackBufferWidth / 4, 100), new Vector2(m_graphics.PreferredBackBufferWidth / 2, 500), 5 );
             float bottom = drawMenuItem(
                 m_currentSelection == MenuState.NewGame ? m_fontMenuSelect : m_fontMenu, 
                 "New Game",
-                200, 
+                150, 
                 m_currentSelection == MenuState.NewGame ? Colors.selectedColor : Colors.displayColor);
             bottom = drawMenuItem(m_currentSelection == MenuState.HighScores ? m_fontMenuSelect : m_fontMenu, "High Scores", bottom, m_currentSelection == MenuState.HighScores ? Colors.selectedColor : Colors.displayColor);
             bottom = drawMenuItem(m_currentSelection == MenuState.Controls ? m_fontMenuSelect : m_fontMenu, "Controls", bottom, m_currentSelection == MenuState.Controls ? Colors.selectedColor : Colors.displayColor);

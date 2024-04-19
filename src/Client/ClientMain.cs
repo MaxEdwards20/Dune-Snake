@@ -48,8 +48,8 @@ namespace Client
             // For Graders: You can change the resolution here
             // m_graphics.PreferredBackBufferWidth = 1920;
             // m_graphics.PreferredBackBufferHeight = 1080;
-            m_graphics.PreferredBackBufferWidth = 1000;
-            m_graphics.PreferredBackBufferHeight = 750;
+            m_graphics.PreferredBackBufferWidth = 1920/2;
+            m_graphics.PreferredBackBufferHeight = 1080/2;
             m_graphics.ApplyChanges();
             
             // Load the controls

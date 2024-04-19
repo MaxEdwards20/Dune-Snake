@@ -7,7 +7,6 @@ namespace Shared.Components.Appearance
         {
             this.texture = texture;
         }
-
         public string texture { get; private set; }
     }
 }
