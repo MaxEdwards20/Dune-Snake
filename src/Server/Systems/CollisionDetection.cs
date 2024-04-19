@@ -61,17 +61,18 @@ public class CollisionDetection : Shared.Systems.System
                 {
                     continue;
                 }
-                if (entity.contains<SpicePower>() && !entity.contains<Worm>() )
+                
+                if (entity.contains<Shared.Components.Wall>())
                 {
-                    wormToSpice(elapsedTime, head, entity);
+                    wormToWall(entity, head, worm);
                 }
                 else if (entity.contains<Worm>())
                 {
                     wormToWorm(head, worm, entity);
                 }
-                else if (entity.contains<Shared.Components.Wall>())
+                else if (entity.contains<SpicePower>() && !entity.contains<Worm>() )
                 {
-                    wormToWall(entity, head, worm);
+                    wormToSpice(elapsedTime, head, entity);
                 }
             }
         }

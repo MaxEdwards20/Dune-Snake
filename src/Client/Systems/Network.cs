@@ -249,6 +249,7 @@ namespace Client.Systems
                             }
                         }
                         heads.Sort((a, b) => a.get<Stats>().Score.CompareTo(b.get<Stats>().Score));
+                        heads.Reverse(); // Largest to smallest
                         playerData.addPosition(heads.IndexOf(entity) + 1);
                     }
                 }

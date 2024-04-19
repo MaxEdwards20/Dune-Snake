@@ -16,7 +16,6 @@ public class GameModel
     private readonly Dictionary<int, uint> m_clientToEntityId = new();
     private readonly WormMovement m_systemWormMovement = new();
     private readonly CollisionDetection m_systemCollisionDetection = new();
-    private readonly GrowthHandler m_SystemGrowthHandler = new();
     private readonly Network m_systemNetwork = new();
     private readonly SpiceGen m_systemSpiceGen = new(MapSize.MAP_SIZE - 200, 300);
     private const int wallSize = 100;
@@ -30,7 +29,6 @@ public class GameModel
     {
         m_systemNetwork.update(elapsedTime, MessageQueueServer.instance.getMessages());
         m_systemCollisionDetection.update(elapsedTime);
-        m_SystemGrowthHandler.update(elapsedTime);
         m_systemWormMovement.update(elapsedTime);
         m_systemSpiceGen.update(elapsedTime);
     }
@@ -105,7 +103,6 @@ public class GameModel
         m_entities[entity.id] = entity;
         m_systemNetwork.add(entity);
         m_systemCollisionDetection.add(entity);
-        m_SystemGrowthHandler.add(entity);
         m_systemWormMovement.add(entity);
         m_systemSpiceGen.add(entity);
     }
@@ -121,7 +118,6 @@ public class GameModel
         m_entities.Remove(id);
         m_systemNetwork.remove(id);
         m_systemCollisionDetection.remove(id);
-        m_SystemGrowthHandler.remove(id);
         m_systemWormMovement.remove(id);
         m_systemSpiceGen.remove(id);
     }
