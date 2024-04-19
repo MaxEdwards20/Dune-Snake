@@ -103,6 +103,7 @@ public class Network : Shared.Systems.System
     /// <param name="message"></param>
     private void handleInput(Shared.Messages.Input message)
     {
+        if (!m_entities.ContainsKey(message.entityId)) return;
         var entity = m_entities[message.entityId];
         var worm = WormMovement.getWormFromHead(entity, m_entities);
         var update = false;
