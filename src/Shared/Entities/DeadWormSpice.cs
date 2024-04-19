@@ -11,7 +11,7 @@ public class DeadWormSpice
     {
         float size = 50;
         Entity entity = new();
-        entity.add(new Appearance("Textures/deadWormSpice"));
+        entity.add(new Appearance());
         entity.add(new Position(position));
         entity.add(new Size(new Vector2(size, size)));
         entity.add(new Collidable());

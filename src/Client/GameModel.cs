@@ -141,39 +141,12 @@ public class GameModel
 
         if (message.hasAppearance)
         {
-            var isSpice = message.hasSpicePower && !message.hasWorm;
-            if (isSpice)
-            {
-                createSpiceAppearance(message, entity);
-            }
-            else if (message.hasHead)
-            {
-                Texture2D texture = m_contentManager.Load<Texture2D>("Textures/sandworm_head");
-                entity.add(new Components.Sprite(texture));
-            } else if (message.hasTail)
-            {
-                Texture2D texture = m_contentManager.Load<Texture2D>("Textures/sandworm_tail");
-                entity.add(new Components.Sprite(texture));
-            } else if (message.hasWorm)
-            {
-                Texture2D texture = m_contentManager.Load<Texture2D>("Textures/sandworm_body");
-                entity.add(new Components.Sprite(texture));
-            } else if (message.hasWall)
-            {
-                Texture2D texture = m_contentManager.Load<Texture2D>("Textures/wall");
-                entity.add(new Components.Sprite(texture));
-            } 
-            else
-            {
-                Texture2D texture = m_contentManager.Load<Texture2D>(message.texture);
-                entity.add(new Components.Sprite(texture));
-            }
+            createAppearance(message, entity);
         }
         if (message.hasPosition)
         {
             entity.add(new Shared.Components.Position(message.position, message.orientation));
         }
-
         if (message.hasSize)
         {
             entity.add(new Shared.Components.Size(message.size));
@@ -253,6 +226,40 @@ public class GameModel
         }
 
         return entity;
+    }
+
+    private void createAppearance(NewEntity message, Entity entity)
+    {
+        var isSpice = message.hasSpicePower && !message.hasWorm;
+        if (isSpice)
+        {
+            createSpiceAppearance(message, entity);
+        }
+        else if (message.hasHead)
+        {
+            Texture2D texture = m_contentManager.Load<Texture2D>("Textures/sandworm_head");
+            entity.add(new Components.Sprite(texture));
+        }
+        else if (message.hasTail)
+        {
+            Texture2D texture = m_contentManager.Load<Texture2D>("Textures/sandworm_tail");
+            entity.add(new Components.Sprite(texture));
+        }
+        else if (message.hasWorm)
+        {
+            Texture2D texture = m_contentManager.Load<Texture2D>("Textures/sandworm_body");
+            entity.add(new Components.Sprite(texture));
+        }
+        else if (message.hasWall)
+        {
+            Texture2D texture = m_contentManager.Load<Texture2D>("Textures/wall");
+            entity.add(new Components.Sprite(texture));
+        }
+        else
+        {
+            Texture2D texture = m_contentManager.Load<Texture2D>(message.texture);
+            entity.add(new Components.Sprite(texture));
+        }
     }
 
     private void createSpiceAppearance(NewEntity message, Entity entity)

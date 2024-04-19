@@ -15,7 +15,7 @@ public class WormTail
     {
         Entity entity = new Entity();
         entity.add(new Position(position));
-        entity.add(new Appearance("Textures/sandworm_tail"));
+        entity.add(new Appearance());
         entity.add(new Size(new Vector2(size, size)));
         entity.add(new ParentId(parent));
         entity.add(new Movement(moveRate, rotateRate));

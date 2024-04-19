@@ -15,7 +15,6 @@ namespace Shared.Messages
             if (entity.contains<Appearance>())
             {
                 this.hasAppearance = true;
-                this.texture = entity.get<Appearance>().texture;
             }
             else
             {
@@ -456,14 +455,6 @@ namespace Shared.Messages
         {
             this.hasAppearance = BitConverter.ToBoolean(data, offset);
             offset += sizeof(bool);
-            if (hasAppearance)
-            {
-                int textureSize = BitConverter.ToInt32(data, offset);
-                offset += sizeof(Int32);
-                this.texture = Encoding.UTF8.GetString(data, offset, textureSize);
-                offset += textureSize;
-            }
-
             return offset;
         }
 
@@ -568,11 +559,6 @@ namespace Shared.Messages
         private void serializeAppearance(List<byte> data)
         {
             data.AddRange(BitConverter.GetBytes(hasAppearance));
-            if (hasAppearance)
-            {
-                data.AddRange(BitConverter.GetBytes(texture.Length));
-                data.AddRange(Encoding.UTF8.GetBytes(texture));
-            }
         }
     }
 }
