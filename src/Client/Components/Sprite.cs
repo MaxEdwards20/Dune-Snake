@@ -16,7 +16,7 @@ namespace Client.Components
                 Row = row;
                 FrameCount = 4;
                 RowCount = 8;
-                FrameSpeed = 1.1f;
+                FrameSpeed = 100f; // Milliseconds between frames
                 IsLooping = true;
                 CurrentFrame = 0;
                 Timer = 0f;
