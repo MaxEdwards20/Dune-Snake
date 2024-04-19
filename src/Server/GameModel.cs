@@ -18,9 +18,8 @@ public class GameModel
     private readonly CollisionDetection m_systemCollisionDetection = new();
     private readonly GrowthHandler m_SystemGrowthHandler = new();
     private readonly Network m_systemNetwork = new();
-    private readonly SpiceGen m_systemSpiceGen = new(mapSize - 200, 300);
+    private readonly SpiceGen m_systemSpiceGen = new(MapSize.MAP_SIZE - 200, 300);
     private const int wallSize = 100;
-    private const int mapSize = 4000;
 
     /// <summary>
     /// This is where the server-side simulation takes place.  Messages
@@ -159,15 +158,14 @@ public class GameModel
     {
         // We want to create wall entities around the entire map. 5000x5000 is the size of the map
         // We'll create a wall every 100 units
-        
-        for (int i = 0; i < mapSize / 100; i++)
+        for (int i = 0; i < MapSize.MAP_SIZE / wallSize; i++)
         {
             // Top wall
             Entity wall = Shared.Entities.Wall.create(new Vector2(i * wallSize, 0 - wallSize), wallSize);
             addEntity(wall);
 
             // Bottom wall
-            wall = Shared.Entities.Wall.create(new Vector2(i * wallSize, mapSize - wallSize), wallSize);
+            wall = Shared.Entities.Wall.create(new Vector2(i * wallSize, MapSize.MAP_SIZE - wallSize), wallSize);
             addEntity(wall);
 
             // Left wall
@@ -175,7 +173,7 @@ public class GameModel
             addEntity(wall);
 
             // Right wall
-            wall = Shared.Entities.Wall.create(new Vector2(mapSize - wallSize, i * wallSize), wallSize);
+            wall = Shared.Entities.Wall.create(new Vector2(MapSize.MAP_SIZE - wallSize, i * wallSize), wallSize);
             addEntity(wall);
         }
         
@@ -252,7 +250,7 @@ public class GameModel
         Random random = new Random();
         var offset = wallSize * 10;
         var lowerBound = offset;
-        var upperBound = mapSize - offset;
+        var upperBound = MapSize.MAP_SIZE - offset;
         return new Vector2(random.Next(lowerBound, upperBound), random.Next(lowerBound, upperBound));
     }
 }
