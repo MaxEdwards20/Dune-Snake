@@ -1,8 +1,8 @@
 using Microsoft.Xna.Framework;
 using Shared.Entities;
 using System;
-using System.Diagnostics;
 using Shared.Components;
+using System.Diagnostics;
 
 namespace Client.Systems;
 
@@ -10,16 +10,19 @@ public class Camera : Shared.Systems.System
 {
     private Rectangle m_viewport = new();
     public Rectangle Viewport { get { return m_viewport; } }
-    private const float m_maxScale = 0.6f;
+    private const float m_maxScale = 0.7f;
     private const float m_minScale = 0.3f;
     private const int m_zoomInTime = 1000;
     private const int m_zoomOutTime = 15000;
     private float m_currentZoom = m_minScale;
     public float Zoom { get { return m_currentZoom; } }
-    private PlayerData m_playerData;
+    private readonly PlayerData m_playerData;
     private bool m_playing = false;
+    private bool m_newGame = true;
     private float m_bezierCurveMS = 0;
     private float m_interpTime;
+    private Vector2 m_prevDirection;
+    private float m_timeSincePrevDirection = 0;
 
     public Camera(Vector2 viewportSize, PlayerData playerData) : base(typeof(Input))
     {
@@ -46,6 +49,7 @@ public class Camera : Shared.Systems.System
 
         if (!m_playing)
         {
+            m_newGame = true;
             m_playing = true;
             m_interpTime = m_zoomInTime;
             m_bezierCurveMS = 0;
@@ -57,14 +61,28 @@ public class Camera : Shared.Systems.System
             if (e.contains<Name>() && e.get<Name>().name == m_playerData.playerName)
             {
                 Entity player = e;
-                Vector2 pos = player.get<Position>().position;
+                Vector2 targetPos = player.get<Position>().position;
 
-                // TODO: Change zoom depending on player size
+                if (m_newGame)
+                {
+                    m_newGame = false;
+                    m_viewport.Location = targetPos.ToPoint();
+                }
 
-                m_viewport.Location = pos.ToPoint();
-                return;
+                Vector2 cameraOffset = targetPos - m_viewport.Location.ToVector2();
+                float interpolationSpeed = 0.05f;
+                Vector2 interpolatedPos = m_viewport.Location.ToVector2() + cameraOffset * interpolationSpeed;
+                m_viewport.Location = interpolatedPos.ToPoint();
+
+                break;
             }
         }
+    }
+
+    private static Vector2 RadiansToVector(float radians)
+    {
+        Vector2 directionVec = new((float)Math.Cos(radians), (float)Math.Sin(radians));
+        return Vector2.Normalize(directionVec);
     }
 
     private void BezierZoom(TimeSpan elapsedTime, bool zoomIn = true)
@@ -119,7 +137,7 @@ public static class BezierCurve
     }
 
     // Linear interpolation between two vectors
-    private static Vector2 Lerp(Vector2 a, Vector2 b, float t)
+    public static Vector2 Lerp(Vector2 a, Vector2 b, float t)
     {
         return a + (b - a) * t;
     }
