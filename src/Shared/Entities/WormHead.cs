@@ -14,7 +14,7 @@ public class WormHead
     {
         Entity entity = new();
         entity.add(new Position(position));
-        entity.add(new Appearance("Textures/sandworm_head"));
+        entity.add(new Appearance());
         entity.add(new Size(new Vector2(size, size)));
         entity.add(new Movement(moveRate, rotateRate));
         entity.add(new ClientId(clientId));

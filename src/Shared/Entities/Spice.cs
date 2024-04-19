@@ -12,7 +12,7 @@ public class Spice
         int power = random.Next(1, 10);
         float size = 3 * power + 10;
         Entity entity = new();
-        entity.add(new Appearance("Textures/spice"));
+        entity.add(new Appearance());
         entity.add(new Position(position));
         entity.add(new Size(new Vector2(size, size)));
         entity.add(new Collidable());

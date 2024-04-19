@@ -15,7 +15,6 @@ namespace Shared.Messages
             if (entity.contains<Appearance>())
             {
                 this.hasAppearance = true;
-                this.texture = entity.get<Appearance>().texture;
             }
             else
             {

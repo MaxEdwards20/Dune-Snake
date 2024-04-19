@@ -9,7 +9,7 @@ public class Wall
     public static Entity create(Vector2 position, int size)
     {
         Entity entity = new Entity();
-        entity.add(new Appearance("Textures/dune_wall"));
+        entity.add(new Appearance());
         entity.add(new Position(position));
         entity.add(new Size(new Vector2(size, size)));
         entity.add(new Collidable());
