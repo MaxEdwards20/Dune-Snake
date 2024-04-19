@@ -148,7 +148,7 @@ public class GameModel
             }
             else if (message.hasHead)
             {
-                Texture2D texture = m_contentManager.Load<Texture2D>("Textures/sandworm_head");
+                Texture2D texture = m_contentManager.Load<Texture2D>("Textures/dean");
                 entity.add(new Components.Sprite(texture));
             } else if (message.hasTail)
             {
