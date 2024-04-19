@@ -405,6 +405,9 @@ public class GameModel
         {
             return;
         }
+        if (message.collisionType == Collision.CollisionType.HeadToWall && player == entity1) { 
+            m_deathSoundInstance.Play();
+        }
         if (message.collisionType == Collision.CollisionType.ReceiverDies && player == entity1 ||
             message.collisionType == Collision.CollisionType.SenderDies && player == entity2)
         {
