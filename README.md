@@ -11,7 +11,7 @@ A game of Snake built using C# in the MonoGame framework, themed around everyone
 2. Open [this](./src/DuneSnake.sln) file in Visual Studio, Jet Brains Ryder, or another compatible IDE.
 3. Start the server
 4. Start the client
-5. Start playin!
+5. Start playing!
 
 ## Debugging
 
